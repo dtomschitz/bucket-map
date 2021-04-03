@@ -1,9 +1,122 @@
-import 'package:bucket_map/config/constants/app_constants.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Map extends StatefulWidget {
+  const Map({Key key}) : super(key: key);
+
+  @override
+  State createState() => _MapState();
+}
+
+class _MapState extends State<Map> {
+  Completer<GoogleMapController> _controller = Completer();
+  MapType _mapType = MapType.normal;
+
+  static final _initialCameraPosition = CameraPosition(
+    target: LatLng(0, 0),
+    zoom: 1,
+  );
+
+  static final _kLake = CameraPosition(
+    bearing: 192.8334901395799,
+    target: LatLng(37.43296265331129, -122.08832357078792),
+    tilt: 59.440717697143555,
+    zoom: 0,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        GoogleMap(
+          mapType: _mapType,
+          initialCameraPosition: _initialCameraPosition,
+          trafficEnabled: false,
+          mapToolbarEnabled: false,
+          myLocationButtonEnabled: false,
+          compassEnabled: false,
+          tiltGesturesEnabled: false,
+          rotateGesturesEnabled: false,
+          onMapCreated: (GoogleMapController controller) {
+            if (!_controller.isCompleted) {
+              _controller.complete(controller);
+            }
+          },
+        ),
+        SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 56,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    elevation: 8,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 8,
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16),
+                            child: Text(
+                              'Nach Länder oder Region suchen..',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    FloatingActionButton(
+                      child: Icon(Icons.layers_outlined),
+                      mini: true,
+                      backgroundColor: Color.fromARGB(230, 255, 255, 255),
+                      onPressed: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(height: 200, child: Text('Tetst'));
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Future<void> _goToTheLake() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  }
+}
+
+/*class Map extends StatefulWidget {
   const Map({Key key}) : super(key: key);
 
   @override
@@ -84,8 +197,10 @@ class _MapState extends State<Map> {
       initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
       compassEnabled: false,
       rotateGesturesEnabled: false,
+    
     );
   }
 
   void onStyleLoadedCallback() {}
 }
+*/

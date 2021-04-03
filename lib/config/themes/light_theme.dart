@@ -5,16 +5,15 @@ final lightTheme = ThemeData(
   primaryColor: Colors.green[700],
   appBarTheme: AppBarTheme(
     centerTitle: true,
-    titleTextStyle:
-        TextStyle(color: Colors.black, backgroundColor: Colors.black),
+    titleTextStyle: TextStyle(
+      color: Colors.black,
+      backgroundColor: Colors.black,
+    ),
     backgroundColor: Colors.white,
     iconTheme: IconThemeData(color: Colors.black, opacity: .87),
   ),
-
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    foregroundColor: Colors.black,
-    backgroundColor: Colors.white
-  ),
+      foregroundColor: Colors.black, backgroundColor: Colors.white),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     selectedIconTheme: IconThemeData(color: Colors.black),
     selectedLabelStyle: TextStyle(color: Colors.black),

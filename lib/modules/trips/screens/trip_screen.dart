@@ -53,7 +53,57 @@ class TripScreen extends StatelessWidget {
               ),
             ),
             actions: [
-              IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+              IconButton(
+                icon: Icon(Icons.more_vert),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    builder: (BuildContext context) {
+                      return SafeArea(
+                        child: Container(
+                          height: 350,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              ListTile(
+                                leading: Icon(Icons.favorite_outline_sharp),
+                                title: Text('Zu favoriten hinzufügen'),
+                                onTap: () {},
+                              ),
+                              Divider(indent: 70,),
+                              ListTile(
+                                leading: Icon(Icons.edit_outlined),
+                                title: Text('Umbennen'),
+                                onTap: () {},
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.place_outlined),
+                                title: Text('Besuchte Länder anpassen'),
+                                onTap: () {},
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.image_outlined),
+                                title: Text('Titelbild aktualisieren'),
+                                onTap: () {},
+                              ),
+                              Divider(indent: 70,),
+                              ListTile(
+                                leading: Icon(Icons.delete_outline),
+                                title: Text('Diese Reise löschen'),
+                                onTap: () {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
           const SliverToBoxAdapter(
