@@ -1,5 +1,5 @@
 import 'package:bucket_map/models/country.dart';
-import 'package:bucket_map/modules/countries/widgets/map.dart';
+import 'package:bucket_map/widgets/map.dart';
 import 'package:bucket_map/modules/countries/widgets/widgets.dart';
 import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';

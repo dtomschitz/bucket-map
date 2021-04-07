@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+/*import 'package:equatable/equatable.dart';
 import 'package:bucket_map/modules/countries/models/models.dart';
 
 abstract class CountriesState extends Equatable {
@@ -32,4 +32,4 @@ class CountrySuccess extends CountriesState {
 
   @override
   String toString() => 'CountrySuccess { countries: ${countries.length} }';
-}
+}*/
