@@ -1,9 +1,9 @@
-import 'package:bucket_map/models/country.dart';
-import 'package:bucket_map/widgets/map.dart';
-import 'package:bucket_map/utils/interval.dart';
+import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/utils/utils.dart';
 import 'package:bucket_map/widgets/widgets.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -20,41 +20,44 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SlidingSheet(
-        duration: const Duration(milliseconds: 900),
-        controller: controller,
-        color: Colors.white,
-        shadowColor: Colors.black26,
-        elevation: 12,
-        maxWidth: 500,
-        cornerRadius: 16,
-        cornerRadiusOnFullscreen: 0.0,
-        closeOnBackdropTap: true,
-        closeOnBackButtonPressed: true,
-        addTopViewPaddingOnFullscreen: true,
-        isBackdropInteractable: true,
-        snapSpec: SnapSpec(
-          snap: true,
-          positioning: SnapPositioning.relativeToAvailableSpace,
-          snappings: const [
-            SnapSpec.headerFooterSnap,
-            0.4,
-            SnapSpec.expanded,
-          ],
-        ),
-        liftOnScrollHeaderElevation: 12.0,
-        body: Map(key: mapKey),
-        headerBuilder: buildHeader,
-        builder: buildChild,
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 60),
-        child: FloatingActionButton(
-          onPressed: () {},
-        ),
-      ),
+    return BlocBuilder<CountriesBloc, CountriesState>(
+      builder: (context, state) {
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SlidingSheet(
+            duration: const Duration(milliseconds: 900),
+            controller: controller,
+            color: Colors.white,
+            shadowColor: Colors.black26,
+            elevation: 12,
+            maxWidth: 500,
+            cornerRadius: 16,
+            cornerRadiusOnFullscreen: 0.0,
+            closeOnBackdropTap: true,
+            closeOnBackButtonPressed: true,
+            addTopViewPaddingOnFullscreen: true,
+            isBackdropInteractable: true,
+            snapSpec: SnapSpec(
+              snap: true,
+              positioning: SnapPositioning.relativeToAvailableSpace,
+              snappings: const [
+                SnapSpec.headerFooterSnap,
+                SnapSpec.expanded,
+              ],
+            ),
+            liftOnScrollHeaderElevation: 12.0,
+            body: CountriesMap(),
+            headerBuilder: buildHeader,
+            builder: buildChild,
+          ),
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(bottom: 60),
+            child: FloatingActionButton(
+              onPressed: () {},
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -63,6 +66,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shadowColor: Colors.black12,
+      height: 80,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -113,11 +117,12 @@ class _CountriesScreenState extends State<CountriesScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        for (var country in countries)
+        /*for (var country in countries)
           ListTile(
             leading: CircleAvatar(
-              backgroundImage:
-                  NetworkImage('https://flagcdn.com/w160/${country.code}.png'),
+              backgroundImage: NetworkImage(
+                'https://flagcdn.com/w160/${country.code}.png',
+              ),
               backgroundColor: Colors.grey.shade100,
             ),
             title: Text(country.name),
@@ -126,7 +131,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
               color: Colors.black,
             ),
             onTap: () {},
-          )
+          )*/
       ],
     );
   }

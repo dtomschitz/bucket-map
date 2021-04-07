@@ -1,21 +1,17 @@
 import 'dart:async';
 
-import 'package:bucket_map/models/country.dart';
-import 'package:bucket_map/screens/country_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:geojson/geojson.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class Map extends StatefulWidget {
-  const Map({Key key}) : super(key: key);
+class CountriesMap extends StatefulWidget {
+  const CountriesMap({Key key}) : super(key: key);
 
   @override
-  State createState() => _MapState();
+  State createState() => _CountriesMapState();
 }
 
-class _MapState extends State<Map> {
+class _CountriesMapState extends State<CountriesMap> {
   Completer<GoogleMapController> _controller = Completer();
   MapType _mapType = MapType.normal;
 
@@ -33,7 +29,7 @@ class _MapState extends State<Map> {
   }
 
   Future<void> parseAndDrawAssetsOnMap() async {
-    final geo = GeoJson();
+    /*final geo = GeoJson();
     final data = await rootBundle.loadString('assets/countries.geojson');
     await geo.parse(data);
 
@@ -49,7 +45,7 @@ class _MapState extends State<Map> {
       },
     );
 
-    /*await geo.search(data,
+    await geo.search(data,
         query: GeoJsonQuery(
             geometryType: GeoJsonFeatureType.polygon,
             matchCase: false,
@@ -77,6 +73,14 @@ class _MapState extends State<Map> {
         ),
       );
     });*/
+
+    Polygon(
+      polygonId: PolygonId("Afghanistan"),
+      fillColor: Color.fromARGB(50, 0, 0, 0),
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 1,
+    );
   }
 
   @override

@@ -26,10 +26,12 @@ dependencies:
   fluro: ^2.0.3
   material_floating_search_bar: ^0.3.3
   flutter_bloc: ^7.0.0
+  provider: ^5.0.0
   equatable: ^2.0.0
   google_maps_flutter: ^2.0.2
   cupertino_icons: ^1.0.2
   sliding_sheet: ^0.5.0
+  sliding_up_panel: ^1.0.2
   geojson: ^0.10.0
 
 dev_dependencies:
