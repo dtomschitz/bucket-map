@@ -28,6 +28,8 @@ dependencies:
   mapbox_gl: ^0.10.0
   google_maps_flutter: ^2.0.2
   cupertino_icons: ^1.0.2
+  firebase_auth: ^1.0.2
+  cloud_firestore: ^1.0.4
   sliding_sheet: ^0.5.0
 
 dev_dependencies:
