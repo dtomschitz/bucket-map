@@ -1,12 +1,9 @@
-import 'package:flutter/widgets.dart';
+import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
 
 import 'package:bucket_map/config/routes/routes.dart';
 import 'package:bucket_map/config/themes/themes.dart';
-import 'package:bucket_map/modules/countries/countries.dart';
-import 'package:bucket_map/modules/profile/profile.dart';
-import 'package:bucket_map/modules/trips/trips.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -28,86 +25,9 @@ class _AppState extends State<App> {
     return MaterialApp(
       title: 'Bucket Map',
       theme: themes[ThemeType.Light],
-      home: HomeScreen(),
+      home: CountriesScreen(),
       //initialRoute: Routes,
-      onGenerateRoute: AppRouter.router.generator,
+      //onGenerateRoute: AppRouter.router.generator,
     );
   }
-
-  BitmapDescriptor pinLocationIcon;
-  @override
-  void initState() {
-    super.initState();
-    setCustomMapPin();
-  }
-
-  void setCustomMapPin() async {
-    pinLocationIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/destination_map_marker.png');
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  @override
-  State createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          for (final tabItem in TabItem.items) tabItem.page,
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (int index) => setState(() => _currentIndex = index),
-        items: [
-          for (final tabItem in TabItem.items)
-            BottomNavigationBarItem(
-              icon: tabItem.icon,
-              label: tabItem.label,
-            )
-        ],
-        //showSelectedLabels: false,
-        //showUnselectedLabels: false,
-      ),
-    );
-  }
-}
-
-class TabItem {
-  final Widget page;
-  final String label;
-  final Icon icon;
-
-  TabItem({
-    @required this.page,
-    @required this.label,
-    @required this.icon,
-  });
-
-  static List<TabItem> get items => [
-        TabItem(
-          page: MapScreen(),
-          icon: Icon(Icons.map_outlined),
-          label: "Karte",
-        ),
-        TabItem(
-          page: TripsScreen(),
-          icon: Icon(Icons.explore_outlined),
-          label: "Meine Reisen",
-        ),
-        TabItem(
-          page: ProfileScreen(),
-          icon: Icon(Icons.account_circle_outlined),
-          label: "Profil",
-        ),
-      ];
 }

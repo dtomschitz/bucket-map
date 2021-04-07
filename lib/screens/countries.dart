@@ -1,20 +1,17 @@
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/map.dart';
-import 'package:bucket_map/modules/countries/widgets/widgets.dart';
 import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:sliding_sheet/sliding_sheet.dart';
 
-class MapScreen extends StatefulWidget {
+class CountriesScreen extends StatefulWidget {
   @override
-  State createState() => _MapScreenState();
+  State createState() => _CountriesScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
 
   SheetController controller = SheetController();
