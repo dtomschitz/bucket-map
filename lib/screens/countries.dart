@@ -7,12 +7,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
-class MapScreen extends StatefulWidget {
+class CountriesScreen extends StatefulWidget {
   @override
-  State createState() => _MapScreenState();
+  State createState() => _CountriesScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
 
   SheetController controller = SheetController();

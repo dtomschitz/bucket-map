@@ -1,4 +1,4 @@
-import 'package:bucket_map/modules/countries/models/country.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:flutter/material.dart';
 import 'package:bucket_map/modules/trips/trips.dart';
 
