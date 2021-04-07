@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/map.dart';
 import 'package:bucket_map/utils/interval.dart';
@@ -5,6 +7,7 @@ import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
   @override
@@ -14,10 +17,79 @@ class CountriesScreen extends StatefulWidget {
 class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
 
+  final GlobalKey _scaffoldKey = GlobalKey();
+
   SheetController controller = SheetController();
 
   bool show = false;
 
+  double offset = 0;
+
+  double height;
+
+  double screenHeight;
+
+  Offset test;
+
+  double _initFabHeight;
+  double _fabHeight;
+  double _panelHeightOpen;
+  double _panelHeightClosed = 95.0;
+
+  @override
+  Widget build(BuildContext context) {
+    BorderRadiusGeometry radius = BorderRadius.only(
+      topLeft: Radius.circular(24.0),
+      topRight: Radius.circular(24.0),
+    );
+
+    screenHeight = MediaQuery.of(context).size.height;
+    _initFabHeight = screenHeight * 0.12;
+    if (_fabHeight == null) _fabHeight = _initFabHeight;
+    _panelHeightOpen = screenHeight * 1;
+
+    return Scaffold(
+      body: SlidingUpPanel(
+        backdropEnabled: true,
+        panelSnapping: true,
+        snapPoint: 0.5,
+        maxHeight: screenHeight * 1,
+        onPanelSlide: (double pos) => setState(() {
+          print(pos);
+          _fabHeight =
+              pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
+        }),
+        panel: Center(
+          child: Text("This is the sliding Widget"),
+        ),
+        collapsed: Container(
+          decoration:
+              BoxDecoration(color: Colors.blueGrey, borderRadius: radius),
+          child: Center(
+            child: Text(
+              "This is the collapsed Widget",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        body: Scaffold(
+            body: Map(key: mapKey),
+            floatingActionButton: Padding(
+              padding: EdgeInsets.only(
+                  bottom: _fabHeight >= screenHeight * 0.4
+                      ? screenHeight * 0.4
+                      : (_fabHeight)),
+              child: FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {},
+              ),
+            )),
+        borderRadius: radius,
+      ),
+    );
+  }
+
+/*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,16 +122,22 @@ class _CountriesScreenState extends State<CountriesScreen> {
         builder: buildChild,
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 60),
+        padding: EdgeInsets.only(bottom: (offset + 30.0)),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            getSizeOfCard();
+          },
         ),
       ),
     );
   }
 
   Widget buildHeader(BuildContext context, SheetState state) {
+    offset = state.currentScrollOffset;
+    print(offset);
+    print(state.currentScrollOffset);
     return CustomContainer(
+      key: _scaffoldKey,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shadowColor: Colors.black12,
@@ -110,6 +188,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
   }
 
   Widget buildChild(BuildContext context, SheetState state) {
+    print(state.currentScrollOffset);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -130,4 +209,5 @@ class _CountriesScreenState extends State<CountriesScreen> {
       ],
     );
   }
+  */
 }
