@@ -37,6 +37,7 @@ class CustomContainer extends StatelessWidget {
   final Color rippleColor;
   final bool animate;
   final Duration duration;
+  
   const CustomContainer({
     Key key,
     this.child,
