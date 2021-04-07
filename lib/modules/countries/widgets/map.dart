@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geojson/geojson.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Map extends StatefulWidget {
@@ -14,6 +16,8 @@ class Map extends StatefulWidget {
 class _MapState extends State<Map> {
   Completer<GoogleMapController> _controller = Completer();
   MapType _mapType = MapType.normal;
+
+  Set<Polygon> polygons = {};
 
   static final _initialCameraPosition = CameraPosition(
     target: LatLng(0, 0),
@@ -28,10 +32,59 @@ class _MapState extends State<Map> {
   );
 
   @override
+  void initState() {
+    super.initState();
+    parseAndDrawAssetsOnMap();
+  }
+
+  Future<void> parseAndDrawAssetsOnMap() async {
+    final geo = GeoJson();
+    final data = await rootBundle.loadString('assets/countries.geojson');
+
+    await geo.search(data,
+        query: GeoJsonQuery(
+            geometryType: GeoJsonFeatureType.polygon,
+            matchCase: false,
+            property: "ADMIN",
+            value: "Afghanistan"),
+        verbose: true);
+    GeoJsonPolygon result = geo.polygons[0];
+    var points = result.geoSeries.first.geoPoints
+        .map((e) => LatLng(e.latitude, e.longitude))
+        .toList();
+
+    setState(() {
+      polygons.add(
+        Polygon(
+          polygonId: PolygonId("Afghanistan"),
+          points: points,
+          fillColor: Color.fromARGB(50, 0, 0, 0),
+          visible: true,
+          zIndex: 2,
+          strokeWidth: 1,
+          //strokeColor: Color.fromARGB(50, 0, 0, 0),
+        ),
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
+          onCameraMove: (CameraPosition cameraPosition) => {
+            print(cameraPosition.zoom), // 3 to 5
+            //factor = 5 - cameraPosition.zoom,
+
+            setState(() {
+              polygons = polygons
+                  .map((e) => e.copyWith(
+                      fillColorParam: e.fillColor.withOpacity(
+                          (1 - (cameraPosition.zoom - 3) / 2) / 2)))
+                  .toSet();
+            }),
+          },
           mapType: _mapType,
           initialCameraPosition: _initialCameraPosition,
           trafficEnabled: false,
@@ -40,6 +93,7 @@ class _MapState extends State<Map> {
           compassEnabled: false,
           tiltGesturesEnabled: false,
           rotateGesturesEnabled: false,
+          polygons: polygons,
           onMapCreated: (GoogleMapController controller) {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
@@ -118,14 +172,11 @@ class _MapState extends State<Map> {
 
 /*class Map extends StatefulWidget {
   const Map({Key key}) : super(key: key);
-
   @override
   State createState() => _MapState();
 }
-
 class _MapState extends State<Map> {
   MapboxMapController _controller;
-
   void _onMapCreated(MapboxMapController controller) {
     _controller = controller;
     _controller.addLayer('country-boundaries', 'country-label');
@@ -144,9 +195,7 @@ class _MapState extends State<Map> {
         [LatLng(-70.64573401557249, 43.090083319667144)],
       ]
     ));
-
     _controller.addImageSource(imageSourceId, bytes, coordinates)*/
-
     _controller.addFill(
       FillOptions(geometry: [
         [
@@ -164,7 +213,6 @@ class _MapState extends State<Map> {
         ]
       ], fillColor: "#FF0000", fillOutlineColor: "#FF0000"),
     );
-
     /*
     [-67.13734351262877, 45.137451890638886],
 [-66.96466, 44.8097],
@@ -187,7 +235,6 @@ class _MapState extends State<Map> {
 [-67.79141211614706, 45.702585354182816],
 [-67.13734351262877, 45.137451890638886]*/
   }
-
   @override
   Widget build(BuildContext context) {
     return MapboxMap(
@@ -200,7 +247,6 @@ class _MapState extends State<Map> {
     
     );
   }
-
   void onStyleLoadedCallback() {}
 }
 */
