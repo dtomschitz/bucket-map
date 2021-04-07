@@ -25,7 +25,6 @@ dependencies:
     sdk: flutter
   fluro: ^2.0.3
   material_floating_search_bar: ^0.3.3
-  mapbox_gl: ^0.10.0
   google_maps_flutter: ^2.0.2
   cupertino_icons: ^1.0.2
   sliding_sheet: ^0.5.0
@@ -48,6 +47,10 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+
+  assets:
+    - assets/countries.geojson
+    - assets/destination_map_marker.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

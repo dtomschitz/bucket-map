@@ -8,6 +8,9 @@ import 'package:bucket_map/modules/countries/countries.dart';
 import 'package:bucket_map/modules/profile/profile.dart';
 import 'package:bucket_map/modules/trips/trips.dart';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:async';
+
 class App extends StatefulWidget {
   @override
   State createState() => _AppState();
@@ -29,6 +32,19 @@ class _AppState extends State<App> {
       //initialRoute: Routes,
       onGenerateRoute: AppRouter.router.generator,
     );
+  }
+
+  BitmapDescriptor pinLocationIcon;
+  @override
+  void initState() {
+    super.initState();
+    setCustomMapPin();
+  }
+
+  void setCustomMapPin() async {
+    pinLocationIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/destination_map_marker.png');
   }
 }
 

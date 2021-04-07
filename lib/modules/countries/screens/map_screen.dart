@@ -5,6 +5,8 @@ import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class MapScreen extends StatefulWidget {

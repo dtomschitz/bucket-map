@@ -15,6 +15,19 @@ class _MapState extends State<Map> {
   Completer<GoogleMapController> _controller = Completer();
   MapType _mapType = MapType.normal;
 
+  List<Marker> allMarkers = [];
+
+  LatLng currentMarkerPosition;
+
+  bool addMarkerPressed = false;
+
+  List<Marker> currentMarkers = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   static final _initialCameraPosition = CameraPosition(
     target: LatLng(0, 0),
     zoom: 1,
@@ -27,19 +40,159 @@ class _MapState extends State<Map> {
     zoom: 0,
   );
 
+  _handleTap(LatLng tappedPoint) {
+    setState(() {
+      currentMarkers.add(Marker(
+          markerId: MarkerId(tappedPoint.toString()),
+          position: tappedPoint,
+          draggable: true,
+          onDragEnd: (dragEndPosition) {
+            print(dragEndPosition);
+            setState(() {
+              currentMarkerPosition = dragEndPosition;
+            });
+          }));
+    });
+  }
+
+  _handleAddMarker(LatLng markerPosition) {
+    allMarkers.add(Marker(
+      markerId: MarkerId(markerPosition.toString()),
+      position: markerPosition,
+      draggable: false,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Scaffold(
+        body: Stack(
+          children: [
+            GoogleMap(
+              mapType: _mapType,
+              initialCameraPosition: _initialCameraPosition,
+              markers: addMarkerPressed
+                  ? Set.from(currentMarkers)
+                  : Set.from(allMarkers),
+              trafficEnabled: false,
+              mapToolbarEnabled: false,
+              myLocationButtonEnabled: false,
+              compassEnabled: false,
+              tiltGesturesEnabled: false,
+              rotateGesturesEnabled: false,
+              onTap: addMarkerPressed
+                  ? _handleTap
+                  : _handleAddMarker(currentMarkerPosition),
+              onMapCreated: (GoogleMapController controller) {
+                if (!_controller.isCompleted) {
+                  _controller.complete(controller);
+                }
+              },
+            ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 56,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        elevation: 8,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 8,
+                            bottom: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search),
+                              Padding(
+                                padding: EdgeInsets.only(left: 16),
+                                child: Text(
+                                  'Nach Länder oder Region suchen..',
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        FloatingActionButton(
+                          child: Icon(Icons.layers_outlined),
+                          mini: true,
+                          backgroundColor: Color.fromARGB(230, 255, 255, 255),
+                          onPressed: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                    height: 200, child: Text('Tetst'));
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 50.0),
+          child: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                addMarkerPressed = !addMarkerPressed;
+              });
+            },
+            child: addMarkerPressed
+                ? const Icon(Icons.done)
+                : const Icon(Icons.add),
+            backgroundColor: addMarkerPressed ? Colors.green : Colors.white,
+          ),
+        ));
+  }
+
+  Future<void> _goToTheLake() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  }
+}
+
+/*class Map extends StatefulWidget {
+  const Map({Key key}) : super(key: key);
+
+  @override
+  State createState() => _MapState();
+
+  Stack(
       children: [
         GoogleMap(
           mapType: _mapType,
           initialCameraPosition: _initialCameraPosition,
+          markers: Set.from(allMarkers),
           trafficEnabled: false,
           mapToolbarEnabled: false,
           myLocationButtonEnabled: false,
           compassEnabled: false,
           tiltGesturesEnabled: false,
           rotateGesturesEnabled: false,
+          onTap: _handleTap,
           onMapCreated: (GoogleMapController controller) {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
@@ -107,20 +260,10 @@ class _MapState extends State<Map> {
           ),
         )
       ],
+      
     );
-  }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
-}
 
-/*class Map extends StatefulWidget {
-  const Map({Key key}) : super(key: key);
-
-  @override
-  State createState() => _MapState();
 }
 
 class _MapState extends State<Map> {
