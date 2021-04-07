@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/models/country.dart';
+import 'package:bucket_map/screens/country_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -80,23 +81,7 @@ class _MapState extends State<Map> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      mapType: _mapType,
-      initialCameraPosition: _initialCameraPosition,
-      trafficEnabled: false,
-      mapToolbarEnabled: false,
-      myLocationButtonEnabled: false,
-      compassEnabled: false,
-      tiltGesturesEnabled: false,
-      rotateGesturesEnabled: false,
-      polygons: polygons,
-      onMapCreated: (GoogleMapController controller) {
-        if (!_controller.isCompleted) {
-          _controller.complete(controller);
-        }
-      },
-    );
-    /*return Stack(
+    return Stack(
       children: [
         GoogleMap(
           mapType: _mapType,
@@ -182,6 +167,6 @@ class _MapState extends State<Map> {
           ),
         )
       ],
-    );*/
+    );
   }
 }

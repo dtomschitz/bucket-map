@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+/*import 'package:equatable/equatable.dart';
 
 abstract class CountriesEvent extends Equatable {
   const CountriesEvent();
@@ -8,3 +8,4 @@ abstract class CountriesEvent extends Equatable {
 }
 
 class CountriesLoadSuccess extends CountriesEvent {}
+*/
