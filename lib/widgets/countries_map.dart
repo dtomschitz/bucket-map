@@ -40,18 +40,20 @@ class _CountriesMapState extends State<CountriesMap> {
           //Set<Polygon> polygons = {};
           for (var country in state.countries) {
             print(country);
-            setState(() {
-              _polygons.add(
-                Polygon(
-                  polygonId: PolygonId(country.name),
-                  points: country.points,
-                  fillColor: Color.fromARGB(50, 0, 0, 0),
-                  visible: true,
-                  zIndex: 2,
-                  strokeWidth: 1,
-                ),
-              );
-            });
+            if (country.points.isNotEmpty) {
+              setState(() {
+                _polygons.add(
+                  Polygon(
+                    polygonId: PolygonId(country.name),
+                    points: country.points,
+                    fillColor: Color.fromARGB(50, 0, 0, 0),
+                    visible: true,
+                    zIndex: 2,
+                    strokeWidth: 1,
+                  ),
+                );
+              });
+            }
           }
         }
       },
