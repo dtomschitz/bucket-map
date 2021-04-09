@@ -1,12 +1,10 @@
 import 'dart:ui';
 
+import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/models/country.dart';
-import 'package:bucket_map/widgets/map.dart';
-import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -18,8 +16,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
 
   final GlobalKey _scaffoldKey = GlobalKey();
-
-  SheetController controller = SheetController();
 
   bool show = false;
 
@@ -48,87 +44,98 @@ class _CountriesScreenState extends State<CountriesScreen> {
     if (_fabHeight == null) _fabHeight = _initFabHeight;
     _panelHeightOpen = screenHeight * 1;
 
-    return Scaffold(
-      body: SlidingUpPanel(
-        backdropEnabled: true,
-        panelSnapping: true,
-        snapPoint: 0.5,
-        maxHeight: screenHeight * 1,
-        onPanelSlide: (double pos) => setState(() {
-          print(pos);
-          _fabHeight =
-              pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
-        }),
-        panel: Center(
-          child: Text("This is the sliding Widget"),
-        ),
-        collapsed: Container(
-          decoration:
-              BoxDecoration(color: Colors.blueGrey, borderRadius: radius),
-          child: Center(
-            child: Text(
-              "This is the collapsed Widget",
-              style: TextStyle(color: Colors.white),
+    return BlocBuilder<CountriesBloc, CountriesState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: SlidingUpPanel(
+            backdropEnabled: true,
+            panelSnapping: true,
+            snapPoint: 0.5,
+            maxHeight: screenHeight * 1,
+            onPanelSlide: (double pos) => setState(() {
+              print(pos);
+              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                  _initFabHeight;
+            }),
+            panel: Center(
+              child: Text("This is the sliding Widget"),
             ),
-          ),
-        ),
-        body: Scaffold(
-            body: Map(key: mapKey),
-            floatingActionButton: Padding(
-              padding: EdgeInsets.only(
+            collapsed: Container(
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: radius,
+              ),
+              child: Center(
+                child: Text(
+                  "This is the collapsed Widget",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            body: Scaffold(
+              body: CountriesMap(
+                key: mapKey,
+              ),
+              floatingActionButton: Padding(
+                padding: EdgeInsets.only(
                   bottom: _fabHeight >= screenHeight * 0.4
                       ? screenHeight * 0.4
-                      : (_fabHeight)),
-              child: FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () {},
+                      : _fabHeight,
+                ),
+                child: FloatingActionButton(
+                  child: const Icon(Icons.add),
+                  onPressed: () {},
+                ),
               ),
-            )),
-        borderRadius: radius,
-      ),
+            ),
+            borderRadius: radius,
+          ),
+        );
+      },
     );
   }
 
 /*
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SlidingSheet(
-        duration: const Duration(milliseconds: 900),
-        controller: controller,
-        color: Colors.white,
-        shadowColor: Colors.black26,
-        elevation: 12,
-        maxWidth: 500,
-        cornerRadius: 16,
-        cornerRadiusOnFullscreen: 0.0,
-        closeOnBackdropTap: true,
-        closeOnBackButtonPressed: true,
-        addTopViewPaddingOnFullscreen: true,
-        isBackdropInteractable: true,
-        snapSpec: SnapSpec(
-          snap: true,
-          positioning: SnapPositioning.relativeToAvailableSpace,
-          snappings: const [
-            SnapSpec.headerFooterSnap,
-            0.4,
-            SnapSpec.expanded,
-          ],
-        ),
-        liftOnScrollHeaderElevation: 12.0,
-        body: Map(key: mapKey),
-        headerBuilder: buildHeader,
-        builder: buildChild,
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: (offset + 30.0)),
-        child: FloatingActionButton(
-          onPressed: () {
-            getSizeOfCard();
-          },
-        ),
-      ),
+    return BlocBuilder<CountriesBloc, CountriesState>(
+      builder: (context, state) {
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SlidingSheet(
+            duration: const Duration(milliseconds: 900),
+            controller: controller,
+            color: Colors.white,
+            shadowColor: Colors.black26,
+            elevation: 12,
+            maxWidth: 500,
+            cornerRadius: 16,
+            cornerRadiusOnFullscreen: 0.0,
+            closeOnBackdropTap: true,
+            closeOnBackButtonPressed: true,
+            addTopViewPaddingOnFullscreen: true,
+            isBackdropInteractable: true,
+            snapSpec: SnapSpec(
+              snap: true,
+              positioning: SnapPositioning.relativeToAvailableSpace,
+              snappings: const [
+                SnapSpec.headerFooterSnap,
+                SnapSpec.expanded,
+              ],
+            ),
+            liftOnScrollHeaderElevation: 12.0,
+            body: CountriesMap(),
+            headerBuilder: buildHeader,
+            builder: buildChild,
+          ),
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(bottom: 60),
+            child: FloatingActionButton(
+              onPressed: () {},
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -141,6 +148,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shadowColor: Colors.black12,
+      height: 80,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -192,11 +200,12 @@ class _CountriesScreenState extends State<CountriesScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        for (var country in countries)
+        /*for (var country in countries)
           ListTile(
             leading: CircleAvatar(
-              backgroundImage:
-                  NetworkImage('https://flagcdn.com/w160/${country.code}.png'),
+              backgroundImage: NetworkImage(
+                'https://flagcdn.com/w160/${country.code}.png',
+              ),
               backgroundColor: Colors.grey.shade100,
             ),
             title: Text(country.name),
@@ -205,7 +214,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
               color: Colors.black,
             ),
             onTap: () {},
-          )
+          )*/
       ],
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:fluro/fluro.dart';
-import './route_handlers.dart';
 
 export 'app_router.dart';
 
@@ -18,7 +17,5 @@ class Routes {
       print("Route was not found");
       return;
     });
-
-    router.define(trip, handler: tripHandler);
   }
 }

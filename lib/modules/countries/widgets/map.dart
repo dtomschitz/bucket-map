@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -174,7 +174,7 @@ class _MapState extends State<Map> {
   }
 }
 
-/*class Map extends StatefulWidget {
+class Map extends StatefulWidget {
   const Map({Key key}) : super(key: key);
 
   @override
@@ -345,5 +345,4 @@ class _MapState extends State<Map> {
   }
 
   void onStyleLoadedCallback() {}
-}
-*/
+}*/

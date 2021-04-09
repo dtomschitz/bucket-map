@@ -1,25 +1,28 @@
 import 'dart:async';
 
-import 'package:bucket_map/models/country.dart';
-import 'package:bucket_map/screens/country_search.dart';
+import 'package:bucket_map/config/constants/constants.dart';
+import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:geojson/geojson.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class Map extends StatefulWidget {
-  const Map({Key key}) : super(key: key);
+class CountriesMap extends StatefulWidget {
+  const CountriesMap({Key key}) : super(key: key);
 
   @override
-  State createState() => _MapState();
+  State createState() => _CountriesMapState();
 }
 
-class _MapState extends State<Map> {
-  Completer<GoogleMapController> _controller = Completer();
-  MapType _mapType = MapType.normal;
+class _CountriesMapState extends State<CountriesMap> {
+  StreamSubscription _countriesSubscription;
+  //MapboxMapController _mapController;
+  //WebViewController _controller;
 
-  Set<Polygon> polygons = {};
+  Completer<GoogleMapController> _controller = Completer();
+
+  MapType _mapType = MapType.normal;
+  Set<Polygon> _polygons = {};
 
   static final _initialCameraPosition = CameraPosition(
     target: LatLng(0, 0),
@@ -29,11 +32,40 @@ class _MapState extends State<Map> {
   @override
   void initState() {
     super.initState();
-    parseAndDrawAssetsOnMap();
+
+    final CountriesBloc countriesBloc = BlocProvider.of<CountriesBloc>(context);
+    _countriesSubscription = countriesBloc.stream.listen(
+      (state) {
+        if (state is CountriesLoaded) {
+          //Set<Polygon> polygons = {};
+          for (var country in state.countries) {
+            print(country);
+            setState(() {
+              _polygons.add(
+                Polygon(
+                  polygonId: PolygonId(country.name),
+                  points: country.points,
+                  fillColor: Color.fromARGB(50, 0, 0, 0),
+                  visible: true,
+                  zIndex: 2,
+                  strokeWidth: 1,
+                ),
+              );
+            });
+          }
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _countriesSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> parseAndDrawAssetsOnMap() async {
-    final geo = GeoJson();
+    /*final geo = GeoJson();
     final data = await rootBundle.loadString('assets/countries.geojson');
     await geo.parse(data);
 
@@ -49,7 +81,7 @@ class _MapState extends State<Map> {
       },
     );
 
-    /*await geo.search(data,
+    await geo.search(data,
         query: GeoJsonQuery(
             geometryType: GeoJsonFeatureType.polygon,
             matchCase: false,
@@ -77,10 +109,31 @@ class _MapState extends State<Map> {
         ),
       );
     });*/
+
+    /* Polygon(
+      polygonId: PolygonId("Afghanistan"),
+      fillColor: Color.fromARGB(50, 0, 0, 0),
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 1,
+    );*/
   }
+
+  /*void _onMapCreated(MapboxMapController controller) {
+    _mapController = controller;
+  }
+
+  //void _onStyleLoadedCallback() {}*/
 
   @override
   Widget build(BuildContext context) {
+    /*return MapboxMap(
+      accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
+      initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+      onMapCreated: _onMapCreated,
+      onStyleLoadedCallback: _onStyleLoadedCallback,
+      //onStyleLoadedCallback: onStyleLoadedCallback,
+    );*/
     return Stack(
       children: [
         GoogleMap(
@@ -92,7 +145,7 @@ class _MapState extends State<Map> {
           compassEnabled: false,
           tiltGesturesEnabled: false,
           rotateGesturesEnabled: false,
-          polygons: polygons,
+          polygons: _polygons,
           onMapCreated: (GoogleMapController controller) {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
