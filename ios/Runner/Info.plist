@@ -22,6 +22,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MGLMapboxAccessToken</key>
+	<string>pk.eyJ1IjoiZGF2aWRkbzMzOTkiLCJhIjoiY2ttbnFwZHB2MHNucjJ2bXprcjRhdjRiMSJ9.axNI3vuHm13Mt5yjWXQnMQ</string>
+	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
+	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Shows your location on the map and helps improve the map</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Shows your location on the map and helps improve the map</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -41,13 +49,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>MGLMapboxAccessToken</key>
-    <string>pk.eyJ1IjoiZGF2aWRkbzMzOTkiLCJhIjoiY2ttbnFwZHB2MHNucjJ2bXprcjRhdjRiMSJ9.axNI3vuHm13Mt5yjWXQnMQ</string>
-	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
+	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Shows your location on the map and helps improve the map</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Shows your location on the map and helps improve the map</string>
 </dict>
 </plist>

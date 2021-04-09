@@ -20,8 +20,6 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
         .map((feature) => Country.fromGeoJsonFeature(feature))
         .toList();
 
-    print(countries.length);
-
     yield CountriesLoaded(countries);
   }
 }

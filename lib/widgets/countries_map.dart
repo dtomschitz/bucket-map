@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:bucket_map/config/constants/constants.dart';
+import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CountriesMap extends StatefulWidget {
@@ -12,10 +15,14 @@ class CountriesMap extends StatefulWidget {
 }
 
 class _CountriesMapState extends State<CountriesMap> {
-  Completer<GoogleMapController> _controller = Completer();
-  MapType _mapType = MapType.normal;
+  StreamSubscription _countriesSubscription;
+  //MapboxMapController _mapController;
+  //WebViewController _controller;
 
-  Set<Polygon> polygons = {};
+  Completer<GoogleMapController> _controller = Completer();
+
+  MapType _mapType = MapType.normal;
+  Set<Polygon> _polygons = {};
 
   static final _initialCameraPosition = CameraPosition(
     target: LatLng(0, 0),
@@ -25,7 +32,36 @@ class _CountriesMapState extends State<CountriesMap> {
   @override
   void initState() {
     super.initState();
-    parseAndDrawAssetsOnMap();
+
+    final CountriesBloc countriesBloc = BlocProvider.of<CountriesBloc>(context);
+    _countriesSubscription = countriesBloc.stream.listen(
+      (state) {
+        if (state is CountriesLoaded) {
+          //Set<Polygon> polygons = {};
+          for (var country in state.countries) {
+            print(country);
+            setState(() {
+              _polygons.add(
+                Polygon(
+                  polygonId: PolygonId(country.name),
+                  points: country.points,
+                  fillColor: Color.fromARGB(50, 0, 0, 0),
+                  visible: true,
+                  zIndex: 2,
+                  strokeWidth: 1,
+                ),
+              );
+            });
+          }
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _countriesSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> parseAndDrawAssetsOnMap() async {
@@ -74,17 +110,30 @@ class _CountriesMapState extends State<CountriesMap> {
       );
     });*/
 
-    Polygon(
+    /* Polygon(
       polygonId: PolygonId("Afghanistan"),
       fillColor: Color.fromARGB(50, 0, 0, 0),
       visible: true,
       zIndex: 2,
       strokeWidth: 1,
-    );
+    );*/
   }
+
+  /*void _onMapCreated(MapboxMapController controller) {
+    _mapController = controller;
+  }
+
+  //void _onStyleLoadedCallback() {}*/
 
   @override
   Widget build(BuildContext context) {
+    /*return MapboxMap(
+      accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
+      initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+      onMapCreated: _onMapCreated,
+      onStyleLoadedCallback: _onStyleLoadedCallback,
+      //onStyleLoadedCallback: onStyleLoadedCallback,
+    );*/
     return Stack(
       children: [
         GoogleMap(
@@ -96,7 +145,7 @@ class _CountriesMapState extends State<CountriesMap> {
           compassEnabled: false,
           tiltGesturesEnabled: false,
           rotateGesturesEnabled: false,
-          polygons: polygons,
+          polygons: _polygons,
           onMapCreated: (GoogleMapController controller) {
             if (!_controller.isCompleted) {
               _controller.complete(controller);

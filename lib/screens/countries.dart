@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -14,8 +16,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
 
   final GlobalKey _scaffoldKey = GlobalKey();
-
-  SheetController controller = SheetController();
 
   bool show = false;
 
@@ -44,44 +44,54 @@ class _CountriesScreenState extends State<CountriesScreen> {
     if (_fabHeight == null) _fabHeight = _initFabHeight;
     _panelHeightOpen = screenHeight * 1;
 
-    return Scaffold(
-      body: SlidingUpPanel(
-        backdropEnabled: true,
-        panelSnapping: true,
-        snapPoint: 0.5,
-        maxHeight: screenHeight * 1,
-        onPanelSlide: (double pos) => setState(() {
-          print(pos);
-          _fabHeight =
-              pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
-        }),
-        panel: Center(
-          child: Text("This is the sliding Widget"),
-        ),
-        collapsed: Container(
-          decoration:
-              BoxDecoration(color: Colors.blueGrey, borderRadius: radius),
-          child: Center(
-            child: Text(
-              "This is the collapsed Widget",
-              style: TextStyle(color: Colors.white),
+    return BlocBuilder<CountriesBloc, CountriesState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: SlidingUpPanel(
+            backdropEnabled: true,
+            panelSnapping: true,
+            snapPoint: 0.5,
+            maxHeight: screenHeight * 1,
+            onPanelSlide: (double pos) => setState(() {
+              print(pos);
+              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                  _initFabHeight;
+            }),
+            panel: Center(
+              child: Text("This is the sliding Widget"),
             ),
-          ),
-        ),
-        body: Scaffold(
-            body: CountriesMap(key: mapKey),
-            floatingActionButton: Padding(
-              padding: EdgeInsets.only(
+            collapsed: Container(
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: radius,
+              ),
+              child: Center(
+                child: Text(
+                  "This is the collapsed Widget",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            body: Scaffold(
+              body: CountriesMap(
+                key: mapKey,
+              ),
+              floatingActionButton: Padding(
+                padding: EdgeInsets.only(
                   bottom: _fabHeight >= screenHeight * 0.4
                       ? screenHeight * 0.4
-                      : (_fabHeight)),
-              child: FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () {},
+                      : _fabHeight,
+                ),
+                child: FloatingActionButton(
+                  child: const Icon(Icons.add),
+                  onPressed: () {},
+                ),
               ),
-            )),
-        borderRadius: radius,
-      ),
+            ),
+            borderRadius: radius,
+          ),
+        );
+      },
     );
   }
 

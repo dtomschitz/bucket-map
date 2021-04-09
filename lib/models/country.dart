@@ -7,6 +7,7 @@ class Country extends Equatable {
   final String name;
   final String code;
   final List<LatLng> points;
+  //final List<LatLng> points;
 
   const Country({
     @required this.name,
@@ -23,13 +24,21 @@ class Country extends Equatable {
         );
 
     if (feature.geometry is GeoJsonPolygon) {
-      var _points = (feature.geometry as GeoJsonPolygon)
+      points = (feature.geometry as GeoJsonPolygon)
           .geoSeries
-          .map((geoSerie) => geoSerie.geoPoints.map(transformGeoPoint))
+          .map((geoSerie) => geoSerie.geoPoints.map(transformGeoPoint).toList())
           .expand((point) => point)
           .toList();
-      points.addAll(_points);
-    } else if (feature.geometry is GeoJsonMultiPolygon) {}
+    } else if (feature.geometry is GeoJsonMultiPolygon) {
+      /*points = (feature.geometry as GeoJsonMultiPolygon)
+          .polygons
+          .map((polygon) => polygon.geoSeries
+              .map((geoSerie) =>
+                  geoSerie.geoPoints.map(transformGeoPoint).toList())
+              .toList())
+          .expand((element) => element)
+          .toList();*/
+    }
 
     return Country(
       name: feature.properties['ADMIN'],
