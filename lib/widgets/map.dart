@@ -35,32 +35,15 @@ class _MapState extends State<Map> {
   Future<void> parseAndDrawAssetsOnMap() async {
     final geo = GeoJson();
     final data = await rootBundle.loadString('assets/countries.geojson');
-    await geo.parse(data);
 
-    print(geo.features.length);
-    print((geo.features[100].geometry as GeoJsonPolygon).geoSeries.length);
-
-    List<Country> countries = geo.features.map(
-      (feature) {
-        return Country(
-          name: feature.properties['ADMIN'],
-          code: feature.properties['ISO_A3'],
-        );
-      },
-    );
-
-    /*await geo.search(data,
+    await geo.search(data,
         query: GeoJsonQuery(
             geometryType: GeoJsonFeatureType.polygon,
             matchCase: false,
             property: "ADMIN",
             value: "Afghanistan"),
         verbose: true);
-    print(geo.features[0].geometry);
     GeoJsonPolygon result = geo.polygons[0];
-
-    print(result.geoSeries.first.name);
-
     var points = result.geoSeries.first.geoPoints
         .map((e) => LatLng(e.latitude, e.longitude))
         .toList();
@@ -74,9 +57,32 @@ class _MapState extends State<Map> {
           visible: true,
           zIndex: 2,
           strokeWidth: 1,
+          strokeColor: Color.fromARGB(255, 0, 0, 0),
         ),
       );
-    });*/
+    });
+  }
+
+  void updatePolygons(CameraPosition cameraPosition) {
+    if (cameraPosition.zoom > 6) {
+      setState(() {
+        polygons = polygons
+            .map((e) =>
+                e.copyWith(strokeColorParam: e.strokeColor.withOpacity(0)))
+            .toSet();
+      });
+    }
+    else {
+      double new_opacity =
+          (((1 - (cameraPosition.zoom - 3) / 2) / 2) * 10).roundToDouble() / 10;
+      setState(() {
+        polygons = polygons
+            .map((e) => e.copyWith(
+                fillColorParam: e.fillColor.withOpacity(new_opacity),
+                strokeColorParam: Color.fromARGB(255, 0, 0, 0)))
+            .toSet();
+      });
+    }
   }
 
   @override
@@ -97,6 +103,9 @@ class _MapState extends State<Map> {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
             }
+          },
+          onCameraMove: (CameraPosition cameraPosition) {
+            updatePolygons(cameraPosition);
           },
         ),
         SafeArea(
