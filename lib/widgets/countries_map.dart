@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:bucket_map/config/constants/constants.dart';
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 class CountriesMap extends StatefulWidget {
   const CountriesMap({Key key}) : super(key: key);
@@ -16,13 +19,13 @@ class CountriesMap extends StatefulWidget {
 
 class _CountriesMapState extends State<CountriesMap> {
   StreamSubscription _countriesSubscription;
-  //MapboxMapController _mapController;
+  MapboxMapController _mapController;
   //WebViewController _controller;
 
-  Completer<GoogleMapController> _controller = Completer();
+  //Completer<GoogleMapController> _controller = Completer();
 
-  MapType _mapType = MapType.normal;
-  Set<Polygon> _polygons = {};
+  //MapType _mapType = MapType.normal;
+  //Set<Polygon> _polygons = {};
 
   static final _initialCameraPosition = CameraPosition(
     target: LatLng(0, 0),
@@ -40,7 +43,7 @@ class _CountriesMapState extends State<CountriesMap> {
           //Set<Polygon> polygons = {};
           for (var country in state.countries) {
             print(country);
-            setState(() {
+            /*setState(() {
               _polygons.add(
                 Polygon(
                   polygonId: PolygonId(country.name),
@@ -51,7 +54,7 @@ class _CountriesMapState extends State<CountriesMap> {
                   strokeWidth: 1,
                 ),
               );
-            });
+            });*/
           }
         }
       },
@@ -119,22 +122,34 @@ class _CountriesMapState extends State<CountriesMap> {
     );*/
   }
 
-  /*void _onMapCreated(MapboxMapController controller) {
+  void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
+
+    //controller.addImage(name, bytes)
   }
 
-  //void _onStyleLoadedCallback() {}*/
+  void _onStyleLoadedCallback() {}
 
   @override
   Widget build(BuildContext context) {
-    /*return MapboxMap(
+    return MapboxMap(
       accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
       initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+
+      onCameraTrackingChanged: (test) {
+        print('dadawdwa');
+      },
+      onUserLocationUpdated: (a) {
+        print('bbbb');
+      },
+      onMapClick: (test, te2st) {
+        print('Tap');
+      },
       onMapCreated: _onMapCreated,
       onStyleLoadedCallback: _onStyleLoadedCallback,
       //onStyleLoadedCallback: onStyleLoadedCallback,
-    );*/
-    return Stack(
+    );
+    /*return Stack(
       children: [
         GoogleMap(
           mapType: _mapType,
@@ -151,6 +166,7 @@ class _CountriesMapState extends State<CountriesMap> {
               _controller.complete(controller);
             }
           },
+          
         ),
         SafeArea(
           child: Padding(
@@ -220,6 +236,6 @@ class _CountriesMapState extends State<CountriesMap> {
           ),
         )
       ],
-    );
+    );*/
   }
 }
