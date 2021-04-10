@@ -1,3 +1,4 @@
+import 'package:bucket_map/modules/profile/screens/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {
@@ -9,12 +10,7 @@ class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(
-        child: Text(
-          'authenticate',
-          textAlign: TextAlign.center,
-        ),
-      ),
+        child: SignIn(),
     );
   }
 }
