@@ -1,3 +1,4 @@
+import 'package:bucket_map/modules/profile/screens/wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
@@ -5,7 +6,7 @@ import 'package:fluro/fluro.dart';
 import 'package:bucket_map/config/routes/routes.dart';
 import 'package:bucket_map/config/themes/themes.dart';
 import 'package:bucket_map/modules/countries/countries.dart';
-import 'package:bucket_map/modules/profile/profile.dart';
+//import 'package:bucket_map/modules/profile/profile.dart';
 import 'package:bucket_map/modules/trips/trips.dart';
 
 class App extends StatefulWidget {
@@ -89,7 +90,7 @@ class TabItem {
           label: "Meine Reisen",
         ),
         TabItem(
-          page: ProfileScreen(),
+          page: Wrapper(),
           icon: Icon(Icons.account_circle_outlined),
           label: "Profil",
         ),
