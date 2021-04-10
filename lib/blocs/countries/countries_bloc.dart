@@ -13,13 +13,15 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   Stream<CountriesState> _loadCountries() async* {
     yield CountriesUninitialized();
 
-    final data = await rootBundle.loadString('assets/countries.geojson');
-    final features = await featuresFromGeoJson(data);
-
-    List<Country> countries = features.collection
-        .map((feature) => Country.fromGeoJsonFeature(feature))
-        .toList();
+    final jsonData = json.decode(await _loadCountriesAssets());
+    final List<Country> countries = List<Country>.from(
+      jsonData.map((country) => Country.fromJson(country)),
+    );
 
     yield CountriesLoaded(countries);
+  }
+
+  Future<String> _loadCountriesAssets() {
+    return rootBundle.loadString('assets/countries.json');
   }
 }
