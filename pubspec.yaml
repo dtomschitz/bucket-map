@@ -36,6 +36,8 @@ dependencies:
   sliding_up_panel: ^1.0.2
   geojson: ^0.10.0
   mapbox_gl: ^0.11.0
+  location_permissions: ^3.0.0
+  permissions_plugin: ^1.1.4
 
 dev_dependencies:
   flutter_test:
