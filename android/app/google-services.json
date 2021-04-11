@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "132504313324",
+    "project_id": "bucket-map",
+    "storage_bucket": "bucket-map.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132504313324:android:37e2913d90fa74c0c734c9",
+        "android_client_info": {
+          "package_name": "com.mm_mi_project.bucket_map"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "132504313324-963v1polk2qqabi41lf8lmap7q5frnca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjFWcpdBWx30_GC8kVhNk3rESyAwKPLcY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "132504313324-963v1polk2qqabi41lf8lmap7q5frnca.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "132504313324-j5suf112dtpgoqr6rtraakpdkuve5thk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mm-mi-project.bucket-map"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,12 +1,11 @@
-import 'dart:async';
+import 'dart:io';
 
 import 'package:bucket_map/config/constants/constants.dart';
-import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 class CountriesMap extends StatefulWidget {
   final bool modifyPin;
@@ -17,14 +16,7 @@ class CountriesMap extends StatefulWidget {
 }
 
 class _CountriesMapState extends State<CountriesMap> {
-  StreamSubscription _countriesSubscription;
-  //MapboxMapController _mapController;
-  //WebViewController _controller;
-
-  Completer<GoogleMapController> _controller = Completer();
-
-  MapType _mapType = MapType.normal;
-  Set<Polygon> _polygons = {};
+  MapboxMapController _mapController;
 
   List<Marker> currentMarkers;
   List<Marker> allMarkers;
@@ -34,8 +26,7 @@ class _CountriesMapState extends State<CountriesMap> {
   bool modifyPin;
 
   static final _initialCameraPosition = CameraPosition(
-    target: LatLng(0, 0),
-    zoom: 1,
+    target: LatLng(0.0, 0.0),
   );
 
   @override
@@ -75,70 +66,14 @@ class _CountriesMapState extends State<CountriesMap> {
 
   @override
   void dispose() {
-    _countriesSubscription.cancel();
     super.dispose();
   }
 
-  Future<void> parseAndDrawAssetsOnMap() async {
-    /*final geo = GeoJson();
-    final data = await rootBundle.loadString('assets/countries.geojson');
-    await geo.parse(data);
-
-    print(geo.features.length);
-    print((geo.features[100].geometry as GeoJsonPolygon).geoSeries.length);
-
-    List<Country> countries = geo.features.map(
-      (feature) {
-        return Country(
-          name: feature.properties['ADMIN'],
-          code: feature.properties['ISO_A3'],
-        );
-      },
-    );
-
-    await geo.search(data,
-        query: GeoJsonQuery(
-            geometryType: GeoJsonFeatureType.polygon,
-            matchCase: false,
-            property: "ADMIN",
-            value: "Afghanistan"),
-        verbose: true);
-    print(geo.features[0].geometry);
-    GeoJsonPolygon result = geo.polygons[0];
-
-    print(result.geoSeries.first.name);
-
-    var points = result.geoSeries.first.geoPoints
-        .map((e) => LatLng(e.latitude, e.longitude))
-        .toList();
-
-    setState(() {
-      polygons.add(
-        Polygon(
-          polygonId: PolygonId("Afghanistan"),
-          points: points,
-          fillColor: Color.fromARGB(50, 0, 0, 0),
-          visible: true,
-          zIndex: 2,
-          strokeWidth: 1,
-        ),
-      );
-    });*/
-
-    /* Polygon(
-      polygonId: PolygonId("Afghanistan"),
-      fillColor: Color.fromARGB(50, 0, 0, 0),
-      visible: true,
-      zIndex: 2,
-      strokeWidth: 1,
-    );*/
-  }
-
-  /*void _onMapCreated(MapboxMapController controller) {
+  void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
   }
 
-  //void _onStyleLoadedCallback() {}*/
+  void _onStyleLoadedCallback() {}
 
   _handleTap(LatLng tappedPoint) {
     setState(() {
@@ -165,9 +100,10 @@ class _CountriesMapState extends State<CountriesMap> {
 
   @override
   Widget build(BuildContext context) {
-    /*return MapboxMap(
+    return MapboxMap(
       accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-      initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+      initialCameraPosition: _initialCameraPosition,
+      styleString: new File("assets/style.json").path,
       onMapCreated: _onMapCreated,
       onStyleLoadedCallback: _onStyleLoadedCallback,
       //onStyleLoadedCallback: onStyleLoadedCallback,
