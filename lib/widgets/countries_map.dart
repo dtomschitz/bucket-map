@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:bucket_map/config/constants/constants.dart';
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CountriesMap extends StatefulWidget {
-  const CountriesMap({Key key}) : super(key: key);
+  final bool modifyPin;
+  CountriesMap({Key key, @required this.modifyPin}) : super(key: key);
 
   @override
   State createState() => _CountriesMapState();
@@ -24,6 +26,13 @@ class _CountriesMapState extends State<CountriesMap> {
   MapType _mapType = MapType.normal;
   Set<Polygon> _polygons = {};
 
+  List<Marker> currentMarkers;
+  List<Marker> allMarkers;
+
+  LatLng currentMarkerPosition;
+
+  bool modifyPin;
+
   static final _initialCameraPosition = CameraPosition(
     target: LatLng(0, 0),
     zoom: 1,
@@ -32,6 +41,10 @@ class _CountriesMapState extends State<CountriesMap> {
   @override
   void initState() {
     super.initState();
+    this.modifyPin = false;
+
+    (currentMarkers == null) ? currentMarkers = [] : DoNothingAction();
+    (allMarkers == null) ? allMarkers = [] : DoNothingAction();
 
     final CountriesBloc countriesBloc = BlocProvider.of<CountriesBloc>(context);
     _countriesSubscription = countriesBloc.stream.listen(
@@ -39,7 +52,7 @@ class _CountriesMapState extends State<CountriesMap> {
         if (state is CountriesLoaded) {
           //Set<Polygon> polygons = {};
           for (var country in state.countries) {
-            print(country);
+            //print(country);
             if (country.points.isNotEmpty) {
               setState(() {
                 _polygons.add(
@@ -127,6 +140,29 @@ class _CountriesMapState extends State<CountriesMap> {
 
   //void _onStyleLoadedCallback() {}*/
 
+  _handleTap(LatLng tappedPoint) {
+    setState(() {
+      currentMarkers.add(Marker(
+          markerId: MarkerId(tappedPoint.toString()),
+          position: tappedPoint,
+          draggable: true,
+          onDragEnd: (dragEndPosition) {
+            print(dragEndPosition);
+            setState(() {
+              currentMarkerPosition = dragEndPosition;
+            });
+          }));
+    });
+  }
+
+  _handleAddMarker(LatLng markerPosition) {
+    allMarkers.add(Marker(
+      markerId: MarkerId(markerPosition.toString()),
+      position: markerPosition,
+      draggable: false,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     /*return MapboxMap(
@@ -141,12 +177,16 @@ class _CountriesMapState extends State<CountriesMap> {
         GoogleMap(
           mapType: _mapType,
           initialCameraPosition: _initialCameraPosition,
+          markers: modifyPin ? Set.from(currentMarkers) : Set.from(allMarkers),
           trafficEnabled: false,
           mapToolbarEnabled: false,
           myLocationButtonEnabled: false,
           compassEnabled: false,
           tiltGesturesEnabled: false,
           rotateGesturesEnabled: false,
+          onTap: this.modifyPin
+              ? _handleTap(currentMarkerPosition)
+              : _handleAddMarker(currentMarkerPosition),
           polygons: _polygons,
           onMapCreated: (GoogleMapController controller) {
             if (!_controller.isCompleted) {
