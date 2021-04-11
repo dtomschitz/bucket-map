@@ -16,10 +16,6 @@ class CountriesMap extends StatefulWidget {
 class _CountriesMapState extends State<CountriesMap> {
   MapboxMapController _mapController;
 
-  static final _initialCameraPosition = CameraPosition(
-    target: LatLng(0.0, 0.0),
-  );
-
   @override
   void initState() {
     super.initState();
@@ -40,7 +36,7 @@ class _CountriesMapState extends State<CountriesMap> {
   Widget build(BuildContext context) {
     return MapboxMap(
       accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-      initialCameraPosition: _initialCameraPosition,
+      initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
       styleString: new File("assets/style.json").path,
       onMapCreated: _onMapCreated,
       onStyleLoadedCallback: _onStyleLoadedCallback,
