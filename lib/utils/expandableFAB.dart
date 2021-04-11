@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 @immutable
@@ -60,14 +60,13 @@ class _ExpandableFabState extends State<ExpandableFab>
   List<Widget> _buildExpandingActionButtons() {
     final children = <Widget>[];
     final count = widget.children.length;
-    final step = 90.0 / (count - 1);
-    for (var i = 0, angleInDegrees = 0.0;
-        i < count;
-        i++, angleInDegrees += step) {
+    double distance = widget.distance;
+    //final step = 90.0 / (count - 1);
+    for (var i = 0, angleInDegrees = 0.0; i < count; i++, distance += 70) {
       children.add(
         _ExpandingActionButton(
-          directionInDegrees: angleInDegrees,
-          maxDistance: widget.distance,
+          directionInDegrees: 90,
+          maxDistance: distance,
           progress: _expandAnimation,
           child: widget.children[i],
         ),
@@ -83,10 +82,12 @@ class _ExpandableFabState extends State<ExpandableFab>
         alignment: Alignment.bottomRight,
         clipBehavior: Clip.none,
         children: [
-          _buildTapToCloseFab(),
-          _buildExpandingActionButtons(),
-          _buildTapToOpenFab(),
-        ],
+              _buildTapToCloseFab(),
+            ] +
+            _buildExpandingActionButtons() +
+            [
+              _buildTapToOpenFab(),
+            ],
       ),
     );
   }
@@ -133,7 +134,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           duration: const Duration(milliseconds: 250),
           child: FloatingActionButton(
             onPressed: _toggle,
-            child: const Icon(Icons.create),
+            child: const Icon(Icons.add),
           ),
         ),
       ),
@@ -210,4 +211,4 @@ class _ExpandingActionButton extends StatelessWidget {
       ),
     );
   }
-}*/
+}

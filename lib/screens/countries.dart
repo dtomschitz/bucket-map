@@ -85,24 +85,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
             body: Scaffold(
               body: CountriesMap(
                 key: mapKey,
-                modifyPin: modfiyPin,
-              ),
-              floatingActionButton: Padding(
-                padding: EdgeInsets.only(
-                  bottom: _fabHeight >= screenHeight * 0.4
-                      ? screenHeight * 0.4
-                      : _fabHeight,
-                ),
-                child: FloatingActionButton(
-                    child: modfiyPin
-                        ? const Icon(Icons.done)
-                        : const Icon(Icons.add),
-                    onPressed: () {
-                      setState(() {
-                        modfiyPin = !modfiyPin;
-                      });
-                    },
-                    backgroundColor: modfiyPin ? Colors.green : Colors.white),
+                fabHeight: _fabHeight,
               ),
             ),
             borderRadius: radius,
