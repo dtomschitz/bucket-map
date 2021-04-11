@@ -13,12 +13,12 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   Stream<CountriesState> _loadCountries() async* {
     yield CountriesUninitialized();
 
-    final jsonData = json.decode(await _loadCountriesAssets());
-    final List<Country> countries = List<Country>.from(
-      jsonData.map((country) => Country.fromJson(country)),
-    );
+    /*List<dynamic> decodedJson = jsonDecode(await _loadCountriesAssets());
+    List<Country> countries = decodedJson.map((c) => Country.fromJson(c));
 
-    yield CountriesLoaded(countries);
+    print(countries.length);*/
+
+    // yield CountriesLoaded(countries);
   }
 
   Future<String> _loadCountriesAssets() {
