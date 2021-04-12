@@ -5,6 +5,7 @@ import 'package:bucket_map/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location_permissions/location_permissions.dart';
+
 import 'package:permissions_plugin/permissions_plugin.dart' as permissions_plugin;
 
 void main() async {

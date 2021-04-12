@@ -37,7 +37,9 @@ dependencies:
   geojson: ^0.10.0
   mapbox_gl: ^0.11.0
   location_permissions: ^3.0.0
+  http: ^0.13.1
   permissions_plugin: ^1.1.4
+
 
 dev_dependencies:
   flutter_test:
