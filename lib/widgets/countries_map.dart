@@ -14,7 +14,8 @@ import 'package:bucket_map/screens/createPin.dart';
 
 class CountriesMap extends StatefulWidget {
   double fabHeight;
-  CountriesMap({Key key, this.fabHeight}) : super(key: key);
+  Symbol createdPin;
+  CountriesMap({Key key, this.fabHeight, this.createdPin}) : super(key: key);
 
   @override
   State createState() => _CountriesMapState();
@@ -41,6 +42,8 @@ class _CountriesMapState extends State<CountriesMap> {
 
   bool modfiyPin = false;
 
+  List<SymbolOptions> allPins = [];
+
   Offset test;
 
   double _initFabHeight;
@@ -64,9 +67,26 @@ class _CountriesMapState extends State<CountriesMap> {
 
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
+    allPins.add(widget.createdPin.options);
+    _mapController.addSymbols(allPins);
+    print("test");
   }
 
   void _onStyleLoadedCallback() {}
+
+  gotoCreatePin(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreatePin()),
+    );
+
+    // After the Selection Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    setState(() {
+      allPins.add(result.options);
+    });
+    _mapController.addSymbols(allPins);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,11 +115,7 @@ class _CountriesMapState extends State<CountriesMap> {
                   heroTag: "btn1",
                   child: Icon(Icons.create),
                   onPressed: () {
-                    print(_mapController.cameraPosition);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CreatePin()),
-                    );
+                    gotoCreatePin(context);
                   },
                 ),
                 FloatingActionButton(heroTag: "btn2", onPressed: () {}),

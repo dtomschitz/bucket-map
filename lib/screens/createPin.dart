@@ -10,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 
+import 'package:bucket_map/widgets/countries_map.dart';
+
 class CreatePin extends StatefulWidget {
   CreatePin() : super();
 
@@ -82,7 +84,12 @@ class _CreatePinState extends State<CreatePin> {
           actions: <Widget>[
             FlatButton(
               textColor: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                Symbol sym = _mapController.symbols.first;
+                sym.options =
+                    sym.options.copyWith(new SymbolOptions(draggable: false));
+                Navigator.pop(context, sym);
+              },
               child: Text("Ok"),
             ),
           ],
