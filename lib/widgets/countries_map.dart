@@ -54,6 +54,7 @@ class _CountriesMapState extends State<CountriesMap> {
     target: LatLng(0.0, 0.0),
   );
 
+
   @override
   void initState() {
     super.initState();
