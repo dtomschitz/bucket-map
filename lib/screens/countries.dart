@@ -4,6 +4,7 @@ import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -25,12 +26,21 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   double screenHeight;
 
+  bool modfiyPin = false;
+
   Offset test;
 
   double _initFabHeight;
   double _fabHeight;
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    modfiyPin = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,17 +85,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
             body: Scaffold(
               body: CountriesMap(
                 key: mapKey,
-              ),
-              floatingActionButton: Padding(
-                padding: EdgeInsets.only(
-                  bottom: _fabHeight >= screenHeight * 0.4
-                      ? screenHeight * 0.4
-                      : _fabHeight,
-                ),
-                child: FloatingActionButton(
-                  child: const Icon(Icons.add),
-                  onPressed: () {},
-                ),
+                fabHeight: _fabHeight,
               ),
             ),
             borderRadius: radius,
