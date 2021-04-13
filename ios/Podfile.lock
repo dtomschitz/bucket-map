@@ -323,6 +323,7 @@ PODS:
     - nanopb/encode (= 2.30906.0)
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
+  - "permission_handler (5.1.0+2)":
   - permissions_plugin (0.0.1):
     - Flutter
   - PromisesObjC (1.2.12)
@@ -334,6 +335,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
   - mapbox_gl (from `.symlinks/plugins/mapbox_gl/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - permissions_plugin (from `.symlinks/plugins/permissions_plugin/ios`)
 
 SPEC REPOS:
@@ -370,6 +372,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/location_permissions/ios"
   mapbox_gl:
     :path: ".symlinks/plugins/mapbox_gl/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
   permissions_plugin:
     :path: ".symlinks/plugins/permissions_plugin/ios"
 
@@ -398,6 +402,7 @@ SPEC CHECKSUMS:
   MapboxAnnotationExtension: d66de5561562c9d940153c0135725e671407b781
   MapboxMobileEvents: 2bc0ca2eedb627b73cf403258dce2b2fa98074a6
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   permissions_plugin: 98cd73ca0d2e7ab845e3d0efdd29ef2737ffa27c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
 

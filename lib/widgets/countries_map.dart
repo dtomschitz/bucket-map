@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/config/constants/constants.dart';
@@ -54,7 +56,6 @@ class _CountriesMapState extends State<CountriesMap> {
     target: LatLng(0.0, 0.0),
   );
 
-
   @override
   void initState() {
     super.initState();
@@ -66,14 +67,40 @@ class _CountriesMapState extends State<CountriesMap> {
     super.dispose();
   }
 
-  void _onMapCreated(MapboxMapController controller) {
+  void _onMapCreated(MapboxMapController controller) async {
     _mapController = controller;
     allPins.add(widget.createdPin.options);
     _mapController.addSymbols(allPins);
     print("test");
   }
 
-  void _onStyleLoadedCallback() {}
+  void _onStyleLoadedCallback() {
+    _mapController.setFilter(
+      'country-boundaries',
+      [
+        "match",
+        ["get", "iso_3166_1_alpha_3"],
+        [
+          "NLD",
+          "AFG",
+          "ALA",
+          "ALB",
+          "ASM",
+          "ATA",
+          "AIA",
+          "BHR",
+          "BGD",
+          "BLR",
+          "BEL",
+          "BWA",
+          "BRA",
+          "BES"
+        ],
+        true,
+        false
+      ],
+    );
+  }
 
   gotoCreatePin(BuildContext context) async {
     final result = await Navigator.push(
@@ -96,38 +123,39 @@ class _CountriesMapState extends State<CountriesMap> {
     if (widget.fabHeight == null) widget.fabHeight = _initFabHeight;
     _panelHeightOpen = screenHeight * 1;
     return Scaffold(
-        body: MapboxMap(
-          accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-          initialCameraPosition: _initialCameraPosition,
-          styleString: new File("assets/style.json").path,
-          onMapCreated: _onMapCreated,
-          onStyleLoadedCallback: _onStyleLoadedCallback,
-          //onStyleLoadedCallback: onStyleLoadedCallback,
+      body: MapboxMap(
+        accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
+        initialCameraPosition: _initialCameraPosition,
+        styleString: new File("assets/style.json").path,
+        onMapCreated: _onMapCreated,
+        onStyleLoadedCallback: _onStyleLoadedCallback,
+        //onStyleLoadedCallback: onStyleLoadedCallback,
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          bottom: widget.fabHeight >= screenHeight * 0.4
+              ? screenHeight * 0.4
+              : widget.fabHeight,
         ),
-        floatingActionButton: Padding(
-            padding: EdgeInsets.only(
-              bottom: widget.fabHeight >= screenHeight * 0.4
-                  ? screenHeight * 0.4
-                  : widget.fabHeight,
+        child: ExpandableFab(
+          children: [
+            FloatingActionButton(
+              heroTag: "btn1",
+              child: Icon(Icons.create),
+              onPressed: () {
+                gotoCreatePin(context);
+              },
             ),
-            child: ExpandableFab(
-              children: [
-                FloatingActionButton(
-                  heroTag: "btn1",
-                  child: Icon(Icons.create),
-                  onPressed: () {
-                    gotoCreatePin(context);
-                  },
-                ),
-                FloatingActionButton(heroTag: "btn2", onPressed: () {}),
-                FloatingActionButton(heroTag: "btn3", onPressed: () {}),
-              ],
-              distance: 70.0,
-              initialOpen: false,
-            )));
+            FloatingActionButton(heroTag: "btn2", onPressed: () {}),
+            FloatingActionButton(heroTag: "btn3", onPressed: () {}),
+          ],
+          distance: 70.0,
+          initialOpen: false,
+        ),
+      ),
+    );
   }
 }
-
 
 /*
 

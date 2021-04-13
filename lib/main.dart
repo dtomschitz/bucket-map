@@ -5,7 +5,6 @@ import 'package:bucket_map/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location_permissions/location_permissions.dart';
-
 import 'package:permissions_plugin/permissions_plugin.dart' as permissions_plugin;
 
 void main() async {
@@ -13,7 +12,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  
+
   PermissionStatus permission =
       await LocationPermissions().requestPermissions();
 
@@ -21,11 +20,11 @@ void main() async {
       await permissions_plugin.PermissionsPlugin.requestPermissions(
           [permissions_plugin.Permission.READ_PHONE_STATE]);
 
-
   runApp(
     BlocProvider(
       create: (context) {
         return CountriesBloc()..add(LoadCountriesEvent());
+
       },
       child: App(),
     ),
