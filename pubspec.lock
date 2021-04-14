@@ -282,13 +282,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
-  location_permissions:
-    dependency: "direct main"
-    description:
-      name: location_permissions
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0+1"
   logging:
     dependency: transitive
     description:
@@ -386,13 +379,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.2"
-  permissions_plugin:
-    dependency: "direct main"
-    description:
-      name: permissions_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.4"
   petitparser:
     dependency: transitive
     description:

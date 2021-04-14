@@ -6,6 +6,7 @@ import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -82,11 +83,9 @@ class _CountriesScreenState extends State<CountriesScreen> {
                 ),
               ),
             ),
-            body: Scaffold(
-              body: CountriesMap(
-                key: mapKey,
-                fabHeight: _fabHeight,
-              ),
+            body: CountriesMap(
+              key: mapKey,
+              fabHeight: _fabHeight,
             ),
             borderRadius: radius,
           ),

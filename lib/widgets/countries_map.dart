@@ -1,11 +1,12 @@
-import 'dart:io';
+import 'dart:math';
 
-import 'package:bucket_map/config/constants/constants.dart';
+import 'package:bucket_map/config/constants.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CountriesMap extends StatefulWidget {
   double fabHeight;
@@ -115,13 +116,23 @@ class _CountriesMapState extends State<CountriesMap> {
     _initFabHeight = screenHeight * 0.12;
     if (widget.fabHeight == null) widget.fabHeight = _initFabHeight;
     _panelHeightOpen = screenHeight * 1;
+
     return Scaffold(
-      body: MapboxMap(
-        accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-        initialCameraPosition: _initialCameraPosition,
-        styleString: new File("assets/style.json").path,
-        onMapCreated: _onMapCreated,
-        onStyleLoadedCallback: _onStyleLoadedCallback,
+      body: PermissionBuilder(
+        permission: Permission.location,
+        builder: (context, snapshot) {
+          return MapboxMap(
+            accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
+            styleString: AppConstants.MAPBOX_STYLE_URL,
+            initialCameraPosition: _initialCameraPosition,
+            compassEnabled: false,
+            tiltGesturesEnabled: false,
+            rotateGesturesEnabled: false,
+            myLocationEnabled: snapshot.data == PermissionStatus.granted,
+            onMapCreated: _onMapCreated,
+            onStyleLoadedCallback: _onStyleLoadedCallback,
+          );
+        },
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
