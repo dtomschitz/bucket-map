@@ -1,18 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/config/constants/constants.dart';
+import 'package:bucket_map/screens/screens.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-
-import 'package:bucket_map/utils/expandableFAB.dart';
-import 'package:bucket_map/screens/createPin.dart';
 
 class CountriesMap extends StatefulWidget {
   double fabHeight;
@@ -105,7 +98,7 @@ class _CountriesMapState extends State<CountriesMap> {
   gotoCreatePin(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CreatePin()),
+      MaterialPageRoute(builder: (context) => CreatePinScreen()),
     );
 
     // After the Selection Screen returns a result, hide any previous snackbars
@@ -129,7 +122,6 @@ class _CountriesMapState extends State<CountriesMap> {
         styleString: new File("assets/style.json").path,
         onMapCreated: _onMapCreated,
         onStyleLoadedCallback: _onStyleLoadedCallback,
-        //onStyleLoadedCallback: onStyleLoadedCallback,
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
@@ -137,7 +129,7 @@ class _CountriesMapState extends State<CountriesMap> {
               ? screenHeight * 0.4
               : widget.fabHeight,
         ),
-        child: ExpandableFab(
+        child: ExpandableFloatingActionButton(
           children: [
             FloatingActionButton(
               heroTag: "btn1",
