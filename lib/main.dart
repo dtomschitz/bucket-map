@@ -1,5 +1,6 @@
 import 'package:bucket_map/blocs/bloc_observer.dart';
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/theme/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:bucket_map/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,10 +13,15 @@ void main() async {
   await Firebase.initializeApp();
 
   runApp(
-    BlocProvider(
-      create: (context) {
-        return CountriesBloc()..add(LoadCountriesEvent());
-      },
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeBloc>(
+          create: (context) => ThemeBloc()..add(LoadTheme()),
+        ),
+        BlocProvider<CountriesBloc>(
+          create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
+        )
+      ],
       child: App(),
     ),
   );
