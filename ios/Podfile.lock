@@ -307,8 +307,6 @@ PODS:
   - gRPC-Core/Interface (1.28.2)
   - GTMSessionFetcher/Core (1.5.0)
   - leveldb-library (1.22.1)
-  - "location_permissions (3.0.0+1)":
-    - Flutter
   - Mapbox-iOS-SDK (5.6.1):
     - MapboxMobileEvents (= 0.10.2)
   - mapbox_gl (0.0.1):
@@ -325,19 +323,18 @@ PODS:
   - nanopb/encode (2.30906.0)
   - "permission_handler (5.1.0+2)":
     - Flutter
-  - permissions_plugin (0.0.1):
-    - Flutter
   - PromisesObjC (1.2.12)
+  - shared_preferences (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
-  - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
   - mapbox_gl (from `.symlinks/plugins/mapbox_gl/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
-  - permissions_plugin (from `.symlinks/plugins/permissions_plugin/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
 SPEC REPOS:
   trunk:
@@ -369,14 +366,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
-  location_permissions:
-    :path: ".symlinks/plugins/location_permissions/ios"
   mapbox_gl:
     :path: ".symlinks/plugins/mapbox_gl/ios"
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
-  permissions_plugin:
-    :path: ".symlinks/plugins/permissions_plugin/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
@@ -396,15 +391,14 @@ SPEC CHECKSUMS:
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
-  location_permissions: 7e0f9aa0f60deb8ff93ddf0e2a164c7e8197bc94
   Mapbox-iOS-SDK: b31bd62a5dd5b7e688eab787acd3d093a122f4d6
   mapbox_gl: 48d261b93d7dfc2367c2f93b493ea8f43df5ba96
   MapboxAnnotationExtension: d66de5561562c9d940153c0135725e671407b781
   MapboxMobileEvents: 2bc0ca2eedb627b73cf403258dce2b2fa98074a6
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  permissions_plugin: 98cd73ca0d2e7ab845e3d0efdd29ef2737ffa27c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
 
 PODFILE CHECKSUM: f0ec83ae088021d7c4ea54e9081879da525c602c
 

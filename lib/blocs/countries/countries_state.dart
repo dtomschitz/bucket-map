@@ -20,8 +20,7 @@ class CountriesLoading extends CountriesState {
 
 class CountriesLoaded extends CountriesState {
   final List<Country> countries;
-
-  CountriesLoaded(this.countries);
+  const CountriesLoaded(this.countries);
 
   CountriesLoaded copyWith({
     List<Country> countries,
@@ -40,8 +39,7 @@ class CountriesLoaded extends CountriesState {
 
 class CountriesError extends CountriesState {
   final String error;
-
-  CountriesError(this.error);
+  const CountriesError(this.error);
 
   @override
   String toString() => 'CountriesError[error: $error]';
