@@ -10,7 +10,7 @@ class Settings extends Equatable {
 
   factory Settings.fromJson(Map<String, dynamic> json) {
     return Settings(
-      themeMode: json['themeMode'],
+      themeMode: ThemeMode.values[json['themeMode']],
     );
   }
 
@@ -34,7 +34,7 @@ class Settings extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'themeMode': themeMode,
+      'themeMode': themeMode.index,
     };
   }
 }

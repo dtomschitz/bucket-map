@@ -23,4 +23,5 @@ final lightTheme = ThemeData(
     backgroundColor: Colors.white,
     type: BottomNavigationBarType.fixed,
   ),
+  
 );

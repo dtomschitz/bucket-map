@@ -5,9 +5,7 @@ final darkTheme = ThemeData(
   primaryColor: Colors.green[700],
   appBarTheme: AppBarTheme(
     centerTitle: true,
-    titleTextStyle:
-        TextStyle(color: Colors.black, backgroundColor: Colors.black),
-    backgroundColor: Colors.white,
-    iconTheme: IconThemeData(color: Colors.black, opacity: .87),
+        backgroundColor: Colors.black,
+    iconTheme: IconThemeData(color: Colors.white, opacity: .87),
   ),
 );
