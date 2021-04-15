@@ -1,6 +1,7 @@
 import 'package:bucket_map/blocs/bloc_observer.dart';
 import 'package:bucket_map/blocs/countries/bloc.dart';
-import 'package:bucket_map/blocs/theme/bloc.dart';
+import 'package:bucket_map/blocs/settings/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:bucket_map/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,8 +16,8 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeBloc>(
-          create: (context) => ThemeBloc()..add(LoadTheme()),
+        BlocProvider<SettingsBloc>(
+          create: (context) => SettingsBloc()..add(LoadSettings()),
         ),
         BlocProvider<CountriesBloc>(
           create: (context) => CountriesBloc()..add(LoadCountriesEvent()),

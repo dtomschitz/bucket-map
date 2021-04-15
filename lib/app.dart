@@ -1,4 +1,4 @@
-import 'package:bucket_map/blocs/theme/bloc.dart';
+import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/modules/profile/models/user.dart';
 import 'package:bucket_map/modules/profile/services/auth.dart';
 import 'package:bucket_map/screens/screens.dart';
@@ -23,17 +23,16 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeState>(
+    return BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
         return StreamProvider<CustomUserObject>.value(
           value: AuthService().user,
           initialData: null,
           child: MaterialApp(
             title: 'Bucket Map',
-            themeMode: state.mode,
+            themeMode: state.settings.themeMode,
             theme: lightTheme,
             darkTheme: darkTheme,
-            
             home: CountriesScreen(),
           ),
         );

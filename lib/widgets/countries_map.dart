@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:bucket_map/blocs/theme/bloc.dart';
 import 'package:bucket_map/config/constants.dart';
+import 'package:bucket_map/config/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
@@ -20,7 +20,6 @@ class CountriesMap extends StatefulWidget {
 }
 
 class _CountriesMapState extends State<CountriesMap> {
-  final key = GlobalKey();
   MapboxMapController _mapController;
 
   static final LatLng center = const LatLng(-33.86711, 151.1947171);
@@ -123,13 +122,12 @@ class _CountriesMapState extends State<CountriesMap> {
       body: PermissionBuilder(
         permission: Permission.location,
         builder: (context, snapshot) {
-          return BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, state) {
-              return MapboxMap(
+          return Stack(
+            children: [
+              MapboxMap(
+                key: GlobalKeys.mapbox,
                 accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-                styleString: state.isDarkModeEnabled
-                    ? AppConstants.MAPBOX_DARK_STYLE_URL
-                    : AppConstants.MAPBOX_DARK_STYLE_URL,
+                styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
                 initialCameraPosition: _initialCameraPosition,
                 compassEnabled: false,
                 tiltGesturesEnabled: false,
@@ -139,8 +137,8 @@ class _CountriesMapState extends State<CountriesMap> {
                 myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
                 onMapCreated: _onMapCreated,
                 onStyleLoadedCallback: _onStyleLoadedCallback,
-              );
-            },
+              )
+            ],
           );
         },
       ),
