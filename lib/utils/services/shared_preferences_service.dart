@@ -1,7 +1,10 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesKeys {
-  static const darkModeEnabled = 'darkModeEnabled';
+  static const settings = 'settings';
 }
 
 class SharedPreferencesService {
@@ -22,11 +25,15 @@ class SharedPreferencesService {
     return _instance;
   }
 
-  Future<void> setDarkModeEnabled(bool value) async {
-    await _preferences.setBool(SharedPreferencesKeys.darkModeEnabled, value);
+  Future<void> setSettings(Map<String, dynamic> json) async {
+    await _preferences.setString(
+      SharedPreferencesKeys.settings,
+      jsonEncode(json),
+    );
   }
 
-  bool get isDarkModeEnabled {
-    return _preferences.getBool(SharedPreferencesKeys.darkModeEnabled);
+  Map<String, dynamic> get settings {
+    final settings = _preferences.getString(SharedPreferencesKeys.settings);
+    return settings != null ? jsonDecode(settings) : null;
   }
 }
