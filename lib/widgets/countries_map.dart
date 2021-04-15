@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bucket_map/config/constants.dart';
+import 'package:bucket_map/config/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
@@ -19,7 +20,6 @@ class CountriesMap extends StatefulWidget {
 }
 
 class _CountriesMapState extends State<CountriesMap> {
-  final key = GlobalKey();
   MapboxMapController _mapController;
 
   static final LatLng center = const LatLng(-33.86711, 151.1947171);
@@ -122,18 +122,23 @@ class _CountriesMapState extends State<CountriesMap> {
       body: PermissionBuilder(
         permission: Permission.location,
         builder: (context, snapshot) {
-          return MapboxMap(
-            accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-            styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
-            initialCameraPosition: _initialCameraPosition,
-            compassEnabled: false,
-            tiltGesturesEnabled: false,
-            rotateGesturesEnabled: false,
-            myLocationEnabled: snapshot.data == PermissionStatus.granted,
-            myLocationRenderMode: MyLocationRenderMode.GPS,
-            myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-            onMapCreated: _onMapCreated,
-            onStyleLoadedCallback: _onStyleLoadedCallback,
+          return Stack(
+            children: [
+              MapboxMap(
+                key: GlobalKeys.mapbox,
+                accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
+                styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
+                initialCameraPosition: _initialCameraPosition,
+                compassEnabled: false,
+                tiltGesturesEnabled: false,
+                rotateGesturesEnabled: false,
+                myLocationEnabled: snapshot.data == PermissionStatus.granted,
+                myLocationRenderMode: MyLocationRenderMode.GPS,
+                myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
+                onMapCreated: _onMapCreated,
+                onStyleLoadedCallback: _onStyleLoadedCallback,
+              )
+            ],
           );
         },
       ),
