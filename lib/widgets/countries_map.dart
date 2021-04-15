@@ -6,7 +6,7 @@ import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -21,6 +21,13 @@ class CountriesMap extends StatefulWidget {
 
 class _CountriesMapState extends State<CountriesMap> {
   MapboxMapController _mapController;
+
+  static final initialCameraPosition = CameraPosition(
+    target: LatLng(0.0, 0.0),
+  );
+
+  CameraPosition currentCameraPosition;
+  bool showLocationButton = true;
 
   static final LatLng center = const LatLng(-33.86711, 151.1947171);
 
@@ -47,10 +54,6 @@ class _CountriesMapState extends State<CountriesMap> {
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
 
-  static final _initialCameraPosition = CameraPosition(
-    target: LatLng(0.0, 0.0),
-  );
-
   @override
   void initState() {
     super.initState();
@@ -62,8 +65,21 @@ class _CountriesMapState extends State<CountriesMap> {
     super.dispose();
   }
 
-  void _onMapCreated(MapboxMapController controller) async {
+  void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
+    currentCameraPosition = _mapController.cameraPosition;
+    _mapController.addListener(() {
+      print(_mapController.requ);
+      print(currentCameraPosition);
+      print(_mapController.cameraPosition != currentCameraPosition);
+      if (_mapController.cameraPosition != currentCameraPosition &&
+          !showLocationButton) {
+        setState(() {
+          print("DAda");
+          showLocationButton = true;
+        });
+      }
+    });
     allPins.add(widget.createdPin.options);
     _mapController.addSymbols(allPins);
     print("test");
@@ -97,6 +113,22 @@ class _CountriesMapState extends State<CountriesMap> {
     );
   }
 
+  _moveCameraToCurrentLocation() async {
+    if (await Permission.location.isGranted) {
+      Position positon = await Geolocator.getCurrentPosition();
+      CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(
+        LatLng(positon.latitude, positon.longitude),
+        13,
+      );
+      await _mapController.animateCamera(cameraUpdate);
+      setState(() {
+           print("dadad");
+        currentCameraPosition = _mapController.cameraPosition;
+        showLocationButton = false;
+      });
+    }
+  }
+
   gotoCreatePin(BuildContext context) async {
     final result = await Navigator.push(
       context,
@@ -128,15 +160,31 @@ class _CountriesMapState extends State<CountriesMap> {
                 key: GlobalKeys.mapbox,
                 accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
                 styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
-                initialCameraPosition: _initialCameraPosition,
+                initialCameraPosition: initialCameraPosition,
                 compassEnabled: false,
                 tiltGesturesEnabled: false,
                 rotateGesturesEnabled: false,
+                //trackCameraPosition: true,
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
                 myLocationRenderMode: MyLocationRenderMode.GPS,
                 myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
                 onMapCreated: _onMapCreated,
                 onStyleLoadedCallback: _onStyleLoadedCallback,
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 120),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: AnimatedOpacity(
+                    opacity: showLocationButton ? 1.0 : 0.0,
+                    duration: Duration(milliseconds: 250),
+                    child: FloatingActionButton(
+                      child: Icon(Icons.location_city_outlined),
+                      mini: true,
+                      onPressed: _moveCameraToCurrentLocation,
+                    ),
+                  ),
+                ),
               )
             ],
           );
