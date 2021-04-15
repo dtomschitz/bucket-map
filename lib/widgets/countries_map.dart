@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:bucket_map/blocs/theme/bloc.dart';
 import 'package:bucket_map/config/constants.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
@@ -123,24 +122,18 @@ class _CountriesMapState extends State<CountriesMap> {
       body: PermissionBuilder(
         permission: Permission.location,
         builder: (context, snapshot) {
-          return BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, state) {
-              return MapboxMap(
-                accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-                styleString: state.isDarkModeEnabled
-                    ? AppConstants.MAPBOX_DARK_STYLE_URL
-                    : AppConstants.MAPBOX_DARK_STYLE_URL,
-                initialCameraPosition: _initialCameraPosition,
-                compassEnabled: false,
-                tiltGesturesEnabled: false,
-                rotateGesturesEnabled: false,
-                myLocationEnabled: snapshot.data == PermissionStatus.granted,
-                myLocationRenderMode: MyLocationRenderMode.GPS,
-                myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-                onMapCreated: _onMapCreated,
-                onStyleLoadedCallback: _onStyleLoadedCallback,
-              );
-            },
+          return MapboxMap(
+            accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
+            styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
+            initialCameraPosition: _initialCameraPosition,
+            compassEnabled: false,
+            tiltGesturesEnabled: false,
+            rotateGesturesEnabled: false,
+            myLocationEnabled: snapshot.data == PermissionStatus.granted,
+            myLocationRenderMode: MyLocationRenderMode.GPS,
+            myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
+            onMapCreated: _onMapCreated,
+            onStyleLoadedCallback: _onStyleLoadedCallback,
           );
         },
       ),
