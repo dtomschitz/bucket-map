@@ -26,9 +26,6 @@ class _CountriesMapState extends State<CountriesMap> {
     target: LatLng(0.0, 0.0),
   );
 
-  CameraPosition currentCameraPosition;
-  bool showLocationButton = true;
-
   static final LatLng center = const LatLng(-33.86711, 151.1947171);
 
   int _symbolCount = 0;
@@ -67,19 +64,7 @@ class _CountriesMapState extends State<CountriesMap> {
 
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
-    currentCameraPosition = _mapController.cameraPosition;
-    _mapController.addListener(() {
-      print(_mapController.requ);
-      print(currentCameraPosition);
-      print(_mapController.cameraPosition != currentCameraPosition);
-      if (_mapController.cameraPosition != currentCameraPosition &&
-          !showLocationButton) {
-        setState(() {
-          print("DAda");
-          showLocationButton = true;
-        });
-      }
-    });
+    
     allPins.add(widget.createdPin.options);
     _mapController.addSymbols(allPins);
     print("test");
@@ -121,11 +106,6 @@ class _CountriesMapState extends State<CountriesMap> {
         13,
       );
       await _mapController.animateCamera(cameraUpdate);
-      setState(() {
-           print("dadad");
-        currentCameraPosition = _mapController.cameraPosition;
-        showLocationButton = false;
-      });
     }
   }
 
@@ -164,7 +144,7 @@ class _CountriesMapState extends State<CountriesMap> {
                 compassEnabled: false,
                 tiltGesturesEnabled: false,
                 rotateGesturesEnabled: false,
-                //trackCameraPosition: true,
+                trackCameraPosition: true,
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
                 myLocationRenderMode: MyLocationRenderMode.GPS,
                 myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
@@ -176,10 +156,10 @@ class _CountriesMapState extends State<CountriesMap> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: AnimatedOpacity(
-                    opacity: showLocationButton ? 1.0 : 0.0,
+                    opacity: true ? 1.0 : 0.0,
                     duration: Duration(milliseconds: 250),
                     child: FloatingActionButton(
-                      child: Icon(Icons.location_city_outlined),
+                      child: Icon(Icons.near_me_outlined),
                       mini: true,
                       onPressed: _moveCameraToCurrentLocation,
                     ),
