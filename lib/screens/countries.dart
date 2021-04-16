@@ -4,11 +4,13 @@ import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/config/routes/routes.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/screens/screens.dart';
+import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -20,6 +22,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
 
   final GlobalKey _scaffoldKey = GlobalKey();
+  SheetController controller;
 
   bool show = false;
 
@@ -45,75 +48,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
     modfiyPin = false;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    BorderRadiusGeometry radius = BorderRadius.only(
-      topLeft: Radius.circular(24.0),
-      topRight: Radius.circular(24.0),
-    );
-
-    screenHeight = MediaQuery.of(context).size.height;
-    _initFabHeight = screenHeight * 0.12;
-    if (_fabHeight == null) _fabHeight = _initFabHeight;
-    _panelHeightOpen = screenHeight * 1;
-
-    return BlocBuilder<CountriesBloc, CountriesState>(
-      builder: (context, state) {
-        return Material(
-          child: SlidingUpPanel(
-            backdropEnabled: true,
-            panelSnapping: true,
-            snapPoint: 0.5,
-            maxHeight: screenHeight * 1,
-            onPanelSlide: (double pos) => setState(() {
-              print(pos);
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            }),
-            panel: Center(
-              child: Text("This is the sliding Widget"),
-            ),
-            collapsed: Container(
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: radius,
-              ),
-              child: Center(
-                child: Text(
-                  "This is the collapsed Widget",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            body: Scaffold(
-              appBar: AppBar(
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.settings_outlined),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => SettingsScreen(),
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-              body: CountriesMap(
-                key: mapKey,
-                fabHeight: _fabHeight,
-              ),
-            ),
-            borderRadius: radius,
-          ),
-        );
-      },
-    );
-  }
-
-/*
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CountriesBloc, CountriesState>(
@@ -236,5 +170,4 @@ class _CountriesScreenState extends State<CountriesScreen> {
       ],
     );
   }
-  */
 }
