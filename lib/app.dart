@@ -1,5 +1,6 @@
 import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/modules/profile/models/user.dart';
+import 'package:bucket_map/modules/profile/screens/wrapper.dart';
 import 'package:bucket_map/modules/profile/services/auth.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _AppState extends State<App> {
             themeMode: state.settings.themeMode,
             theme: lightTheme,
             darkTheme: darkTheme,
-            home: CountriesScreen(),
+            home: Wrapper(),
           ),
         );
       },
