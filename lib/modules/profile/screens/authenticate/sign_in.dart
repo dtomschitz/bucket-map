@@ -21,7 +21,6 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 4,
         title: Text(
           'Profil',
@@ -54,10 +53,8 @@ class _SignInState extends State<SignIn> {
                 }),
             SizedBox(height: 20.0),
             RaisedButton(
-                color: Colors.pink[400],
                 child: Text(
                   'Sign in',
-                  style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () async {
                   print(email);
@@ -65,17 +62,6 @@ class _SignInState extends State<SignIn> {
                 }),
           ]),
         ),
-        /*child: RaisedButton(
-            child: Text('Sign in anonymously'),
-            onPressed: () async {
-              dynamic result = await _auth.signInAnonym();
-              if (result == null) {
-                print('error signing in');
-              } else {
-                print('signed in');
-                print(result.uid);
-              }
-            }),*/
       ),
     );
   }
