@@ -5,6 +5,7 @@ import 'package:bucket_map/config/routes/routes.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/utils/interval.dart';
+import 'package:bucket_map/widgets/custom_container.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,57 +51,73 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BorderRadiusGeometry radius = BorderRadius.only(
+      topLeft: Radius.circular(24.0),
+      topRight: Radius.circular(24.0),
+    );
+
+    screenHeight = MediaQuery.of(context).size.height;
+    _initFabHeight = screenHeight * 0.12;
+    if (_fabHeight == null) _fabHeight = _initFabHeight;
+    _panelHeightOpen = screenHeight * 1;
+
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SlidingSheet(
-            duration: const Duration(milliseconds: 900),
-            controller: controller,
-            color: Colors.white,
-            shadowColor: Colors.black26,
-            elevation: 12,
-            maxWidth: 500,
-            cornerRadius: 16,
-            cornerRadiusOnFullscreen: 0.0,
-            closeOnBackdropTap: true,
-            closeOnBackButtonPressed: true,
-            addTopViewPaddingOnFullscreen: true,
-            isBackdropInteractable: true,
-            snapSpec: SnapSpec(
-              snap: true,
-              positioning: SnapPositioning.relativeToAvailableSpace,
-              snappings: const [
-                SnapSpec.headerFooterSnap,
-                SnapSpec.expanded,
-              ],
-            ),
-            liftOnScrollHeaderElevation: 12.0,
-            body: CountriesMap(),
-            headerBuilder: buildHeader,
-            builder: buildChild,
-          ),
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: 60),
-            child: FloatingActionButton(
-              onPressed: () {},
-            ),
-          ),
-        );
+        return Material(
+            child: SlidingSheet(
+                headerBuilder: _buildHeader,
+                elevation: 8,
+                cornerRadius: 16,
+                snapSpec: const SnapSpec(
+                  // Enable snapping. This is true by default.
+                  snap: true,
+                  // Set custom snapping points.
+                  snappings: [0.1, 0.4, 1.0],
+                  // Define to what the snappings relate to. In this case,
+                  // the total available space that the sheet can expand to.
+                  positioning: SnapPositioning.relativeToAvailableSpace,
+                ),
+                // The body widget will be displayed under the SlidingSheet
+                // and a parallax effect can be applied to it.
+                body: Scaffold(
+                  appBar: AppBar(actions: [
+                    IconButton(
+                      icon: Icon(Icons.settings_outlined),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => SettingsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ]),
+                  body: CountriesMap(
+                    key: mapKey,
+                    fabHeight: _fabHeight,
+                  ),
+                ),
+                builder: (context, state) {
+                  // This is the content of the sheet that will get
+                  // scrolled, if the content is bigger than the available
+                  // height of the sheet.
+                  return Container(
+                    height: 500,
+                    child: Center(
+                      child: CountryList(),
+                    ),
+                  );
+                }));
       },
     );
   }
 
-  Widget buildHeader(BuildContext context, SheetState state) {
-    offset = state.currentScrollOffset;
-    print(offset);
-    print(state.currentScrollOffset);
+  Widget _buildHeader(BuildContext context, SheetState state) {
     return CustomContainer(
-      key: _scaffoldKey,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shadowColor: Colors.black12,
-      height: 80,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -144,30 +161,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildChild(BuildContext context, SheetState state) {
-    print(state.currentScrollOffset);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        /*for (var country in countries)
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://flagcdn.com/w160/${country.code}.png',
-              ),
-              backgroundColor: Colors.grey.shade100,
-            ),
-            title: Text(country.name),
-            trailing: Icon(
-              Icons.lock_open_outlined,
-              color: Colors.black,
-            ),
-            onTap: () {},
-          )*/
-      ],
     );
   }
 }
