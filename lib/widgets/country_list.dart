@@ -39,7 +39,7 @@ class CountryListItem extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(
-          'https://flagcdn.com/w160/${country.code}.png',
+          'https://flagcdn.com/w160/${country.code.toLowerCase()}.png',
         ),
         backgroundColor: Colors.grey.shade100,
       ),

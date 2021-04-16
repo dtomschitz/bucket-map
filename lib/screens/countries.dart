@@ -4,11 +4,14 @@ import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/config/routes/routes.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/screens/screens.dart';
+import 'package:bucket_map/utils/interval.dart';
+import 'package:bucket_map/widgets/custom_container.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -60,56 +63,104 @@ class _CountriesScreenState extends State<CountriesScreen> {
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
         return Material(
-          child: SlidingUpPanel(
-            backdropEnabled: true,
-            panelSnapping: true,
-            snapPoint: 0.5,
-            maxHeight: screenHeight * 1,
-            onPanelSlide: (double pos) => setState(() {
-              print(pos);
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            }),
-            panel: Center(
-              child: Text("This is the sliding Widget"),
-            ),
-            collapsed: Container(
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: radius,
-              ),
-              child: Center(
-                child: Text(
-                  "This is the collapsed Widget",
-                  style: TextStyle(color: Colors.white),
+            child: SlidingSheet(
+              headerBuilder: _buildHeader,
+                elevation: 8,
+                cornerRadius: 16,
+                snapSpec: const SnapSpec(
+                  // Enable snapping. This is true by default.
+                  snap: true,
+                  // Set custom snapping points.
+                  snappings: [0.1, 0.4, 1.0],
+                  // Define to what the snappings relate to. In this case,
+                  // the total available space that the sheet can expand to.
+                  positioning: SnapPositioning.relativeToAvailableSpace,
+                ),
+                // The body widget will be displayed under the SlidingSheet
+                // and a parallax effect can be applied to it.
+                body: Scaffold(
+                  appBar: AppBar(actions: [
+                    IconButton(
+                      icon: Icon(Icons.settings_outlined),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => SettingsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ]),
+                  body: CountriesMap(
+                    key: mapKey,
+                    fabHeight: _fabHeight,
+                  ),
+                ),
+                builder: (context, state) {
+                  // This is the content of the sheet that will get
+                  // scrolled, if the content is bigger than the available
+                  // height of the sheet.
+                  return Container(
+                    height: 500,
+                    child: Center(
+                      child: CountryList(),
+                    ),
+                  );
+                }));
+      },
+    );
+  }
+
+
+  Widget _buildHeader(BuildContext context, SheetState state) {
+    return CustomContainer(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      shadowColor: Colors.black12,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(4),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: CustomContainer(
+                width: 26,
+                height: 4,
+                borderRadius: 2,
+                color: Colors.grey.withOpacity(
+                  .5 * (1 - interval(0.7, 1.0, state.progress)),
                 ),
               ),
             ),
-            body: Scaffold(
-              appBar: AppBar(
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.settings_outlined),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => SettingsScreen(),
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-              body: CountriesMap(
-                key: mapKey,
-                fabHeight: _fabHeight,
-              ),
-            ),
-            borderRadius: radius,
           ),
-        );
-      },
+          Padding(
+            padding: EdgeInsets.only(top: 4, bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Freigeschaltene Länder',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  '15 von 195 Ländern freigeschaltet',
+                  style: TextStyle(
+                    color: Colors.green.shade400,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
