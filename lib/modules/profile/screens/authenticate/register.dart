@@ -1,15 +1,16 @@
-import 'package:bucket_map/modules/profile/services/auth.dart';
+import 'package:bucket_map/modules/profile/screens/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:bucket_map/modules/profile/services/auth.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final Function toggleView;
-  SignIn({this.toggleView});
+  Register({this.toggleView});
 
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
 
   //text field state
@@ -29,7 +30,7 @@ class _SignInState extends State<SignIn> {
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
-            label: Text('Register'),
+            label: Text('Sign in'),
             onPressed: () {
               widget.toggleView();
             },
@@ -54,7 +55,7 @@ class _SignInState extends State<SignIn> {
             RaisedButton(
                 color: Colors.pink[400],
                 child: Text(
-                  'Sign in',
+                  'Register',
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () async {
