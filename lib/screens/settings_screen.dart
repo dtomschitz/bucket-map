@@ -67,9 +67,9 @@ class ThemeSettingsScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(''),
           ),
-          body: ListView(
+          body: Column(
             children: [
-              SettingsHeader('App Einstellungen'),
+              SettingsHeader('Erscheinungsbild'),
               _buildOption(
                 context: context,
                 title: 'System',
@@ -80,14 +80,12 @@ class ThemeSettingsScreen extends StatelessWidget {
               _buildOption(
                 context: context,
                 title: 'Dunkel',
-                subtitle: 'Wählt das Erscheinungsbild des Systems aus',
                 currentThemeMode: themeMode,
                 themeMode: ThemeMode.dark,
               ),
               _buildOption(
                 context: context,
                 title: 'Hell',
-                subtitle: 'Wählt das Erscheinungsbild des Systems aus',
                 currentThemeMode: themeMode,
                 themeMode: ThemeMode.light,
               ),
@@ -107,7 +105,7 @@ class ThemeSettingsScreen extends StatelessWidget {
   }) {
     return ListTile(
       title: Text(title),
-      subtitle: Text(subtitle),
+      subtitle: subtitle != null ? Text(subtitle) : null,
       trailing:
           themeMode == currentThemeMode ? Icon(Icons.check_outlined) : null,
       onTap: () {
@@ -115,6 +113,7 @@ class ThemeSettingsScreen extends StatelessWidget {
           SettingsChanged(changes: Settings(themeMode: themeMode)),
         );
       },
+      dense: true,
     );
   }
 }

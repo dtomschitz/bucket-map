@@ -5,7 +5,7 @@ import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
 import 'package:bucket_map/config/routes/routes.dart';
-import 'package:bucket_map/config/themes/themes.dart';
+import 'package:bucket_map/config/themes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
@@ -31,8 +31,8 @@ class _AppState extends State<App> {
           child: MaterialApp(
             title: 'Bucket Map',
             themeMode: state.settings.themeMode,
-            theme: lightTheme,
-            darkTheme: darkTheme,
+            theme: Themes.buildLightTheme(),
+            darkTheme: Themes.buildDarkTheme(),
             home: CountriesScreen(),
           ),
         );
