@@ -16,6 +16,7 @@ class _SignInState extends State<SignIn> {
   //text field state
   String email = '';
   String password = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +43,17 @@ class _SignInState extends State<SignIn> {
           key: _formKey,
           child: Column(children: <Widget>[
             SizedBox(height: 20.0),
-            TextFormField(onChanged: (val) {
-              setState(() => email = val);
-            }),
+            TextFormField(
+                validator: (val) => val.isEmpty ? 'Enter an email.' : null,
+                onChanged: (val) {
+                  setState(() => email = val);
+                }),
             SizedBox(height: 20.0),
             TextFormField(
                 obscureText: true,
+                validator: (val) => val.length < 6
+                    ? 'Your password must be at least 6 characters long.'
+                    : null,
                 onChanged: (val) {
                   setState(() => password = val);
                 }),
@@ -57,9 +63,21 @@ class _SignInState extends State<SignIn> {
                   'Sign in',
                 ),
                 onPressed: () async {
-                  print(email);
-                  print(password);
+                  if (_formKey.currentState.validate()) {
+                    dynamic result =
+                        await _auth.signInWithEmailAndPassword(email, password);
+                    if (result == null) {
+                      setState(() => error = 'user not registered');
+                    }
+                  }
                 }),
+            SizedBox(
+              height: 12.0,
+            ),
+            Text(
+              error,
+              style: TextStyle(color: Colors.red, fontSize: 14.0),
+            ),
           ]),
         ),
       ),
