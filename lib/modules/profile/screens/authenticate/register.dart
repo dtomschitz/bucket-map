@@ -1,17 +1,18 @@
-import 'package:bucket_map/modules/profile/services/auth.dart';
+import 'package:bucket_map/modules/profile/screens/authenticate/sign_in.dart';
 import 'package:bucket_map/modules/profile/shared/constants.dart';
 import 'package:bucket_map/modules/profile/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:bucket_map/modules/profile/services/auth.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final Function toggleView;
-  SignIn({this.toggleView});
+  Register({this.toggleView});
 
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
@@ -35,7 +36,7 @@ class _SignInState extends State<SignIn> {
               actions: <Widget>[
                 FlatButton.icon(
                   icon: Icon(Icons.person),
-                  label: Text('Register'),
+                  label: Text('Sign in'),
                   onPressed: () {
                     widget.toggleView();
                   },
@@ -70,16 +71,16 @@ class _SignInState extends State<SignIn> {
                   SizedBox(height: 20.0),
                   RaisedButton(
                       child: Text(
-                        'Sign in',
+                        'Register',
                       ),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() => loading = true);
                           dynamic result = await _auth
-                              .signInWithEmailAndPassword(email, password);
+                              .registerWithEmailAndPassword(email, password);
                           if (result == null) {
                             setState(() {
-                              error = 'user not registered';
+                              error = 'please supply a valid email';
                               loading = false;
                             });
                           }
