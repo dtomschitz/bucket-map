@@ -34,7 +34,6 @@ dependencies:
   cloud_firestore: ^1.0.4
   sliding_sheet: ^0.5.0
   sliding_up_panel: ^1.0.2
-  geojson: ^0.10.0
   permission_handler: ^6.1.1
   mapbox_gl:
     git: https://github.com/davidddo/flutter-mapbox-gl.git
@@ -42,6 +41,7 @@ dependencies:
   shared_preferences: ^2.0.5
   geolocator: ^7.0.3
   flutter_spinkit: "^4.1.2"
+  google_fonts: ^2.0.0
 
 dev_dependencies:
   flutter_test:
