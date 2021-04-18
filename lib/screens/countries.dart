@@ -1,11 +1,14 @@
 import 'dart:ui';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/config/routes/routes.dart';
 import 'package:bucket_map/models/country.dart';
+import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -56,8 +59,8 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
-        return Scaffold(
-          body: SlidingUpPanel(
+        return Material(
+          child: SlidingUpPanel(
             backdropEnabled: true,
             panelSnapping: true,
             snapPoint: 0.5,
@@ -83,6 +86,21 @@ class _CountriesScreenState extends State<CountriesScreen> {
               ),
             ),
             body: Scaffold(
+              appBar: AppBar(
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.settings_outlined),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => SettingsScreen(),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
               body: CountriesMap(
                 key: mapKey,
                 fabHeight: _fabHeight,

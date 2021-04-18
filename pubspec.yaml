@@ -34,12 +34,13 @@ dependencies:
   cloud_firestore: ^1.0.4
   sliding_sheet: ^0.5.0
   sliding_up_panel: ^1.0.2
-  geojson: ^0.10.0
-  mapbox_gl: ^0.11.0
-  location_permissions: ^3.0.0
+  permission_handler: ^6.1.1
+  mapbox_gl:
+    git: https://github.com/davidddo/flutter-mapbox-gl.git
   http: ^0.13.1
-  permissions_plugin: ^1.1.4
-
+  shared_preferences: ^2.0.5
+  geolocator: ^7.0.3
+  google_fonts: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,7 @@ flutter:
   assets:
     - countries.geojson
     - style.json
+    - index.html
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

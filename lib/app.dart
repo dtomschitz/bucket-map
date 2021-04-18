@@ -1,11 +1,12 @@
+import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/modules/profile/models/user.dart';
 import 'package:bucket_map/modules/profile/services/auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
 import 'package:bucket_map/config/routes/routes.dart';
-import 'package:bucket_map/config/themes/themes.dart';
+import 'package:bucket_map/config/themes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
@@ -22,18 +23,20 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<CustomUserObject>.value(
-      value: AuthService().user,
-      initialData: null,
-      child: MaterialApp(
-        title: 'Bucket Map',
-        theme: themes[ThemeType.Light],
-        home: CountriesScreen(),
-        //initialRoute: Routes,
-        //onGenerateRoute: AppRouter.router.generator,
-      ),
+    return BlocBuilder<SettingsBloc, SettingsState>(
+      builder: (context, state) {
+        return StreamProvider<CustomUserObject>.value(
+          value: AuthService().user,
+          initialData: null,
+          child: MaterialApp(
+            title: 'Bucket Map',
+            themeMode: state.settings.themeMode,
+            theme: Themes.buildLightTheme(),
+            darkTheme: Themes.buildDarkTheme(),
+            home: CountriesScreen(),
+          ),
+        );
+      },
     );
   }
 }
-
-
