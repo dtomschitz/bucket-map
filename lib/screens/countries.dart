@@ -13,9 +13,7 @@ class CountriesScreen extends StatefulWidget {
   State createState() => _CountriesScreenState();
 }
 
-class _CountriesScreenState extends State<CountriesScreen> {
-  SheetController controller;
-
+class _CountriesScreenState extends State<CountriesScreen> with SingleTickerProviderStateMixin {
   bool _isFullscreen = false;
 
   double _screenHeight;
@@ -23,6 +21,8 @@ class _CountriesScreenState extends State<CountriesScreen> {
   double _fabHeight;
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
+  bool _elevateAppBar = false;
+  bool _highlightAppBar = false;
 
   @override
   void initState() {
@@ -38,8 +38,142 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
+        /*return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            title: Card(
+              shape: RoundedRectangleBorder(
+                side: _elevateAppBar
+                    ? BorderSide(color: Colors.grey, width: 1.0)
+                    : BorderSide(color: Colors.white, width: 1.0),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              elevation: _elevateAppBar ? 0 : 4,
+              child: Container(
+                height: 46,
+                width: double.infinity,
+                padding: EdgeInsets.only(right: 16, left: 16),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Icon(Icons.search_outlined),
+                    ),
+                    Text('Search')
+                  ],
+                ),
+              ),
+            ),
+            backgroundColor:
+                _highlightAppBar ? Colors.white : Colors.transparent,
+            elevation: _elevateAppBar ? 4 : 0,
+          ),
+          body: Stack(
+            children: [
+              CountriesMap(),
+              SizedBox.expand(
+                child: NotificationListener<DraggableScrollableNotification>(
+                  onNotification: (notification) {
+                    if (notification.extent > .87 && !_highlightAppBar) {
+                      setState(() {
+                        _highlightAppBar = true;
+                      });
+                    }
+
+                    if (notification.extent < .87 && _highlightAppBar) {
+                      setState(() {
+                        _highlightAppBar = false;
+                      });
+                    }
+
+                    if (notification.extent == 1.0 && !_elevateAppBar) {
+                      setState(() => _elevateAppBar = true);
+                    }
+
+                    if (notification.extent < 1.0 && _elevateAppBar) {
+                      setState(() => _elevateAppBar = false);
+                    }
+
+                    print("${notification.extent}");
+                  },
+                  child: DraggableScrollableSheet(
+                    initialChildSize: .1,
+                    minChildSize: .1,
+                    maxChildSize: 1,
+                    builder: (
+                      BuildContext context,
+                      ScrollController scrollController,
+                    ) {
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: <Widget>[
+                          SliverAppBar(
+                            title: Text("What's Up?"),
+                            backgroundColor: Colors.white,
+                            automaticallyImplyLeading: false,
+                            primary: false,
+                            floating: true,
+                            pinned: false,
+                            snap: true,
+                          ),
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, idx) => ListTile(
+                                title: Text("Nothing much"),
+                                subtitle: Text("$idx"),
+                              ),
+                              childCount: 100,
+                            ),
+                          )
+                        ],
+                      );
+                      /*return Material(
+                        elevation: 16,
+                        child: Container(
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(4),
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: CustomContainer(
+                                    width: 26,
+                                    height: 4,
+                                    borderRadius: 2,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                  controller: scrollController,
+                                  itemCount: 25,
+                                  itemBuilder: (
+                                    BuildContext context,
+                                    int index,
+                                  ) {
+                                    return ListTile(
+                                      title: Text('Item $index'),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );*/
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        );*/
+
         return Scaffold(
           //extendBodyBehindAppBar: true,
+          // bottomSheet: ,
           appBar: AppBar(
             title: Card(
               shape: RoundedRectangleBorder(
@@ -68,17 +202,33 @@ class _CountriesScreenState extends State<CountriesScreen> {
             backgroundColor: Colors.transparent,
           ),
           body: SlidingSheet(
-            headerBuilder: _buildHeader,
-            elevation: 8,
+            elevation: _isFullscreen ? 0 : 8,
+            closeOnBackdropTap: true,
             cornerRadius: 16,
             cornerRadiusOnFullscreen: 0,
-          
             snapSpec: const SnapSpec(
               snap: true,
-              snappings: [SnapSpec.headerSnap	, 1.0],
+              snappings: [
+                SnapSpec.headerSnap,
+                0.6,
+                SnapSpec.expanded,
+              ],
               positioning: SnapPositioning.relativeToSheetHeight,
             ),
             listener: (state) {
+              print(state.progress);
+
+              if (state.progress == 1.0) {
+                setState(() {
+                  _isFullscreen = true;
+                });
+              }
+
+              if (state.progress < 1.0 && _isFullscreen) {
+                setState(() {
+                  _isFullscreen = false;
+                });
+              }
               /*double progress = state.progress;
 
               setState(() {
@@ -96,10 +246,8 @@ class _CountriesScreenState extends State<CountriesScreen> {
             body: CountriesMap(
               fabHeight: _fabHeight,
             ),
+            headerBuilder: _buildHeader,
             builder: (context, state) {
-              // This is the content of the sheet that will get
-              // scrolled, if the content is bigger than the available
-              // height of the sheet.
               return Column(
                 children: [
                   for (int i = 0; i < 20; i++)
@@ -116,56 +264,51 @@ class _CountriesScreenState extends State<CountriesScreen> {
   }
 
   Widget _buildHeader(BuildContext context, SheetState state) {
-    return AnimatedOpacity(
-      opacity: state.progress > 0.7 ? 0 : 1.0,
+    return AnimatedSize(
       duration: Duration(milliseconds: 250),
-      child: CustomContainer(
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        shadowColor: Colors.black12,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(4),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: CustomContainer(
-                  width: 26,
-                  height: 4,
-                  borderRadius: 2,
-                  color: Colors.grey.withOpacity(
-                    .5 * (1 - interval(0.7, 1.0, state.progress)),
-                  ),
+      vsync: this,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(4),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: CustomContainer(
+                width: 26,
+                height: 4,
+                borderRadius: 2,
+                color: Colors.grey.withOpacity(
+                  .5 * (1 - interval(0.7, 1.0, state.progress)),
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 4, bottom: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Freigeschaltene Länder',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                    ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 4, bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Freigeschaltene Länder',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
                   ),
-                  Text(
-                    '15 von 195 Ländern freigeschaltet',
-                    style: TextStyle(
-                      color: Colors.green.shade400,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Text(
+                  '15 von 195 Ländern freigeschaltet',
+                  style: TextStyle(
+                    color: Colors.green.shade400,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -33,7 +33,7 @@ class _AppState extends State<App> {
             themeMode: state.settings.themeMode,
             theme: Themes.buildLightTheme(),
             darkTheme: Themes.buildDarkTheme(),
-            home: CountriesScreen(),
+            home: HomeScreen(),
           ),
         );
       },
@@ -41,4 +41,66 @@ class _AppState extends State<App> {
   }
 }
 
-class
+class HomeScreen extends StatefulWidget {
+  @override
+  State createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          for (final tabItem in TabItem.items) tabItem.page,
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (int index) => setState(() => _currentIndex = index),
+        items: [
+          for (final tabItem in TabItem.items)
+            BottomNavigationBarItem(
+              icon: tabItem.icon,
+              label: tabItem.label,
+            )
+        ],
+        //showSelectedLabels: false,
+        //showUnselectedLabels: false,
+      ),
+    );
+  }
+}
+
+class TabItem {
+  final Widget page;
+  final String label;
+  final Icon icon;
+
+  TabItem({
+    @required this.page,
+    @required this.label,
+    @required this.icon,
+  });
+
+  static List<TabItem> get items => [
+        TabItem(
+          page: CountriesScreen(),
+          icon: Icon(Icons.map_outlined),
+          label: "Karte",
+        ),
+        TabItem(
+          page: CountriesScreen(),
+          icon: Icon(Icons.explore_outlined),
+          label: "Meine Reisen",
+        ),
+        TabItem(
+          page: CountriesScreen(),
+          icon: Icon(Icons.account_circle_outlined),
+          label: "Profil",
+        ),
+      ];
+}

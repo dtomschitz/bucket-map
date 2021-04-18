@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bucket_map/config/constants.dart';
 import 'package:bucket_map/config/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
