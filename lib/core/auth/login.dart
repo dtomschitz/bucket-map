@@ -92,6 +92,7 @@ class _PasswordInput extends StatelessWidget {
       builder: (context, state) {
         return FormInputField(
           key: const Key('loginForm_passwordInput_textField'),
+          obscureText: true,
           onChanged: (password) =>
               context.read<LoginCubit>().passwordChanged(password),
           labelText: 'Passwort',
