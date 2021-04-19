@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
-import 'package:bucket_map/utils/interval.dart';
-import 'package:bucket_map/widgets/custom_container.dart';
+import 'package:bucket_map/core/settings/settings_screen.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
   @override
