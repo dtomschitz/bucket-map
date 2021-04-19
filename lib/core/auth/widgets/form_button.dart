@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of widgets.auth;
 
 class FormButton extends StatelessWidget {
   const FormButton({
@@ -15,12 +15,6 @@ class FormButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       key: key,
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        primary: const Color(0xFFFFD600),
-      ),
       child: Text(text),
       onPressed: onPressed,
     );

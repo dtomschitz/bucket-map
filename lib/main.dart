@@ -1,6 +1,6 @@
-import 'package:bucket_map/blocs/bloc_observer.dart';
 import 'package:bucket_map/core/app/app.dart';
-import 'package:bucket_map/repositories/auth_repository.dart';
+import 'package:bucket_map/core/auth/repositories/repositories.dart';
+import 'package:bucket_map/core/bloc_observer.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -7,8 +7,6 @@ abstract class AppEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AppLogoutRequested extends AppEvent {}
-
 class AppUserChanged extends AppEvent {
   @visibleForTesting
   const AppUserChanged(this.user);
@@ -18,3 +16,5 @@ class AppUserChanged extends AppEvent {
   @override
   List<Object> get props => [user];
 }
+
+class AppLogoutRequested extends AppEvent {}

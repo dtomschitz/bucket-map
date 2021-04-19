@@ -1,6 +1,6 @@
 library blocs.settings;
 
-import 'package:bucket_map/models/settings.dart';
+import 'package:bucket_map/core/settings/models/models.dart';
 import 'package:bucket_map/utils/services/shared_preferences_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

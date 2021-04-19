@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of widgets.auth;
 
 class FormInputField extends StatelessWidget {
   const FormInputField({

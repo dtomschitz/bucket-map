@@ -1,2 +1,6 @@
-export 'form_button.dart';
-export 'form_input_field.dart';
+library widgets.auth;
+
+import 'package:flutter/material.dart';
+
+part 'form_button.dart';
+part 'form_input_field.dart';

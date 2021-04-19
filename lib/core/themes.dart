@@ -1,4 +1,4 @@
-import 'package:bucket_map/core/config/colors.dart';
+import 'package:bucket_map/core/colors.dart';
 import 'package:flutter/material.dart';
 
 class Themes {
