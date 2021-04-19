@@ -1,16 +1,11 @@
 import 'dart:ui';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
-import 'package:bucket_map/config/routes/routes.dart';
-import 'package:bucket_map/models/country.dart';
-import 'package:bucket_map/screens/screens.dart';
+import 'package:bucket_map/core/settings/settings_screen.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:bucket_map/modules/profile/services/auth.dart';
 
 class CountriesScreen extends StatefulWidget {
   @override
@@ -19,7 +14,6 @@ class CountriesScreen extends StatefulWidget {
 
 class _CountriesScreenState extends State<CountriesScreen> {
   final mapKey = GlobalKey();
-  final AuthService _auth = AuthService();
 
   final GlobalKey _scaffoldKey = GlobalKey();
 
@@ -65,7 +59,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
           child: SlidingUpPanel(
             backdropEnabled: true,
             panelSnapping: true,
-            snapPoint: 0.5,
             maxHeight: screenHeight * 1,
             onPanelSlide: (double pos) => setState(() {
               print(pos);
@@ -99,13 +92,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
                           builder: (BuildContext context) => SettingsScreen(),
                         ),
                       );
-                    },
-                  ),
-                  FlatButton.icon(
-                    icon: Icon(Icons.person),
-                    label: Text('logout'),
-                    onPressed: () async {
-                      await _auth.signOut();
                     },
                   ),
                 ],
