@@ -1,6 +1,6 @@
 import 'package:bucket_map/modules/profile/screens/authenticate/sign_in.dart';
 import 'package:bucket_map/modules/profile/shared/constants.dart';
-import 'package:bucket_map/modules/profile/shared/loading.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:bucket_map/modules/profile/services/auth.dart';
 
@@ -25,7 +25,7 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Loading()
+        ? LoadingSpinner()
         : Scaffold(
             appBar: AppBar(
               elevation: 4,
