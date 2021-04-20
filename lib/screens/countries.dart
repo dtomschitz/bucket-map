@@ -2,17 +2,20 @@ import 'dart:ui';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/core/settings/settings_screen.dart';
+import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 
 class CountriesScreen extends StatefulWidget {
   @override
   State createState() => _CountriesScreenState();
 }
 
-class _CountriesScreenState extends State<CountriesScreen> with SingleTickerProviderStateMixin {
+class _CountriesScreenState extends State<CountriesScreen>
+    with SingleTickerProviderStateMixin {
   bool _isFullscreen = false;
 
   double _screenHeight;
@@ -22,6 +25,8 @@ class _CountriesScreenState extends State<CountriesScreen> with SingleTickerProv
   double _panelHeightClosed = 95.0;
   bool _elevateAppBar = false;
   bool _highlightAppBar = false;
+
+  bool _smallSheetHeader = true;
 
   @override
   void initState() {
@@ -37,7 +42,359 @@ class _CountriesScreenState extends State<CountriesScreen> with SingleTickerProv
 
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
+        /*return SlidingSheet(
+          elevation: _isFullscreen ? 0 : 8,
+          closeOnBackdropTap: true,
+          cornerRadius: 16,
+          cornerRadiusOnFullscreen: 0,     
+          snapSpec: const SnapSpec(
+            snap: true,
+            snappings: [
+              SnapSpec.headerSnap,
+              SnapSpec.expanded,
+            ],
+            positioning: SnapPositioning.relativeToSheetHeight,
+          ),
+          listener: (state) {},
+          body: Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              title: SheetListenerBuilder(
+                // buildWhen can be used to only rebuild the widget when needed.
+                buildWhen: (oldState, newState) =>
+                    oldState.isAtTop != newState.isAtTop,
+                builder: (context, state) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      side: _isFullscreen
+                          ? BorderSide(color: Colors.grey, width: 1.0)
+                          : BorderSide(color: Colors.white, width: 1.0),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    elevation: _isFullscreen ? 0 : 4,
+                    child: Container(
+                      height: 46,
+                      width: double.infinity,
+                      padding: EdgeInsets.only(right: 16, left: 16),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 16),
+                            child: Icon(Icons.search_outlined),
+                          ),
+                          Text('Search')
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              elevation: _isFullscreen ? 5 : 0,
+              backgroundColor: _isFullscreen
+                  ? Theme.of(context).appBarTheme.backgroundColor
+                  : Colors.transparent,
+            ),
+            body: CountriesMap(
+              fabHeight: _fabHeight,
+            ),
+          ),
+          headerBuilder: _buildHeader,
+          builder: (context, state) {
+            return Column(
+              children: [
+                for (int i = 0; i < 20; i++)
+                  ListTile(
+                    title: Text('test'),
+                  )
+              ],
+            );
+          },
+        );*/
+
         /*return Scaffold(
+          extendBodyBehindAppBar: true,
+          // bottomSheet: ,
+          appBar: AppBar(
+            title: Card(
+              shape: RoundedRectangleBorder(
+                side: _isFullscreen
+                    ? BorderSide(color: Colors.grey, width: 1.0)
+                    : BorderSide(color: Colors.white, width: 1.0),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              elevation: _isFullscreen ? 0 : 4,
+              child: Container(
+                height: 46,
+                width: double.infinity,
+                padding: EdgeInsets.only(right: 16, left: 16),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Icon(Icons.search_outlined),
+                    ),
+                    Text('Search')
+                  ],
+                ),
+              ),
+            ),
+            elevation: _isFullscreen ? 5 : 0,
+            backgroundColor: _isFullscreen
+                ? Theme.of(context).appBarTheme.backgroundColor
+                : Colors.transparent,
+          ),
+          body: SlidingSheet(
+            elevation: _isFullscreen ? 0 : 8,
+            closeOnBackdropTap: true,
+            cornerRadius: 16,
+            cornerRadiusOnFullscreen: 0,
+            addTopViewPaddingOnFullscreen: true,
+            snapSpec: const SnapSpec(
+              snap: true,
+              snappings: [
+                SnapSpec.headerSnap,
+                SnapSpec.expanded,
+              ],
+              positioning: SnapPositioning.relativeToSheetHeight,
+            ),
+            listener: (state) {},
+            body: CountriesMap(
+              fabHeight: _fabHeight,
+            ),
+            headerBuilder: _buildHeader,
+            builder: (context, state) {
+              return Column(
+                children: [
+                  for (int i = 0; i < 20; i++)
+                    ListTile(
+                      title: Text('test'),
+                    )
+                ],
+              );
+            },
+          ),
+        );*/
+
+        return Scaffold(
+          body: Stack(
+            children: [
+              CountriesMap(),
+              SlidingSheet(
+                elevation: 8,
+                closeOnBackdropTap: true,
+                cornerRadius: 16,
+                cornerRadiusOnFullscreen: 0,
+                addTopViewPaddingOnFullscreen: true,
+                backdropColor: Colors.grey.shade800,
+                liftOnScrollHeaderElevation: 8, 
+                snapSpec: const SnapSpec(
+                  snap: true,
+                  snappings: [
+                    SnapSpec.headerSnap,
+                    SnapSpec.expanded,
+                  ],
+                  positioning: SnapPositioning.relativeToSheetHeight,
+                ),
+                listener: (state) {},
+                body: CountriesMap(
+                  fabHeight: _fabHeight,
+                ),
+                headerBuilder: _buildHeader,
+                builder: (context, state) {
+                  return Column(
+                    children: [
+                      for (int i = 0; i < 20; i++)
+                        ListTile(
+                          title: Text('test'),
+                        )
+                    ],
+                  );
+                },
+              ),
+              AnimatedOpacity(
+                opacity: 1.0,
+                duration: Duration(milliseconds: 500),
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: _isFullscreen
+                            ? BorderSide(color: Colors.grey, width: 1.0)
+                            : BorderSide(color: Colors.white, width: 1.0),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      elevation: _isFullscreen ? 0 : 4,
+                      child: Container(
+                        height: 46,
+                        width: double.infinity,
+                        padding: EdgeInsets.only(right: 16, left: 16),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 16),
+                              child: Icon(Icons.search_outlined),
+                            ),
+                            Text('Search')
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, SheetState state) {
+    return SheetListenerBuilder(
+      buildWhen: (oldState, newState) => oldState.isAtTop != newState.isAtTop,
+      builder: (context, state) {
+        print(state.extent);
+        return Material(
+          color: Theme.of(context).appBarTheme.backgroundColor,
+          elevation: !state.isAtTop ? 7 : 0.0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 4, top: 4, right: 4),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 26,
+                    height: 4,
+                    color: Colors.grey.withOpacity(
+                      .5 * (1 - interval(0.7, 1.0, state.progress)),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Freigeschaltene Länder',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '15 von 195 Ländern freigeschaltet',
+                      style: TextStyle(
+                        color: Colors.green.shade400,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/*return Material(
+          child: SlidingSheet(
+            elevation: _isFullscreen ? 0 : 8,
+            closeOnBackdropTap: true,
+            cornerRadius: 16,
+            cornerRadiusOnFullscreen: 0,
+            snapSpec: const SnapSpec(
+              snap: true,
+              snappings: [
+                SnapSpec.headerSnap,
+                0.6,
+                SnapSpec.expanded,
+              ],
+              positioning: SnapPositioning.relativeToSheetHeight,
+            ),
+            listener: (state) {
+              print(state.progress);
+
+              if (state.progress == 1.0) {
+                setState(() {
+                  _isFullscreen = true;
+                });
+              }
+
+              if (state.progress < 1.0 && _isFullscreen) {
+                setState(() {
+                  _isFullscreen = false;
+                });
+              }
+              /*double progress = state.progress;
+
+              setState(() {
+                if (state.progress >= 0.9) {
+                  _isFullscreen = true;
+                } else {
+                  _isFullscreen = false;
+                }
+
+                _fabHeight =
+                    progress * (_panelHeightOpen - _panelHeightClosed) +
+                        _initFabHeight;
+              });*/
+            },
+            body: Scaffold(
+              extendBodyBehindAppBar: true,
+              // bottomSheet: ,
+              appBar: AppBar(
+                title: Card(
+                  shape: RoundedRectangleBorder(
+                    side: _isFullscreen
+                        ? BorderSide(color: Colors.grey, width: 1.0)
+                        : BorderSide(color: Colors.white, width: 1.0),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  elevation: _isFullscreen ? 0 : 4,
+                  child: Container(
+                    height: 46,
+                    width: double.infinity,
+                    padding: EdgeInsets.only(right: 16, left: 16),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 16),
+                          child: Icon(Icons.search_outlined),
+                        ),
+                        Text('Search')
+                      ],
+                    ),
+                  ),
+                ),
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
+              body: CountriesMap(),
+            ),
+            headerBuilder: _buildHeader,
+            builder: (context, state) {
+              return Column(
+                children: [
+                  for (int i = 0; i < 20; i++)
+                    ListTile(
+                      title: Text('test'),
+                    )
+                ],
+              );
+            },
+          ),
+        );*/
+/*return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
             title: Card(
@@ -170,7 +527,7 @@ class _CountriesScreenState extends State<CountriesScreen> with SingleTickerProv
           ),
         );*/
 
-        return Scaffold(
+/*return Scaffold(
           //extendBodyBehindAppBar: true,
           // bottomSheet: ,
           appBar: AppBar(
@@ -259,59 +616,7 @@ class _CountriesScreenState extends State<CountriesScreen> with SingleTickerProv
           ),
         );
       },
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, SheetState state) {
-    return AnimatedSize(
-      duration: Duration(milliseconds: 250),
-      vsync: this,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(4),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: CustomContainer(
-                width: 26,
-                height: 4,
-                borderRadius: 2,
-                color: Colors.grey.withOpacity(
-                  .5 * (1 - interval(0.7, 1.0, state.progress)),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Freigeschaltene Länder',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '15 von 195 Ländern freigeschaltet',
-                  style: TextStyle(
-                    color: Colors.green.shade400,
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+    );*/
 
 /*return Material(
           child: SlidingSheet(
