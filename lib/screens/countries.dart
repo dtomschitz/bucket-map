@@ -2,234 +2,201 @@ import 'dart:ui';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/core/settings/settings_screen.dart';
+import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 
 class CountriesScreen extends StatefulWidget {
   @override
   State createState() => _CountriesScreenState();
 }
 
-class _CountriesScreenState extends State<CountriesScreen> {
-  final mapKey = GlobalKey();
+class _CountriesScreenState extends State<CountriesScreen>
+    with TickerProviderStateMixin {
+  SheetController _sheetController;
 
-  final GlobalKey _scaffoldKey = GlobalKey();
-
-  bool show = false;
-
-  double offset = 0;
-
-  double height;
-
-  double screenHeight;
-
-  bool modfiyPin = false;
-
-  Offset test;
-
+  double _screenHeight;
   double _initFabHeight;
   double _fabHeight;
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
 
+  bool _showCloseCountriesSheetButton = false;
+  bool _fullScreenCountriesSheet = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    modfiyPin = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    BorderRadiusGeometry radius = BorderRadius.only(
-      topLeft: Radius.circular(24.0),
-      topRight: Radius.circular(24.0),
-    );
-
-    screenHeight = MediaQuery.of(context).size.height;
-    _initFabHeight = screenHeight * 0.12;
+    _screenHeight = MediaQuery.of(context).size.height;
+    _initFabHeight = _screenHeight * 0.12;
     if (_fabHeight == null) _fabHeight = _initFabHeight;
-    _panelHeightOpen = screenHeight * 1;
+    _panelHeightOpen = _screenHeight * 1;
 
     return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
-        return Material(
-          child: SlidingUpPanel(
-            backdropEnabled: true,
-            panelSnapping: true,
-            maxHeight: screenHeight * 1,
-            onPanelSlide: (double pos) => setState(() {
-              print(pos);
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            }),
-            panel: Center(
-              child: Text("This is the sliding Widget"),
-            ),
-            collapsed: Container(
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: radius,
-              ),
-              child: Center(
-                child: Text(
-                  "This is the collapsed Widget",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            body: Scaffold(
-              appBar: AppBar(
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.settings_outlined),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => SettingsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              body: CountriesMap(
-                key: mapKey,
-                fabHeight: _fabHeight,
-              ),
-            ),
-            borderRadius: radius,
-          ),
-        );
-      },
-    );
-  }
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<CountriesBloc, CountriesState>(
-      builder: (context, state) {
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SlidingSheet(
-            duration: const Duration(milliseconds: 900),
-            controller: controller,
-            color: Colors.white,
-            shadowColor: Colors.black26,
-            elevation: 12,
-            maxWidth: 500,
-            cornerRadius: 16,
-            cornerRadiusOnFullscreen: 0.0,
-            closeOnBackdropTap: true,
-            closeOnBackButtonPressed: true,
-            addTopViewPaddingOnFullscreen: true,
-            isBackdropInteractable: true,
-            snapSpec: SnapSpec(
-              snap: true,
-              positioning: SnapPositioning.relativeToAvailableSpace,
-              snappings: const [
-                SnapSpec.headerFooterSnap,
-                SnapSpec.expanded,
-              ],
-            ),
-            liftOnScrollHeaderElevation: 12.0,
-            body: CountriesMap(),
-            headerBuilder: buildHeader,
-            builder: buildChild,
-          ),
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: 60),
-            child: FloatingActionButton(
-              onPressed: () {},
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget buildHeader(BuildContext context, SheetState state) {
-    offset = state.currentScrollOffset;
-    print(offset);
-    print(state.currentScrollOffset);
-    return CustomContainer(
-      key: _scaffoldKey,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      shadowColor: Colors.black12,
-      height: 80,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(4),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: CustomContainer(
-                width: 26,
-                height: 4,
-                borderRadius: 2,
-                color: Colors.grey.withOpacity(
-                  .5 * (1 - interval(0.7, 1.0, state.progress)),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        /*return CountriesSlidingSheet(
+          body: Scaffold(
+            extendBodyBehindAppBar: true,
+            body: Stack(
               children: [
-                Text(
-                  'Freigeschaltene Länder',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
+                CountriesMap(
+                  fabHeight: _fabHeight,
                 ),
-                Text(
-                  '15 von 195 Ländern freigeschaltet',
-                  style: TextStyle(
-                    color: Colors.green.shade400,
-                    fontWeight: FontWeight.w600,
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        AnimatedContainer(
+                          width: _showCloseCountriesSheetButton
+                              ? kMinInteractiveDimension
+                              : 0,
+                          duration: Duration(milliseconds: 150),
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 16),
+                            child: IconButton(
+                              icon: Icon(Icons.close_outlined),
+                              onPressed: () {
+                                setState(() {
+                                  _showCloseCountriesSheetButton = false;
+                                  _fullScreenCountriesSheet = false;
+                                });
+                                _sheetController.collapse();
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: CountriesSearchBar(
+                            type: _fullScreenCountriesSheet
+                                ? CountriesSearchBarType.flat
+                                : CountriesSearchBarType.elevated,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 )
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
+          onSlidingSheetCreated: (controller) {
+            _sheetController = controller;
+          },
+          listener: (state) {
+            print(state.progress);
 
-  Widget buildChild(BuildContext context, SheetState state) {
-    print(state.currentScrollOffset);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        /*for (var country in countries)
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://flagcdn.com/w160/${country.code}.png',
+            if (state.progress == 1 &&
+                !_showCloseCountriesSheetButton &&
+                !_fullScreenCountriesSheet) {
+              setState(() {
+                _showCloseCountriesSheetButton = true;
+                _fullScreenCountriesSheet = true;
+              });
+            }
+
+            if (state.progress < .9 &&
+                _showCloseCountriesSheetButton &&
+                _fullScreenCountriesSheet) {
+              setState(() {
+                _showCloseCountriesSheetButton = false;
+                _fullScreenCountriesSheet = false;
+              });
+            }
+
+            /*setState(() {
+                    _fabHeight = state.progress *
+                            (_panelHeightOpen - _panelHeightClosed) +
+                        _initFabHeight;
+                  });*/
+          },
+        );*/
+        return Scaffold(
+          body: Stack(
+            children: [
+              CountriesMap(
+                fabHeight: _fabHeight,
               ),
-              backgroundColor: Colors.grey.shade100,
-            ),
-            title: Text(country.name),
-            trailing: Icon(
-              Icons.lock_open_outlined,
-              color: Colors.black,
-            ),
-            onTap: () {},
-          )*/
-      ],
+              CountriesSlidingSheet(
+                onSlidingSheetCreated: (controller) {
+                  _sheetController = controller;
+                },
+                listener: (state) {
+                  print(state.progress);
+
+                  if (state.progress == 1 &&
+                      !_showCloseCountriesSheetButton &&
+                      !_fullScreenCountriesSheet) {
+                    setState(() {
+                      _showCloseCountriesSheetButton = true;
+                      _fullScreenCountriesSheet = true;
+                    });
+                  }
+
+                  if (state.progress < .9 &&
+                      _showCloseCountriesSheetButton &&
+                      _fullScreenCountriesSheet) {
+                    setState(() {
+                      _showCloseCountriesSheetButton = false;
+                      _fullScreenCountriesSheet = false;
+                    });
+                  }
+
+                  /*setState(() {
+                    _fabHeight = state.progress *
+                            (_panelHeightOpen - _panelHeightClosed) +
+                        _initFabHeight;
+                  });*/
+                },
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      AnimatedContainer(
+                        width: _showCloseCountriesSheetButton
+                            ? kMinInteractiveDimension
+                            : 0,
+                        duration: Duration(milliseconds: 150),
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 16),
+                          child: IconButton(
+                            icon: Icon(Icons.close_outlined),
+                            onPressed: () {
+                              setState(() {
+                                _showCloseCountriesSheetButton = false;
+                                _fullScreenCountriesSheet = false;
+                              });
+                              _sheetController.collapse();
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: CountriesSearchBar(
+                          type: _fullScreenCountriesSheet
+                              ? CountriesSearchBarType.flat
+                              : CountriesSearchBarType.elevated,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
-  */
 }
