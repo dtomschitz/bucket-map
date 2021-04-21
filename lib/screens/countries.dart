@@ -104,7 +104,12 @@ class _CountriesScreenState extends State<CountriesScreen> {
                   IconButton(
                     icon: Icon(Icons.person),
                     onPressed: () {
-                    print('Open Profile Screen');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                          builder: (BuildContext context) => ProfileScreen(),
+                      ),
+                  );
                   //  label: Text('logout'),
                   //  onPressed: () async {
                   //    await _auth.signOut();
