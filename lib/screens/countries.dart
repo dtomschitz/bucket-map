@@ -101,11 +101,13 @@ class _CountriesScreenState extends State<CountriesScreen> {
                       );
                     },
                   ),
-                  FlatButton.icon(
+                  IconButton(
                     icon: Icon(Icons.person),
-                    label: Text('logout'),
-                    onPressed: () async {
-                      await _auth.signOut();
+                    onPressed: () {
+                    print('Open Profile Screen');
+                  //  label: Text('logout'),
+                  //  onPressed: () async {
+                  //    await _auth.signOut();
                     },
                   ),
                 ],
