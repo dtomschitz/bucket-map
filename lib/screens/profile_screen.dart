@@ -1,4 +1,3 @@
-import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 
