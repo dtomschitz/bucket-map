@@ -1,7 +1,5 @@
-import 'dart:math';
-
-import 'package:bucket_map/config/constants.dart';
-import 'package:bucket_map/config/global_keys.dart';
+import 'package:bucket_map/core/constants.dart';
+import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
@@ -195,23 +193,3 @@ class _CountriesMapState extends State<CountriesMap> {
     );
   }
 }
-
-/*
-
-floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: widget.fabHeight >= screenHeight * 0.4
-              ? screenHeight * 0.4
-              : widget.fabHeight,
-        ),
-        child: FloatingActionButton(
-            child: modfiyPin ? const Icon(Icons.done) : const Icon(Icons.add),
-            onPressed: () {
-              setState(() {
-                modfiyPin = !modfiyPin;
-              });
-            },
-            backgroundColor: modfiyPin ? Colors.green : Colors.white),
-      ),
-
-*/
