@@ -162,13 +162,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  fluro:
+  flow_builder:
     dependency: "direct main"
     description:
-      name: fluro
+      name: flow_builder
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3"
+    version: "0.0.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -181,6 +181,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "7.0.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.2+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -191,6 +198,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  formz:
+    dependency: "direct main"
+    description:
+      name: formz
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0-nullsafety.0"
   geolocator:
     dependency: "direct main"
     description:

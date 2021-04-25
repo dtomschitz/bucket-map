@@ -1,7 +1,5 @@
-import 'dart:math';
-
-import 'package:bucket_map/config/constants.dart';
-import 'package:bucket_map/config/global_keys.dart';
+import 'package:bucket_map/core/constants.dart';
+import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
@@ -26,11 +24,6 @@ class _CountriesMapState extends State<CountriesMap> {
     target: LatLng(0.0, 0.0),
   );
 
-  static final LatLng center = const LatLng(-33.86711, 151.1947171);
-
-  int _symbolCount = 0;
-  Symbol _selectedSymbol;
-
   bool modifyPin;
 
   bool show = false;
@@ -49,7 +42,6 @@ class _CountriesMapState extends State<CountriesMap> {
 
   double _initFabHeight;
   double _panelHeightOpen;
-  double _panelHeightClosed = 95.0;
 
   @override
   void initState() {
@@ -64,7 +56,7 @@ class _CountriesMapState extends State<CountriesMap> {
 
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
-    
+
     allPins.add(widget.createdPin.options);
     _mapController.addSymbols(allPins);
     print("test");
@@ -115,8 +107,6 @@ class _CountriesMapState extends State<CountriesMap> {
       MaterialPageRoute(builder: (context) => CreatePinScreen()),
     );
 
-    // After the Selection Screen returns a result, hide any previous snackbars
-    // and show the new result.
     setState(() {
       allPins.add(result.options);
     });
@@ -195,23 +185,3 @@ class _CountriesMapState extends State<CountriesMap> {
     );
   }
 }
-
-/*
-
-floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: widget.fabHeight >= screenHeight * 0.4
-              ? screenHeight * 0.4
-              : widget.fabHeight,
-        ),
-        child: FloatingActionButton(
-            child: modfiyPin ? const Icon(Icons.done) : const Icon(Icons.add),
-            onPressed: () {
-              setState(() {
-                modfiyPin = !modfiyPin;
-              });
-            },
-            backgroundColor: modfiyPin ? Colors.green : Colors.white),
-      ),
-
-*/
