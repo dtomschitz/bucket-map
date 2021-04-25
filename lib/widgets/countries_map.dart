@@ -1,7 +1,5 @@
-import 'dart:math';
-
-import 'package:bucket_map/config/constants.dart';
-import 'package:bucket_map/config/global_keys.dart';
+import 'package:bucket_map/core/constants.dart';
+import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
