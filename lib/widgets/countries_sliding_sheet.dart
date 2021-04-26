@@ -27,6 +27,11 @@ class CountriesSlidingSheet extends StatefulWidget {
 
 class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
   final PanelController panelController = PanelController();
+  ScrollController _scrollController;
+
+  _onScrollControllerCreated(ScrollController controller) {
+    _scrollController = controller;
+  }
 
   @override
   void initState() {
@@ -43,6 +48,10 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       controller: panelController,
       maxHeight: maxHeight,
       minHeight: 80,
+      onScrollControllerCreated: _onScrollControllerCreated,
+      onPanelClosed: () {
+        _scrollController.jumpTo(0);
+      },
       onPanelSlide: widget.onPanelSlide?.call,
       panelBuilder: _buildPanel,
       collapsed: _buildHeader(),

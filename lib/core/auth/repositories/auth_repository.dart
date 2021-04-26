@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bucket_map/models/models.dart';
-import 'package:bucket_map/utils/cache.dart';
+import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
 
