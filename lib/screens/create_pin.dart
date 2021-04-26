@@ -60,7 +60,6 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         bool isLocationGranted = snapshot.data.isGranted;
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.blue,
             toolbarHeight: 60.0,
             title: Text(
               'Click to create a Pin at any Location.',
@@ -68,7 +67,6 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
             ),
             actions: <Widget>[
               FlatButton(
-                textColor: Colors.white,
                 onPressed: () {
                   Symbol sym = _mapController.symbols.first;
                   sym.options =

@@ -88,7 +88,6 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
                     child: Container(
                       width: 26,
                       height: 4,
-                      color: Colors.grey,
                     ),
                   ),
                 ),
@@ -100,7 +99,6 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
                       Text(
                         'Freigeschaltene Länder',
                         style: TextStyle(
-                          color: Colors.black,
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                         ),
@@ -108,7 +106,6 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
                       Text(
                         '15 von 195 Ländern freigeschaltet',
                         style: TextStyle(
-                          color: Colors.green.shade400,
                           fontWeight: FontWeight.w600,
                         ),
                       )

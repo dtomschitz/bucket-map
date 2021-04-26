@@ -11,9 +11,9 @@ class CountriesSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        side: type == CountriesSearchBarType.elevated
+        /*side: type == CountriesSearchBarType.elevated
             ? BorderSide(color: Colors.white, width: 1.0)
-            : BorderSide(color: Colors.grey, width: 1.0),
+            : BorderSide(color: Colors.grey, width: 1.0),*/
         borderRadius: BorderRadius.circular(50),
       ),
       elevation: type == CountriesSearchBarType.elevated ? 8 : 0,

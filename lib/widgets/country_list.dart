@@ -41,12 +41,10 @@ class CountryListItem extends StatelessWidget {
         backgroundImage: NetworkImage(
           'https://flagcdn.com/w160/${country.code.toLowerCase()}.png',
         ),
-        backgroundColor: Colors.grey.shade100,
       ),
       title: Text(country.name),
       trailing: Icon(
         Icons.lock_open_outlined,
-        color: Colors.black,
       ),
     );
   }
