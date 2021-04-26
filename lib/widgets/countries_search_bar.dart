@@ -16,7 +16,7 @@ class CountriesSearchBar extends StatelessWidget {
             : BorderSide(color: Colors.grey, width: 1.0),
         borderRadius: BorderRadius.circular(50),
       ),
-      elevation: type == CountriesSearchBarType.elevated ? 8 : 0,
+      elevation: type == CountriesSearchBarType.elevated ? 4 : 0,
       child: Container(
         height: 46,
         width: double.infinity,

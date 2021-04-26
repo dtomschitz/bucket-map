@@ -7,4 +7,5 @@ export 'expandable_floating_action_button.dart';
 export 'loading_spinner.dart';
 export 'permission_builder.dart';
 export 'search_bar.dart';
+export 'sliding_sheet_dragger.dart';
 export 'settings.dart';
