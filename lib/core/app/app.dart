@@ -41,11 +41,11 @@ class App extends StatelessWidget {
 }
 
 class AppView extends StatelessWidget {
-  List<Page> onGenerateAppViewPages(
-    AppStatus state,
+  List<Page> _onGenerateAppViewPages(
+    AppStatus status,
     List<Page<dynamic>> pages,
   ) {
-    switch (state) {
+    switch (status) {
       case AppStatus.authenticated:
         return [HomePage.page()];
       case AppStatus.unauthenticated:
@@ -65,7 +65,7 @@ class AppView extends StatelessWidget {
           darkTheme: Themes.buildDarkTheme(),
           home: FlowBuilder<AppStatus>(
             state: context.select((AppBloc bloc) => bloc.state.status),
-            onGeneratePages: onGenerateAppViewPages,
+            onGeneratePages: _onGenerateAppViewPages,
           ),
         );
       },

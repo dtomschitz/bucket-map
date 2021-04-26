@@ -57,7 +57,10 @@ class SettingsScreen extends StatelessWidget {
       width: double.infinity,
       child: TextButton(
         child: Text('Abmelden'),
-        onPressed: () => context.read<AppBloc>().add(AppLogoutRequested()),
+        onPressed: () {
+          Navigator.pop(context);
+          context.read<AppBloc>().add(AppLogoutRequested());
+        },
       ),
     );
   }
