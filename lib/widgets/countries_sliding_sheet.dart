@@ -26,7 +26,7 @@ class CountriesSlidingSheet extends StatefulWidget {
 }
 
 class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
-  final PanelController panelController = PanelController();
+  final PanelController _panelController = PanelController();
   ScrollController _scrollController;
 
   _onScrollControllerCreated(ScrollController controller) {
@@ -36,7 +36,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
   @override
   void initState() {
     super.initState();
-    widget.onSlidingSheetCreated?.call(panelController);
+    widget.onSlidingSheetCreated?.call(_panelController);
   }
 
   @override
@@ -45,33 +45,40 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
         MediaQuery.of(context).size.height + kBottomNavigationBarHeight;
 
     return SlidingUpPanel(
-      controller: panelController,
+      controller: _panelController,
       maxHeight: maxHeight,
       minHeight: 80,
+      backdropEnabled: true,
+      backdropColor: Colors.black,
       onScrollControllerCreated: _onScrollControllerCreated,
       onPanelClosed: () {
         _scrollController.jumpTo(0);
       },
       onPanelSlide: widget.onPanelSlide?.call,
+      body: widget.body,
       panelBuilder: _buildPanel,
       collapsed: _buildHeader(),
-      body: widget.body,
     );
   }
 
   Widget _buildHeader() {
-    return Material(
-      color: Theme.of(context).appBarTheme.backgroundColor,
-      elevation: 7,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SlidingSheetDragger(
-            padding: EdgeInsets.only(left: 8, right: 8, top: 4),
-          ),
-          CountriesSlidingSheetHeader(),
-        ],
+    return GestureDetector(
+      onTap: () {
+        _panelController.open();
+      },
+      child: Material(
+        color: Theme.of(context).appBarTheme.backgroundColor,
+        elevation: 7,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SlidingSheetDragger(
+              padding: EdgeInsets.only(left: 8, right: 8, top: 4),
+            ),
+            CountriesSlidingSheetHeader(),
+          ],
+        ),
       ),
     );
   }

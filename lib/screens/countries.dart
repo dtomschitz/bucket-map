@@ -18,29 +18,38 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   bool _fullScreenCountriesSheet = false;
   bool _elevateAppHeader = false;
+  bool _ignoreOnPanelSlide = false;
 
   _onSlidingSheetCreated(PanelController controller) {
     _panelController = controller;
   }
 
   _onPanelSlide(double progress) {
-    if (progress > .9 && !_fullScreenCountriesSheet) {
-      setState(() {
-        _fullScreenCountriesSheet = true;
-      });
+    if (progress == 0.0) {
+      setState(() => _ignoreOnPanelSlide = false);
     }
 
-    if (progress < .85 && _fullScreenCountriesSheet) {
-      setState(() {
-        _fullScreenCountriesSheet = false;
-      });
-    }
+    if (!_ignoreOnPanelSlide) {
+      print(progress);
 
-    if (progress < .3) {
-      setState(() {
-        _fabHeight =
-            progress * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
-      });
+      if (progress > 0.9 && !_fullScreenCountriesSheet) {
+        setState(() {
+          _fullScreenCountriesSheet = true;
+        });
+      }
+
+      if (progress < 0.85 && _fullScreenCountriesSheet) {
+        setState(() {
+          _fullScreenCountriesSheet = false;
+        });
+      }
+
+      /*if (progress < .3) {
+        setState(() {
+          _fabHeight =
+              progress * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
+        });
+      }*/
     }
   }
 
@@ -68,6 +77,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        
         backgroundColor: _fullScreenCountriesSheet
             ? Theme.of(context).appBarTheme.backgroundColor
             : Colors.transparent,
@@ -88,6 +98,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
                       setState(() {
                         _fullScreenCountriesSheet = false;
                         _elevateAppHeader = false;
+                        _ignoreOnPanelSlide = true;
                       });
                       _panelController.close();
                     },

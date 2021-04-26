@@ -7,7 +7,14 @@ packages:
       name: archive
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.2"
+    version: "2.0.13"
+  args:
+    dependency: transitive
+    description:
+      name: args
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.6.0"
   async:
     dependency: transitive
     description:
@@ -85,13 +92,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   crypto:
     dependency: transitive
     description:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "2.1.5"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -233,13 +247,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  google_fonts:
-    dependency: "direct main"
-    description:
-      name: google_fonts
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   http:
     dependency: "direct main"
     description:
@@ -260,7 +267,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "2.1.19"
   intl:
     dependency: transitive
     description:
@@ -278,12 +285,10 @@ packages:
   mapbox_gl:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "26a3098160d79e99a34fcc0e8be621412f0a04ed"
-      url: "https://github.com/davidddo/flutter-mapbox-gl.git"
-    source: git
-    version: "0.12.0"
+      name: mapbox_gl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.0"
   mapbox_gl_dart:
     dependency: transitive
     description:
@@ -294,21 +299,17 @@ packages:
   mapbox_gl_platform_interface:
     dependency: transitive
     description:
-      path: mapbox_gl_platform_interface
-      ref: HEAD
-      resolved-ref: "26a3098160d79e99a34fcc0e8be621412f0a04ed"
-      url: "https://github.com/davidddo/flutter-mapbox-gl.git"
-    source: git
-    version: "0.12.0"
+      name: mapbox_gl_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.0"
   mapbox_gl_web:
     dependency: transitive
     description:
-      path: mapbox_gl_web
-      ref: HEAD
-      resolved-ref: "26a3098160d79e99a34fcc0e8be621412f0a04ed"
-      url: "https://github.com/davidddo/flutter-mapbox-gl.git"
-    source: git
-    version: "0.12.0"
+      name: mapbox_gl_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.0"
   matcher:
     dependency: transitive
     description:
@@ -344,24 +345,10 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
-  path_provider:
-    dependency: transitive
-    description:
-      name: path_provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.1"
   path_provider_linux:
     dependency: transitive
     description:
       name: path_provider_linux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
-  path_provider_macos:
-    dependency: transitive
-    description:
-      name: path_provider_macos
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
@@ -406,7 +393,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
+    version: "3.1.0"
   platform:
     dependency: transitive
     description:
@@ -572,7 +559,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "4.5.1"
 sdks:
   dart: ">=2.12.0 <3.0.0"
   flutter: ">=1.22.0"

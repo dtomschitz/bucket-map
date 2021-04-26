@@ -69,7 +69,7 @@ class _CountriesMapState extends State<CountriesMap> {
   }
 
   void _onStyleLoadedCallback() {
-    _mapController.setFilter(
+    /*_mapController.setFilter(
       'country-boundaries',
       [
         "match",
@@ -93,7 +93,7 @@ class _CountriesMapState extends State<CountriesMap> {
         true,
         false
       ],
-    );
+    );*/
   }
 
   _moveCameraToCurrentLocation() async {
