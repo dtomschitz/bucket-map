@@ -982,6 +982,23 @@ final class MapboxMapController
         result.success(null);
         break;
       }
+      case "style#setFilter": {
+        if (style == null) {
+          result.error("STYLE IS NULL", "The style is null. Has onStyleLoaded() already been invoked?", null);
+        }
+
+        String layerId = (String) call.argument("layerId");
+        List<Object> filter = call.argument("filter");
+        JsonElement jsonElement = filter == null ? null : new Gson().toJsonTree(filter);
+        JsonArray jsonArray = null;
+        if (jsonElement != null && jsonElement.isJsonArray()) {
+          jsonArray = jsonElement.getAsJsonArray();
+        }
+        Expression filterExpression = jsonArray == null ? null : Expression.Converter.convert(jsonArray);
+        ((FillLayer) style.getLayer(layerId)).setFilter(filterExpression);
+        result.success(null);
+        break;
+      }
       default:
         result.notImplemented();
     }

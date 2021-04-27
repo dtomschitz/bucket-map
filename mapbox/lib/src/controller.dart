@@ -871,6 +871,16 @@ class MapboxMapController extends ChangeNotifier {
     return MapboxGlPlatform.getInstance(_id).removeLayer(imageLayerId);
   }
 
+  /// Sets the specified [filter] for the given layer.
+  /// 
+  /// Change listeners are notified once the filter have been updated on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes once listeners have been notified.
+  Future<void> setFilter(String layer, dynamic filter) async {
+    return MapboxGlPlatform.getInstance(_id).setFilter(layer, filter);
+  }
+
   /// Returns the point on the screen that corresponds to a geographical coordinate ([latLng]). The screen location is in screen pixels (not display pixels) relative to the top left of the map (not of the whole screen)
   ///
   /// Note: The resulting x and y coordinates are rounded to [int] on web, on other platforms they may differ very slightly (in the range of about 10^-10) from the actual nearest screen coordinate.

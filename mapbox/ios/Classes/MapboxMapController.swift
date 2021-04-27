@@ -695,6 +695,22 @@ class MapboxMapController: NSObject, FlutterPlatformView, MGLMapViewDelegate, Ma
             guard let layer = self.mapView.style?.layer(withIdentifier: imageLayerId) else { return }
             self.mapView.style?.removeLayer(layer)
             result(nil)
+        case "style#setFilter":
+            guard let arguments = methodCall.arguments as? [String: Any] else { return }
+            guard let layerId = arguments["layerId"] as? String else { return }
+            guard let layer = self.mapView.style?.layer(withIdentifier: layerId) else { return }
+
+            let predicate = NSPredicate(mglJSONObject: ["all",  ["==", "id",  "NONE"], ["has", "parentId"]])
+            layer.predicate = predicate
+
+            guard let layer = self.mapView.style?.layer(withIdentifier: layerId) as? MGLVectorStyleLayer else { return }
+            var filterExpression: NSPredicate?
+            if let filter = arguments["filter"] as? [Any] {
+                filterExpression = NSPredicate(mglJSONObject: filter)
+            }
+            
+            layer.predicate = filterExpression
+            result(nil)
         default:
             result(FlutterMethodNotImplemented)
         }

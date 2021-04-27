@@ -243,6 +243,11 @@ class MapboxMapController extends MapboxGlPlatform
   }
 
   @override
+  Future<void> setFilter(String layerId, dynamic filter) async {
+    _map.setFilter(layerId, filter);
+  }
+
+  @override
   Future<List> queryRenderedFeatures(
       Point<double> point, List<String> layerIds, List<Object>? filter) async {
     Map<String, dynamic> options = {};

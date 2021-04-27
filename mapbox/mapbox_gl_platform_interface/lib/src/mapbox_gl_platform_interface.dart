@@ -267,6 +267,10 @@ abstract class MapboxGlPlatform {
     throw UnimplementedError('removeLayer() has not been implemented.');
   }
 
+  Future<void> setFilter(String layerId, dynamic filter) async {
+    throw UnimplementedError('setFilter() has not been implemented.');
+  }
+
   Future<Point> toScreenLocation(LatLng latLng) async {
     throw UnimplementedError('toScreenLocation() has not been implemented.');
   }
