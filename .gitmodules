@@ -1,3 +1,0 @@
-[submodule "packages/mapbox"]
-	path = packages/mapbox
-	url = git@github.com:tobrun/flutter-mapbox-gl.git
