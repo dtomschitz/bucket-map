@@ -31,7 +31,7 @@ dependencies:
   sliding_up_panel:
     path: packages/sliding_up_panel
   mapbox_gl:
-    path: packages/flutter-mapbox-gl
+    path: packages/mapbox
   #mapbox_gl:
   #  git: https://github.com/davidddo/flutter-mapbox-gl.git
 
