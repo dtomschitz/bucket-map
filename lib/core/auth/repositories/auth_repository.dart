@@ -79,6 +79,7 @@ class AuthenticationRepository {
         password: password,
       );
     } on Exception {
+      print("DWAda");
       throw LogInWithEmailAndPasswordFailure();
     }
   }

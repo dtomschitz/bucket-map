@@ -605,7 +605,7 @@ class MapboxMapController: NSObject, FlutterPlatformView, MGLMapViewDelegate, Ma
             //guard let length = arguments["length"] as? NSNumber else { return }
             guard let bytes = arguments["bytes"] as? FlutterStandardTypedData else { return }
             guard let sdf = arguments["sdf"] as? Bool else { return }
-            guard let data = bytes.data as? Data else{ return }
+            guard let data = bytes.data as? Data else { return }
             guard let image = UIImage(data: data) else { return }
             if (sdf) {
                 self.mapView.style?.setImage(image.withRenderingMode(.alwaysTemplate), forName: name)
@@ -698,17 +698,11 @@ class MapboxMapController: NSObject, FlutterPlatformView, MGLMapViewDelegate, Ma
         case "style#setFilter":
             guard let arguments = methodCall.arguments as? [String: Any] else { return }
             guard let layerId = arguments["layerId"] as? String else { return }
-            guard let layer = self.mapView.style?.layer(withIdentifier: layerId) else { return }
-
-            let predicate = NSPredicate(mglJSONObject: ["all",  ["==", "id",  "NONE"], ["has", "parentId"]])
-            layer.predicate = predicate
-
             guard let layer = self.mapView.style?.layer(withIdentifier: layerId) as? MGLVectorStyleLayer else { return }
             var filterExpression: NSPredicate?
             if let filter = arguments["filter"] as? [Any] {
                 filterExpression = NSPredicate(mglJSONObject: filter)
             }
-            
             layer.predicate = filterExpression
             result(nil)
         default:
