@@ -13,7 +13,8 @@ buildscript {
 }
 
 rootProject.allprojects {
-    def token = System.getenv('SDK_REGISTRY_TOKEN')
+    //def token = System.getenv('SDK_REGISTRY_TOKEN')
+    def token = "sk.eyJ1IjoiZGF2aWRkbzMzOTkiLCJhIjoiY2tvMWxyb3ZzMDl5ajJxbHBhYnVwaWtvYyJ9.QaV3BZi2Gas3fHvsGnE6uA"
     if (token == null || token.empty) {
         throw new Exception("SDK Registry token is null. See README.md for more information.")
     }
