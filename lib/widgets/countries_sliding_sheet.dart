@@ -47,7 +47,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
     return SlidingUpPanel(
       controller: _panelController,
       maxHeight: maxHeight,
-      minHeight: 80,
+      //minHeight: 80,
       backdropEnabled: true,
       backdropColor: Colors.black,
       onScrollControllerCreated: _onScrollControllerCreated,
@@ -113,7 +113,7 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
