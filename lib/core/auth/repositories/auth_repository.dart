@@ -32,7 +32,7 @@ class AuthenticationRepository {
   /// User cache key.
   /// Should only be used for testing purposes.
   @visibleForTesting
-  static const userCacheKey = '__user_cache_key__';
+  static const userCacheKey = '__user_cache__';
 
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
@@ -79,10 +79,7 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
-
-      await _firebaseAuth.currentUser.reload();
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       throw LogInWithEmailAndPasswordFailure();
     }
   }
