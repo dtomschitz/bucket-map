@@ -65,7 +65,6 @@ class _CountriesMapState extends State<CountriesMap> {
     
     allPins.add(widget.createdPin.options);
     _mapController.addSymbols(allPins);
-    print("test");
   }
 
   void _onStyleLoadedCallback() {

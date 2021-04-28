@@ -43,4 +43,3 @@ flutter:
     - countries.geojson
     - countries.json
     - style.json
-    - index.html

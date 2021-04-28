@@ -22,10 +22,9 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> logInWithCredentials() async {
-    print("DAdwd");
-
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
+
     try {
       await _authenticationRepository.logInWithEmailAndPassword(
         email: state.email.value,
