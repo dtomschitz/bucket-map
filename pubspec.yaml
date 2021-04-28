@@ -16,9 +16,9 @@ dependencies:
   provider: ^5.0.0
   equatable: ^2.0.0
   cupertino_icons: ^1.0.2
-  firebase_core: ^1.0.0
-  firebase_auth: ^1.0.0
-  cloud_firestore: ^1.0.0
+  firebase_core: ^1.0.3
+  firebase_auth: ^1.0.2
+  cloud_firestore: ^1.0.4
   permission_handler: ^6.1.1
   http: ^0.13.1
   shared_preferences: ^2.0.5
@@ -27,8 +27,8 @@ dependencies:
   shimmer: ^2.0.0
   mapbox_gl: ^0.11.0
   # Custom Packages
-  #cache:
-  #  path: packages/cache
+  cache:
+    path: packages/cache
   sliding_up_panel:
     path: packages/sliding_up_panel
   #mapbox_gl:
@@ -44,4 +44,3 @@ flutter:
     - countries.geojson
     - countries.json
     - style.json
-    - index.html
