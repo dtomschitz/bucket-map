@@ -1,0 +1,147 @@
+import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/widgets/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+class CountriesSlidingSheet extends StatefulWidget {
+  CountriesSlidingSheet({
+    this.body,
+    this.onSlidingSheetCreated,
+    this.onPanelSlide,
+    this.onPanelStartScroll,
+    this.onPanelUpdateScroll,
+    this.onPanelEndScroll,
+  });
+
+  final Widget body;
+  final Function(PanelController controller) onSlidingSheetCreated;
+  final Function(double progress) onPanelSlide;
+  final Function(ScrollMetrics metrics) onPanelStartScroll;
+  final Function(ScrollMetrics metrics) onPanelUpdateScroll;
+  final Function(ScrollMetrics metrics) onPanelEndScroll;
+
+  @override
+  State createState() => _CountriesSlidingSheetState();
+}
+
+class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
+  final PanelController _panelController = PanelController();
+  ScrollController _scrollController;
+
+  _onScrollControllerCreated(ScrollController controller) {
+    _scrollController = controller;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.onSlidingSheetCreated?.call(_panelController);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final maxHeight =
+        MediaQuery.of(context).size.height + kBottomNavigationBarHeight;
+
+    return SlidingUpPanel(
+      controller: _panelController,
+      maxHeight: maxHeight,
+      minHeight: 80,
+      backdropEnabled: true,
+      backdropColor: Colors.black,
+      onScrollControllerCreated: _onScrollControllerCreated,
+      onPanelClosed: () {
+        _scrollController.jumpTo(0);
+      },
+      onPanelSlide: widget.onPanelSlide?.call,
+      body: widget.body,
+      panelBuilder: _buildPanel,
+      collapsed: _buildHeader(),
+    );
+  }
+
+  Widget _buildHeader() {
+    return GestureDetector(
+      onTap: () {
+        _panelController.open();
+      },
+      child: Material(
+        color: Theme.of(context).appBarTheme.backgroundColor,
+        elevation: 7,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SlidingSheetDragger(
+              padding: EdgeInsets.only(left: 8, right: 8, top: 4),
+            ),
+            CountriesSlidingSheetHeader(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPanel(ScrollController controller) {
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollStartNotification) {
+            widget.onPanelStartScroll?.call(notification.metrics);
+          } else if (notification is ScrollUpdateNotification) {
+            widget.onPanelUpdateScroll?.call(notification.metrics);
+          } else if (notification is ScrollEndNotification) {
+            widget.onPanelEndScroll?.call(notification.metrics);
+          }
+        },
+        child: CountryList(
+          controller: controller,
+        ),
+      ),
+    );
+  }
+}
+
+class CountriesSlidingSheetHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CountriesBloc, CountriesState>(
+      builder: (context, state) {
+        return Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Freigeschaltene Länder',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  state is CountriesLoaded
+                      ? Text(
+                          '15 von ${state.countries.length} Ländern freigeschaltet',
+                          style: TextStyle(
+                            color: Colors.green.shade400,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      : Text('Loading...')
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
