@@ -36,11 +36,14 @@ class SlidingUpPanel extends StatefulWidget {
   /// [panel] will be used.
   final Widget Function(ScrollController controller) panelBuilder;
 
-  final Function(ScrollController controller) onScrollControllerCreated;
+  final Function(
+    ScrollController scrollController,
+    AnimationController animationController,
+  ) onControllerCreated;
 
   /// The Widget displayed overtop the [panel] when collapsed.
   /// This fades out as the panel is opened.
-  final Widget collapsed;
+  final Widget Function(AnimationController controller) collapseBuilder;
 
   /// The Widget that lies underneath the sliding panel.
   /// This Widget automatically sizes itself
@@ -161,45 +164,45 @@ class SlidingUpPanel extends StatefulWidget {
   /// by default the Panel is open and must be swiped closed by the user.
   final PanelState defaultPanelState;
 
-  SlidingUpPanel(
-      {Key key,
-      this.panel,
-      this.panelBuilder,
-      this.body,
-      this.collapsed,
-      this.minHeight = 100.0,
-      this.maxHeight = 500.0,
-      this.snapPoint,
-      this.border,
-      this.borderRadius,
-      this.boxShadow = const <BoxShadow>[
-        BoxShadow(
-          blurRadius: 8.0,
-          color: Color.fromRGBO(0, 0, 0, 0.25),
-        )
-      ],
-      this.color = Colors.white,
-      this.padding,
-      this.margin,
-      this.renderPanelSheet = true,
-      this.panelSnapping = true,
-      this.controller,
-      this.backdropEnabled = false,
-      this.backdropColor = Colors.black,
-      this.backdropOpacity = 0.5,
-      this.backdropTapClosesPanel = true,
-      this.onScrollControllerCreated,
-      this.onPanelSlide,
-      this.onPanelOpened,
-      this.onPanelClosed,
-      this.parallaxEnabled = false,
-      this.parallaxOffset = 0.1,
-      this.isDraggable = true,
-      this.slideDirection = SlideDirection.UP,
-      this.defaultPanelState = PanelState.CLOSED,
-      this.header,
-      this.footer})
-      : assert(panel != null || panelBuilder != null),
+  SlidingUpPanel({
+    Key key,
+    this.panel,
+    this.panelBuilder,
+    this.body,
+    this.collapseBuilder,
+    this.minHeight = 100.0,
+    this.maxHeight = 500.0,
+    this.snapPoint,
+    this.border,
+    this.borderRadius,
+    this.boxShadow = const <BoxShadow>[
+      BoxShadow(
+        blurRadius: 8.0,
+        color: Color.fromRGBO(0, 0, 0, 0.25),
+      )
+    ],
+    this.color = Colors.white,
+    this.padding,
+    this.margin,
+    this.renderPanelSheet = true,
+    this.panelSnapping = true,
+    this.controller,
+    this.backdropEnabled = false,
+    this.backdropColor = Colors.black,
+    this.backdropOpacity = 0.5,
+    this.backdropTapClosesPanel = true,
+    this.onControllerCreated,
+    this.onPanelSlide,
+    this.onPanelOpened,
+    this.onPanelClosed,
+    this.parallaxEnabled = false,
+    this.parallaxOffset = 0.1,
+    this.isDraggable = true,
+    this.slideDirection = SlideDirection.UP,
+    this.defaultPanelState = PanelState.CLOSED,
+    this.header,
+    this.footer,
+  })  : assert(panel != null || panelBuilder != null),
         assert(0 <= backdropOpacity && backdropOpacity <= 1.0),
         assert(snapPoint == null || 0 < snapPoint && snapPoint < 1.0),
         super(key: key);
@@ -246,8 +249,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
       if (widget.isDraggable && !_scrollingEnabled) _sc.jumpTo(0);
     });
 
-    widget.onScrollControllerCreated?.call(_sc);
-
+    widget.onControllerCreated?.call(_sc, _ac);
     widget.controller?._addState(this);
   }
 
@@ -401,18 +403,11 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                                 : 0),
                         child: Container(
                           height: widget.minHeight,
-                          child: widget.collapsed == null
+                          child: widget.collapseBuilder == null
                               ? Container()
-                              : FadeTransition(
-                                  opacity:
-                                      Tween(begin: 1.0, end: 0.0).animate(_ac),
-
-                                  // if the panel is open ignore pointers (touch events) on the collapsed
-                                  // child so that way touch events go through to whatever is underneath
-                                  child: IgnorePointer(
-                                      ignoring: _isPanelOpen,
-                                      child: widget.collapsed),
-                                ),
+                              : IgnorePointer(
+                                  ignoring: _isPanelOpen,
+                                  child: widget.collapseBuilder(_ac)),
                         ),
                       ),
                     ],

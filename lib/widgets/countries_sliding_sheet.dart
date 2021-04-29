@@ -45,8 +45,8 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       maxHeight: maxHeight,
       backdropEnabled: true,
       backdropColor: Colors.black,
-      onScrollControllerCreated: (controller) {
-        _scrollController = controller;
+      onControllerCreated: (scrollController, animationController) {
+        _scrollController = scrollController;
       },
       onPanelClosed: () {
         _scrollController.jumpTo(0);
@@ -54,11 +54,11 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,
       panelBuilder: (controller) => _buildPanel(controller),
-      collapsed: _buildHeader(),
+      collapseBuilder: (controller) => _buildHeader(controller),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AnimationController controller) {
     return GestureDetector(
       onTap: () {
         _panelController.open();
@@ -66,15 +66,18 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       child: Material(
         color: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 7,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SlidingSheetDragger(
-              padding: EdgeInsets.only(left: 8, right: 8, top: 4),
-            ),
-            CountriesSlidingSheetHeader(),
-          ],
+        child: FadeTransition(
+          opacity: Tween(begin: 1.0, end: 0.0).animate(controller),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SlidingSheetDragger(
+                padding: EdgeInsets.only(left: 8, right: 8, top: 4),
+              ),
+              CountriesSlidingSheetHeader(),
+            ],
+          ),
         ),
       ),
     );

@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountryList extends StatelessWidget {
-  const CountryList({Key key, this.controller}) : super(key: key);
+  const CountryList({Key key, this.controller, this.buildTrailing, this.onTap}) : super(key: key);
 
   final ScrollController controller;
+  final Widget Function(Country country) buildTrailing;
+  final Function(Country country) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +21,16 @@ class CountryList extends StatelessWidget {
             return ListView.builder(
               key: GlobalKeys.countriesSheetList,
               controller: controller,
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.only(top: 8, bottom: 8),
               shrinkWrap: true,
               itemCount: countries.length,
               itemBuilder: (BuildContext context, int index) {
-                return CountryListItem(country: countries[index]);
+                final country = countries[index];
+                return CountryListItem(
+                  country: countries[index],
+                  trailing: buildTrailing(country),
+                  onTap: onTap(country),
+                );
               },
             );
           }
@@ -36,27 +43,24 @@ class CountryList extends StatelessWidget {
 }
 
 class CountryListItem extends StatelessWidget {
-  const CountryListItem({this.country});
+  const CountryListItem({this.country, this.trailing, this.onTap});
 
   final Country country;
+  final Widget trailing;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
+    final code = country.code.toLowerCase();
+
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(
-          'https://flagcdn.com/w160/${country.code.toLowerCase()}.png',
-        ),
+        backgroundImage: NetworkImage('https://flagcdn.com/w160/$code.png'),
         backgroundColor: Colors.grey.shade100,
       ),
       title: Text(country.name),
-      trailing: Icon(
-        Icons.lock_outlined,
-        color: Colors.black,
-      ),
-      onTap: () {
-        
-      },
+      trailing: trailing,
+      onTap: onTap,
     );
   }
 }
