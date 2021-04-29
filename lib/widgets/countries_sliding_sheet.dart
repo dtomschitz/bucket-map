@@ -29,10 +29,6 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
   final PanelController _panelController = PanelController();
   ScrollController _scrollController;
 
-  _onScrollControllerCreated(ScrollController controller) {
-    _scrollController = controller;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -47,16 +43,17 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
     return SlidingUpPanel(
       controller: _panelController,
       maxHeight: maxHeight,
-      //minHeight: 80,
       backdropEnabled: true,
       backdropColor: Colors.black,
-      onScrollControllerCreated: _onScrollControllerCreated,
+      onScrollControllerCreated: (controller) {
+        _scrollController = controller;
+      },
       onPanelClosed: () {
         _scrollController.jumpTo(0);
       },
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,
-      panelBuilder: _buildPanel,
+      panelBuilder: (controller) => _buildPanel(controller),
       collapsed: _buildHeader(),
     );
   }
@@ -87,6 +84,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       child: NotificationListener<ScrollNotification>(
+        // ignore: missing_return
         onNotification: (notification) {
           if (notification is ScrollStartNotification) {
             widget.onPanelStartScroll?.call(notification.metrics);
@@ -113,7 +111,8 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+              padding:
+                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,

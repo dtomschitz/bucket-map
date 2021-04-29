@@ -45,10 +45,6 @@ class _CountriesMapState extends State<CountriesMap> {
 
   Offset test;
 
-  double _initFabHeight;
-  double _panelHeightOpen;
-  double _panelHeightClosed = 95.0;
-
   @override
   void initState() {
     super.initState();
@@ -122,11 +118,6 @@ class _CountriesMapState extends State<CountriesMap> {
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    _initFabHeight = screenHeight * 0.12;
-    if (widget.fabHeight == null) widget.fabHeight = _initFabHeight;
-    _panelHeightOpen = screenHeight * 1;
-
     return Scaffold(
       body: PermissionBuilder(
         permission: Permission.location,
@@ -149,7 +140,7 @@ class _CountriesMapState extends State<CountriesMap> {
                 onStyleLoadedCallback: _onStyleLoadedCallback,
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 120),
+                padding: EdgeInsets.only(bottom: 196),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: AnimatedOpacity(
@@ -169,9 +160,7 @@ class _CountriesMapState extends State<CountriesMap> {
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-          bottom: widget.fabHeight >= screenHeight * 0.4
-              ? screenHeight * 0.4
-              : widget.fabHeight,
+          bottom: 180
         ),
         child: ExpandableFloatingActionButton(
           children: [

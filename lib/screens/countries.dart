@@ -30,8 +30,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
     }
 
     if (!_ignoreOnPanelSlide) {
-      print(progress);
-
       if (progress > 0.9 && !_fullScreenCountriesSheet) {
         setState(() {
           _fullScreenCountriesSheet = true;
@@ -43,13 +41,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
           _fullScreenCountriesSheet = false;
         });
       }
-
-      /*if (progress < .3) {
-        setState(() {
-          _fabHeight =
-              progress * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
-        });
-      }*/
     }
   }
 
