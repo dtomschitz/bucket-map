@@ -7,30 +7,26 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   @override
   Stream<CountriesState> mapEventToState(CountriesEvent event) async* {
     if (event is LoadCountriesEvent) {
-      yield* _fetchCountriesFromFirestore();
+      yield* _mapLoadCountriesToState();
     }
   }
 
-  Stream<CountriesState> _loadCountries() async* {
-    yield CountriesUninitialized();
+  Stream<CountriesState> _mapLoadCountriesToState() async* {
+    yield CountriesLoading();
 
-    /*List<dynamic> decodedJson = jsonDecode(await _loadCountriesAssets());
-    List<Country> countries = decodedJson.map((c) => Country.fromJson(c));
+    List<dynamic> json = jsonDecode(await _loadCountriesAssets());
+    List<Country> countries = json.map((c) => Country.fromJson(c)).toList();
 
-    print(countries.length);*/
-
-    // yield CountriesLoaded(countries);
+    yield CountriesLoaded(countries);
   }
 
   Stream<CountriesState> _fetchCountriesFromFirestore() async* {
     yield CountriesLoading();
-    QuerySnapshot countriesSnapshot = await databaseReference
-      .collection("countries")
-      .orderBy("name")
-      .get();
-    List<Country> countriesList = countriesSnapshot.docs.map<Country>((doc){
-        return Country.fromJson(doc.data());
-      }).toList();
+    QuerySnapshot countriesSnapshot =
+        await databaseReference.collection("countries").orderBy("name").get();
+    List<Country> countriesList = countriesSnapshot.docs.map<Country>((doc) {
+      return Country.fromJson(doc.data());
+    }).toList();
     yield CountriesLoaded(countriesList);
   }
 

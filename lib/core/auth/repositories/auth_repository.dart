@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:bucket_map/models/models.dart';
-import 'package:bucket_map/utils/cache.dart';
+import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
+
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
@@ -31,14 +32,14 @@ class AuthenticationRepository {
   /// User cache key.
   /// Should only be used for testing purposes.
   @visibleForTesting
-  static const userCacheKey = '__user_cache_key__';
+  static const userCacheKey = '__user_cache__';
 
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
   ///
   /// Emits [User.anonymous] if the user is not authenticated.
   Stream<User> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
+    return _firebaseAuth.userChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.anonymous : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
