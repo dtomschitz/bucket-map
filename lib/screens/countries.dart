@@ -68,7 +68,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        
         backgroundColor: _fullScreenCountriesSheet
             ? Theme.of(context).appBarTheme.backgroundColor
             : Colors.transparent,

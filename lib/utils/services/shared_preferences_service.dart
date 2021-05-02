@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesKeys {
@@ -10,6 +9,7 @@ class SharedPreferencesKeys {
 class SharedPreferencesService {
   static SharedPreferencesService _instance;
   static SharedPreferences _preferences;
+  static Map<String, dynamic> _settings;
 
   SharedPreferencesService._internal();
 
@@ -25,6 +25,11 @@ class SharedPreferencesService {
     return _instance;
   }
 
+  Future<void> loadSettings() async {
+    final settings = _preferences.getString(SharedPreferencesKeys.settings);
+    _settings = settings != null ? jsonDecode(settings) : null;
+  }
+
   Future<void> setSettings(Map<String, dynamic> json) async {
     await _preferences.setString(
       SharedPreferencesKeys.settings,
@@ -33,7 +38,6 @@ class SharedPreferencesService {
   }
 
   Map<String, dynamic> get settings {
-    final settings = _preferences.getString(SharedPreferencesKeys.settings);
-    return settings != null ? jsonDecode(settings) : null;
+    return _settings;
   }
 }

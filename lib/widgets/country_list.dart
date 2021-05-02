@@ -27,9 +27,9 @@ class CountryList extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final country = countries[index];
                 return CountryListItem(
-                  country: countries[index],
-                  trailing: buildTrailing(country),
-                  onTap: onTap(country),
+                  country: country,
+                  //trailing: buildTrailing(country),
+                  //onTap: onTap(country),
                 );
               },
             );
@@ -59,7 +59,7 @@ class CountryListItem extends StatelessWidget {
         backgroundColor: Colors.grey.shade100,
       ),
       title: Text(country.name),
-      trailing: trailing,
+      //trailing: trailing,
       onTap: onTap,
     );
   }

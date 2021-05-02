@@ -31,7 +31,7 @@ dependencies:
   sliding_up_panel:
     path: packages/sliding_up_panel
   mapbox_gl:
-    path: mapbox
+    path: packages/mapbox
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,22 @@ part of blocs.settings;
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc() : super(SettingsState(Settings()));
+  //
+  /*SettingsBloc({
+    @required SettingsRepository settingsRepository,
+  })  : _settingsRepository = settingsRepository,
+        super(
+          settingsRepository.currentUser.isNotAnonymous
+              ? AppState.authenticated(authenticationRepository.currentUser)
+              : const AppState.unauthenticated(),
+        ) {
+    _userSubscription = _authenticationRepository.user.listen((user) {
+      add(AppUserChanged(user));
+    });
+  }*/
+
+  //final SettingsRepository _settingsRepository;
+  //StreamSubscription<Settings> _settingsSubscription;
 
   @override
   Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
