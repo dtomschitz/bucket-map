@@ -19,9 +19,6 @@ class Themes {
         )
       ),*/
       brightness: Brightness.dark,
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        
-      ),
     );
   }
 
