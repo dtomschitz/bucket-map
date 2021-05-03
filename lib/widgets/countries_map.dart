@@ -58,7 +58,7 @@ class _CountriesMapState extends State<CountriesMap> {
 
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
-    
+
     allPins.add(widget.createdPin.options);
     _mapController.addSymbols(allPins);
   }
@@ -139,29 +139,34 @@ class _CountriesMapState extends State<CountriesMap> {
                 onMapCreated: _onMapCreated,
                 onStyleLoadedCallback: _onStyleLoadedCallback,
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 196),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: AnimatedOpacity(
-                    opacity: true ? 1.0 : 0.0,
-                    duration: Duration(milliseconds: 250),
-                    child: FloatingActionButton(
-                      child: Icon(Icons.near_me_outlined),
-                      mini: true,
-                      onPressed: _moveCameraToCurrentLocation,
-                    ),
-                  ),
-                ),
-              )
+              PermissionBuilder(
+                permission: Permission.location,
+                builder: (context, snapshot) {
+                  if (snapshot.data == PermissionStatus.granted) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 196),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: AnimatedOpacity(
+                          opacity: true ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 250),
+                          child: FloatingActionButton(
+                            child: Icon(Icons.near_me_outlined),
+                            mini: true,
+                            onPressed: _moveCameraToCurrentLocation,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
             ],
           );
         },
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: 180
-        ),
+        padding: EdgeInsets.only(bottom: 180),
         child: ExpandableFloatingActionButton(
           children: [
             FloatingActionButton(

@@ -5,7 +5,6 @@ import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
 
-
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
 
@@ -39,7 +38,7 @@ class AuthenticationRepository {
   ///
   /// Emits [User.anonymous] if the user is not authenticated.
   Stream<User> get user {
-    return _firebaseAuth.userChanges().map((firebaseUser) {
+    return _firebaseAuth.authStateChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.anonymous : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
@@ -55,14 +54,17 @@ class AuthenticationRepository {
   /// Creates a new user with the provided [email] and [password].
   ///
   /// Throws a [SignUpFailure] if an exception occurs.
-  Future<void> signUp(
-      {@required String email, @required String password}) async {
+  Future<void> signUp({
+    @required String email,
+    @required String password,
+  }) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-    } on Exception {
+    } on Exception catch (e) {
+      print(e);
       throw SignUpFailure();
     }
   }

@@ -38,7 +38,7 @@ class PermissionBuilder extends StatelessWidget {
           }
         }
 
-        return this.builder(context, snapshot);
+        return this.builder(context, snapshot) ?? Container();
       },
     );
   }
