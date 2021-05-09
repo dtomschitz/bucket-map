@@ -1,6 +1,11 @@
+import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 class CountriesScreen extends StatefulWidget {
   @override
@@ -9,6 +14,8 @@ class CountriesScreen extends StatefulWidget {
 
 class _CountriesScreenState extends State<CountriesScreen> {
   PanelController _panelController;
+  TextEditingController _textController;
+  MapboxMapController _mapController;
 
   double _screenHeight;
   double _initFabHeight;
@@ -19,6 +26,29 @@ class _CountriesScreenState extends State<CountriesScreen> {
   bool _fullScreenCountriesSheet = false;
   bool _elevateAppHeader = false;
   bool _ignoreOnPanelSlide = false;
+
+  _onListItemEyeTap(Country country){
+    print(country.name);
+    _fullScreenCountriesSheet = false;
+    _panelController.close();
+    _mapController.moveCamera(CameraUpdate.newLatLngZoom(country.latLng, 3));
+    FocusScope.of(context).unfocus();
+    _textController.clear();
+    BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
+  }
+
+  _onSearchBarFocused(){
+    _fullScreenCountriesSheet = true;
+    _panelController.open();
+  }
+
+  _onMapCreated(MapboxMapController controller){
+    _mapController = controller;
+  }
+
+  _onTextFieldCreated(TextEditingController controller) {
+    _textController = controller;
+  }
 
   _onSlidingSheetCreated(PanelController controller) {
     _panelController = controller;
@@ -91,12 +121,17 @@ class _CountriesScreenState extends State<CountriesScreen> {
                         _ignoreOnPanelSlide = true;
                       });
                       _panelController.close();
+                      _textController.clear();
+                      BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
+                      FocusScope.of(context).unfocus();
                     },
                   ),
                 ),
               ),
               Expanded(
                 child: CountriesSearchBar(
+                  onTextFieldCreated: _onTextFieldCreated,
+                  onFocused: _onSearchBarFocused,
                   type: _fullScreenCountriesSheet
                       ? CountriesSearchBarType.flat
                       : CountriesSearchBarType.elevated,
@@ -107,10 +142,13 @@ class _CountriesScreenState extends State<CountriesScreen> {
         ),
       ),
       body: CountriesSlidingSheet(
-        body: CountriesMap(fabHeight: _fabHeight),
+        body: CountriesMap(
+          fabHeight: _fabHeight,
+          onMapCreated: _onMapCreated),
         onSlidingSheetCreated: _onSlidingSheetCreated,
         onPanelSlide: _onPanelSlide,
         onPanelUpdateScroll: _onPanelUpdateScroll,
+        onListItemEyeTap: _onListItemEyeTap,
       ),
     );
   }

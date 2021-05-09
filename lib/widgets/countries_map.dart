@@ -8,10 +8,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:mapbox_gl/mapbox_gl.dart';
+
 class CountriesMap extends StatefulWidget {
   double fabHeight;
   Symbol createdPin;
-  CountriesMap({Key key, this.fabHeight, this.createdPin}) : super(key: key);
+  final Function(MapboxMapController controller) onMapCreated;
+  CountriesMap({Key key, this.fabHeight, this.createdPin, this.onMapCreated})
+      : super(key: key);
 
   @override
   State createState() => _CountriesMapState();
@@ -136,7 +140,8 @@ class _CountriesMapState extends State<CountriesMap> {
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
                 myLocationRenderMode: MyLocationRenderMode.GPS,
                 myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-                onMapCreated: _onMapCreated,
+                // onMapCreated: _onMapCreated,
+                onMapCreated: widget.onMapCreated,
                 onStyleLoadedCallback: _onStyleLoadedCallback,
               ),
               PermissionBuilder(

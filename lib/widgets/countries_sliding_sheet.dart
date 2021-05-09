@@ -1,18 +1,20 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesSlidingSheet extends StatefulWidget {
-  CountriesSlidingSheet({
-    this.body,
-    this.onSlidingSheetCreated,
-    this.onPanelSlide,
-    this.onPanelStartScroll,
-    this.onPanelUpdateScroll,
-    this.onPanelEndScroll,
-  });
+  CountriesSlidingSheet(
+      {this.body,
+      this.onSlidingSheetCreated,
+      this.onPanelSlide,
+      this.onPanelStartScroll,
+      this.onPanelUpdateScroll,
+      this.onPanelEndScroll,
+      this.onListItemEyeTap,
+      this.onListItemTap});
 
   final Widget body;
   final Function(PanelController controller) onSlidingSheetCreated;
@@ -20,6 +22,8 @@ class CountriesSlidingSheet extends StatefulWidget {
   final Function(ScrollMetrics metrics) onPanelStartScroll;
   final Function(ScrollMetrics metrics) onPanelUpdateScroll;
   final Function(ScrollMetrics metrics) onPanelEndScroll;
+  final Function(Country country) onListItemEyeTap;
+  final Function(Country country) onListItemTap;
 
   @override
   State createState() => _CountriesSlidingSheetState();
@@ -99,6 +103,19 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
         },
         child: CountryList(
           controller: controller,
+          onTap: widget.onListItemTap,
+          buildTrailing: (Country country) {
+            return Wrap(spacing: 12, children: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.remove_red_eye, color: Colors.grey),
+                  onPressed: () => widget.onListItemEyeTap(country)),
+              IconButton(
+                  icon: Icon(
+                Icons.lock,
+                color: Colors.grey,
+              ))
+            ]);
+          },
         ),
       ),
     );

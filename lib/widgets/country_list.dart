@@ -1,23 +1,25 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountryList extends StatelessWidget {
-  const CountryList({Key key, this.controller, this.buildTrailing, this.onTap}) : super(key: key);
+  const CountryList({Key key, this.controller, this.buildTrailing, this.onTap})
+      : super(key: key);
 
   final ScrollController controller;
-  final Widget Function(Country country) buildTrailing;
+  final Wrap Function(Country country) buildTrailing;
   final Function(Country country) onTap;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: BlocBuilder<CountriesBloc, CountriesState>(
+      child: BlocBuilder<FilteredCountriesBloc, FilteredCountriesState>(
         builder: (context, state) {
-          if (state is CountriesLoaded) {
-            List<Country> countries = state.countries;
+          if (state is FilteredCountriesLoaded) {
+            List<Country> countries = state.filteredCountries;
             return ListView.builder(
               key: GlobalKeys.countriesSheetList,
               controller: controller,
@@ -28,7 +30,8 @@ class CountryList extends StatelessWidget {
                 final country = countries[index];
                 return CountryListItem(
                   country: country,
-                  //trailing: buildTrailing(country),
+                  onTap: onTap,
+                  trailing: buildTrailing(country),
                   //onTap: onTap(country),
                 );
               },
@@ -59,8 +62,9 @@ class CountryListItem extends StatelessWidget {
         backgroundColor: Colors.grey.shade100,
       ),
       title: Text(country.name),
-      //trailing: trailing,
-      onTap: onTap,
+      trailing: trailing,
+      // onTap: () => onTap(country),
+      // onTap: onTap,
     );
   }
 }
