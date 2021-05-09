@@ -1,4 +1,8 @@
-library blocs.countries;
+library blocs.filtered_countries;
+import 'dart:async';
+import 'dart:io';
+
+import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +13,6 @@ import 'dart:convert';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
 
-part 'countries_bloc.dart';
-part 'countries_events.dart';
-part 'countries_state.dart';
+part 'filtered_countries_bloc.dart';
+part 'filtered_countries_events.dart';
+part 'filtered_countries_state.dart';

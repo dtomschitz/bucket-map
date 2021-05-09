@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/core/settings/settings_screen.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/utils/interval.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
@@ -17,6 +19,7 @@ class CountriesScreen extends StatefulWidget {
 class _CountriesScreenState extends State<CountriesScreen>
     with TickerProviderStateMixin {
   SheetController _sheetController;
+  MapboxMapController _mapController;
 
   double _screenHeight;
   double _initFabHeight;
@@ -26,6 +29,14 @@ class _CountriesScreenState extends State<CountriesScreen>
 
   bool _showCloseCountriesSheetButton = false;
   bool _fullScreenCountriesSheet = false;
+
+  _onClick(Country country){
+    if(!_fullScreenCountriesSheet){
+      _mapController.moveCamera(CameraUpdate.newLatLngZoom(
+      country.latLng, 3));
+    }
+    // TODO: else unlock country
+  }
 
   @override
   void initState() {
@@ -123,6 +134,9 @@ class _CountriesScreenState extends State<CountriesScreen>
           body: Stack(
             children: [
               CountriesMap(
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                },
                 fabHeight: _fabHeight,
               ),
               CountriesSlidingSheet(
@@ -183,12 +197,15 @@ class _CountriesScreenState extends State<CountriesScreen>
                         ),
                       ),
                       Expanded(
-                        child: CountriesSearchBar(
-                          type: _fullScreenCountriesSheet
-                              ? CountriesSearchBarType.flat
-                              : CountriesSearchBarType.elevated,
-                        ),
-                      )
+                          // child: CountriesSearchBar(
+                          // type: _fullScreenCountriesSheet
+                          //     ? CountriesSearchBarType.flat
+                          //     : CountriesSearchBarType.elevated,
+                          // ),)
+                          child: FloatingCountriesSearchBar(
+                        mapController: _mapController,
+                        onClick: _onClick,
+                      ))
                     ],
                   ),
                 ),

@@ -11,14 +11,15 @@ import 'package:permission_handler/permission_handler.dart';
 class CountriesMap extends StatefulWidget {
   double fabHeight;
   Symbol createdPin;
-  CountriesMap({Key key, this.fabHeight, this.createdPin}) : super(key: key);
+  final Function(MapboxMapController controller) onMapCreated;
+  CountriesMap({Key key, this.fabHeight, this.createdPin, this.onMapCreated}) : super(key: key);
 
   @override
   State createState() => _CountriesMapState();
 }
 
 class _CountriesMapState extends State<CountriesMap> {
-  MapboxMapController _mapController;
+  MapboxMapController _mapController;  
 
   static final initialCameraPosition = CameraPosition(
     target: LatLng(0.0, 0.0),
@@ -62,10 +63,6 @@ class _CountriesMapState extends State<CountriesMap> {
 
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
-    
-    allPins.add(widget.createdPin.options);
-    _mapController.addSymbols(allPins);
-    print("test");
   }
 
   void _onStyleLoadedCallback() {
@@ -146,7 +143,7 @@ class _CountriesMapState extends State<CountriesMap> {
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
                 myLocationRenderMode: MyLocationRenderMode.GPS,
                 myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-                onMapCreated: _onMapCreated,
+                onMapCreated: widget.onMapCreated,
                 onStyleLoadedCallback: _onStyleLoadedCallback,
               ),
               Padding(
