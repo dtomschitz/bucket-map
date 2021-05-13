@@ -1,20 +1,18 @@
+import 'package:bucket_map/core/global_keys.dart';
+import 'package:bucket_map/screens/create_pin.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
+  static Page page() => MaterialPage<void>(child: CountriesScreen());
+
   @override
   State createState() => _CountriesScreenState();
 }
 
 class _CountriesScreenState extends State<CountriesScreen> {
   PanelController _panelController;
-
-  double _screenHeight;
-  double _initFabHeight;
-  double _fabHeight;
-  double _panelHeightOpen;
-  double _panelHeightClosed = 95.0;
 
   bool _fullScreenCountriesSheet = false;
   bool _elevateAppHeader = false;
@@ -60,18 +58,21 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenHeight = MediaQuery.of(context).size.height;
-    _initFabHeight = _screenHeight * 0.2;
-    if (_fabHeight == null) _fabHeight = _initFabHeight;
-    _panelHeightOpen = _screenHeight * 1;
+    final appBarBackgroundColor = _fullScreenCountriesSheet
+        ? Theme.of(context).appBarTheme.backgroundColor
+        : Colors.transparent;
+
+    final appBarElevation = _elevateAppHeader ? 8.0 : 0.0;
+
+    final searchBarType = _fullScreenCountriesSheet
+        ? CountriesSearchBarType.flat
+        : CountriesSearchBarType.elevated;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: _fullScreenCountriesSheet
-            ? Theme.of(context).appBarTheme.backgroundColor
-            : Colors.transparent,
-        elevation: _elevateAppHeader ? 8.0 : 0.0,
+        backgroundColor: appBarBackgroundColor,
+        elevation: appBarElevation,
         title: Padding(
           padding: EdgeInsets.only(top: 16, bottom: 16),
           child: Row(
@@ -97,9 +98,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
               ),
               Expanded(
                 child: CountriesSearchBar(
-                  type: _fullScreenCountriesSheet
-                      ? CountriesSearchBarType.flat
-                      : CountriesSearchBarType.elevated,
+                  type: searchBarType,
                 ),
               )
             ],
@@ -107,10 +106,43 @@ class _CountriesScreenState extends State<CountriesScreen> {
         ),
       ),
       body: CountriesSlidingSheet(
-        body: CountriesMap(fabHeight: _fabHeight),
+        body: Stack(
+          children: [
+            CountriesMap(key: GlobalKeys.countriesMap),
+            CreatePinButton()
+            ,
+          ],
+        ),
         onSlidingSheetCreated: _onSlidingSheetCreated,
         onPanelSlide: _onPanelSlide,
         onPanelUpdateScroll: _onPanelUpdateScroll,
+      ),
+    );
+  }
+}
+
+class CreatePinButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 32,
+          right: 16,
+        ),
+        child: FloatingActionButton(
+          child: Icon(Icons.create),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (context) => CreatePinScreen(),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

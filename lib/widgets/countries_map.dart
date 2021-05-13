@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
-import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,86 +10,100 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CountriesMap extends StatefulWidget {
-  double fabHeight;
-  Symbol createdPin;
-  CountriesMap({Key key, this.fabHeight, this.createdPin}) : super(key: key);
+  const CountriesMap({
+    Key key,
+    this.controller,
+    this.onMapClick,
+    this.locationPadding,
+    this.locationAlignment,
+  }) : super(key: key);
+
+  final CountriesMapController controller;
+
+  final Function(Point<double>, LatLng) onMapClick;
+
+  final EdgeInsets locationPadding;
+  final Alignment locationAlignment;
 
   @override
   State createState() => _CountriesMapState();
 }
 
-class _CountriesMapState extends State<CountriesMap> {
+class _CountriesMapState extends State<CountriesMap>
+    with TickerProviderStateMixin {
   MapboxMapController _mapController;
-
-  static final initialCameraPosition = CameraPosition(
-    target: LatLng(0.0, 0.0),
-  );
-
-  static final LatLng center = const LatLng(-33.86711, 151.1947171);
-
-  int _symbolCount = 0;
-  Symbol _selectedSymbol;
-
-  bool modifyPin;
-
-  bool show = false;
-
-  double offset = 0;
-
-  double height;
-
-  double screenHeight;
-
-  bool modfiyPin = false;
-
-  List<SymbolOptions> allPins = [];
-
-  Offset test;
+  AnimationController _animationController;
+  Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    this.modifyPin = false;
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 250),
+      vsync: this,
+    );
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
+
+    CountriesMapController _controller = widget.controller;
+    if (_controller != null) {
+      _controller.setCountriesFilter = _setCountriesFilter;
+      _controller.animateCamera = _animateCamera;
+      _controller.moveCameraToPosition = _moveCameraToPosition;
+      _controller.addPin = _addPin;
+      _controller.removePin = _removePin;
+    }
   }
 
   @override
   void dispose() {
+    _animationController.dispose();
     super.dispose();
   }
 
-  void _onMapCreated(MapboxMapController controller) {
-    _mapController = controller;
-
-    allPins.add(widget.createdPin.options);
-    _mapController.addSymbols(allPins);
-  }
-
-  void _onStyleLoadedCallback() {
-    _mapController.setFilter(
+  Future<bool> _setCountriesFilter(List<String> countryCodes) {
+    return _mapController.setFilter(
       'country-boundaries',
       [
         "match",
         ["get", "iso_3166_1_alpha_3"],
-        [
-          "NLD",
-          "AFG",
-          "ALA",
-          "ALB",
-          "ASM",
-          "ATA",
-          "AIA",
-          "BHR",
-          "BGD",
-          "BLR",
-          "BEL",
-          "BWA",
-          "BRA",
-          "BES"
-        ],
+        countryCodes,
         true,
         false
       ],
     );
+  }
+
+  Future<bool> _moveCameraToPosition(LatLng position) {
+    return _animateCamera(CameraUpdate.newLatLngZoom(
+      position,
+      13,
+    ));
+  }
+
+  Future<bool> _animateCamera(CameraUpdate cameraUpdate) {
+    return _mapController.animateCamera(cameraUpdate);
+  }
+
+  Future<Symbol> _addPin(LatLng geometry, {bool clearBefore}) {
+    if (clearBefore) {
+      _mapController.clearSymbols();
+    }
+
+    return _mapController.addSymbol(SymbolOptions(
+      geometry: geometry,
+      iconImage: "airport-15",
+      iconSize: 1.3,
+      draggable: true,
+    ));
+  }
+
+  Future<void> _removePin(Symbol symbol) {
+    return _mapController.removeSymbol(symbol);
   }
 
   _moveCameraToCurrentLocation() async {
@@ -102,87 +117,93 @@ class _CountriesMapState extends State<CountriesMap> {
     }
   }
 
-  gotoCreatePin(BuildContext context) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreatePinScreen()),
-    );
-
-    // After the Selection Screen returns a result, hide any previous snackbars
-    // and show the new result.
-    setState(() {
-      allPins.add(result.options);
-    });
-    _mapController.addSymbols(allPins);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PermissionBuilder(
-        permission: Permission.location,
-        builder: (context, snapshot) {
-          return Stack(
-            children: [
-              MapboxMap(
+    final locationPadding = widget.locationPadding ??
+        EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 32,
+        );
+    final locationAlignment =
+        widget.locationAlignment ?? Alignment.bottomCenter;
+
+    return PermissionBuilder(
+      permission: Permission.location,
+      builder: (context, snapshot) {
+        return Stack(
+          children: [
+            FadeTransition(
+              opacity: _animation,
+              child: MapboxMap(
                 key: GlobalKeys.mapbox,
                 accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
                 styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
-                initialCameraPosition: initialCameraPosition,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(0.0, 0.0),
+                ),
                 compassEnabled: false,
                 tiltGesturesEnabled: false,
                 rotateGesturesEnabled: false,
                 trackCameraPosition: true,
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
-                myLocationRenderMode: MyLocationRenderMode.GPS,
-                myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-                onMapCreated: _onMapCreated,
-                onStyleLoadedCallback: _onStyleLoadedCallback,
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                },
+                onStyleLoadedCallback: () {
+                  _animationController.forward();
+                },
+                onMapClick: widget.onMapClick,
               ),
-              PermissionBuilder(
-                permission: Permission.location,
-                builder: (context, snapshot) {
-                  if (snapshot.data == PermissionStatus.granted) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 196),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: AnimatedOpacity(
-                          opacity: true ? 1.0 : 0.0,
-                          duration: Duration(milliseconds: 250),
-                          child: FloatingActionButton(
-                            child: Icon(Icons.near_me_outlined),
-                            mini: true,
-                            onPressed: _moveCameraToCurrentLocation,
-                          ),
+            ),
+            PermissionBuilder(
+              permission: Permission.location,
+              builder: (context, snapshot) {
+                if (snapshot.data == PermissionStatus.granted) {
+                  return Padding(
+                    padding: locationPadding,
+                    child: Align(
+                      alignment: locationAlignment,
+                      child: AnimatedOpacity(
+                        opacity: true ? 1.0 : 0.0,
+                        duration: Duration(milliseconds: 250),
+                        child: FloatingActionButton(
+                          child: Icon(Icons.near_me_outlined),
+                          mini: true,
+                          onPressed: _moveCameraToCurrentLocation,
                         ),
                       ),
-                    );
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 180),
-        child: ExpandableFloatingActionButton(
-          children: [
-            FloatingActionButton(
-              heroTag: "btn1",
-              child: Icon(Icons.create),
-              onPressed: () {
-                gotoCreatePin(context);
+                    ),
+                  );
+                }
               },
             ),
-            FloatingActionButton(heroTag: "btn2", onPressed: () {}),
-            FloatingActionButton(heroTag: "btn3", onPressed: () {}),
           ],
-          distance: 70.0,
-          initialOpen: false,
-        ),
-      ),
+        );
+      },
     );
   }
+}
+
+class CountriesMapController {
+  /// Starts an animated change of the map camera position
+  /// to the given [LatLng] position.
+  ///
+  /// The returned [Future] completes after the change has been started on the
+  /// platform side.
+  /// It returns true if the camera was successfully moved and
+  /// false if the movement was canceled.
+  Future<bool> Function(LatLng position) moveCameraToPosition;
+
+  /// Starts an animated change of the map camera position.
+  ///
+  /// The returned [Future] completes after the change has been started on the
+  /// platform side.
+  /// It returns true if the camera was successfully moved and
+  /// false if the movement was canceled.
+  Future<bool> Function(CameraUpdate) animateCamera;
+
+  Future<bool> Function(List<String> countryCodes) setCountriesFilter;
+
+  Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
+
+  Future<void> Function(Symbol symbol) removePin;
 }
