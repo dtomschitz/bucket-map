@@ -150,10 +150,9 @@ class _CountriesMapState extends State<CountriesMap>
                 rotateGesturesEnabled: false,
                 trackCameraPosition: true,
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
-                // onMapCreated: (controller) {
-                //   _mapController = controller;
-                // },
-                onMapCreated: widget.onMapCreated,
+                onMapCreated: (widget.onMapCreated != null) ? widget.onMapCreated : (controller) {
+                  _mapController = controller;
+                },
                 onStyleLoadedCallback: () {
                   _animationController.forward();
                 },
