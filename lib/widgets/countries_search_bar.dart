@@ -18,6 +18,7 @@ class CountriesSearchBar extends StatefulWidget {
 
 class _CountriesSearchBarState extends State<CountriesSearchBar> {
   final TextEditingController _textEditingController = TextEditingController();
+  bool isFocused = false;
 
   @override
   void initState() {
@@ -46,33 +47,40 @@ class _CountriesSearchBarState extends State<CountriesSearchBar> {
               padding: EdgeInsets.only(right: 16),
               child: Icon(Icons.search_outlined),
             ),
-            // Text('Search')
             Expanded(
                 child: FocusScope(
                     child: Focus(
               onFocusChange: (focus) {
-                if (focus) {
-                  widget.onFocused();
-                }
+                setState(() {
+                  isFocused = focus;
+                  if (focus) {
+                    widget.onFocused();
+                  }
+                });
               },
               child: TextField(
                 controller: _textEditingController,
-                onChanged: (inp) {
+                onChanged: (searchString) {
                   BlocProvider.of<FilteredCountriesBloc>(context)
-                      .add(FilterUpdated(inp));
+                      .add(FilterUpdated(searchString));
                 },
                 decoration: InputDecoration(
-                  labelText: 'Search country',
+                  labelText: isFocused ? null : 'Land suchen',
                   border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      _textEditingController.clear();
-                      BlocProvider.of<FilteredCountriesBloc>(context)
-                          .add(FilterUpdated(""));
-                    },
-                    icon: Icon(Icons.clear),
-                  ),
+                  suffixIcon: isFocused
+                      ? IconButton(
+                          onPressed: () {
+                            FocusScope.of(context).unfocus();
+                            _textEditingController.clear();
+                            BlocProvider.of<FilteredCountriesBloc>(context)
+                                .add(FilterUpdated(""));
+                          },
+                          icon: Icon(
+                            Icons.clear,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : null,
                 ),
               ),
             )))

@@ -4,21 +4,24 @@ import 'package:permission_handler/permission_handler.dart';
 /// Widget that builds itself based on the latest snapshot of interaction with
 /// a [Permission].
 class PermissionBuilder extends StatelessWidget {
-  const PermissionBuilder(
-      {Key key,
-      this.permission,
-      this.builder,
-      this.autoRequestPermission = true})
-      : super(key: key);
+  const PermissionBuilder({
+    Key key,
+    this.permission,
+    this.builder,
+    this.autoRequestPermission = true,
+  }) : super(key: key);
 
-  /// The [Permission] of which the current status is connect to the inherited 
+  /// The [Permission] of which the current status is connect to the inherited
   /// [FutureBuilder] of this widget.
   final Permission permission;
 
   /// The build strategy currently used by this builder.
-  final AsyncWidgetBuilder<PermissionStatus> builder;
+  final dynamic Function(
+    BuildContext context,
+    AsyncSnapshot<PermissionStatus> snapshot,
+  ) builder;
 
-  /// If true the [Permission] will get automatically requested. In case the 
+  /// If true the [Permission] will get automatically requested. In case the
   /// [Permission] is denied permanently the app settings page will be opened.
   ///
   /// Defaults to true.

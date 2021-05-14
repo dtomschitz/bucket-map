@@ -72,23 +72,3 @@ Stream<FilteredCountriesState> _mapFilterUpdatedToState(
     return super.close();
   }
 }
-
-  // @override
-//   Stream<FilteredCountriesState> mapEventToState(FilteredCountriesEvent event) async* {
-//     if (event is FilterCountriesEvent) {
-//       yield* _loadFilteredCountries(event.filterString);
-//     }
-//   }
-
-//   Stream<FilteredCountriesState> _loadFilteredCountries(String filterString) async* {
-//     yield FilteredCountriesFiltering();
-
-//     if(countriesBloc.state is CountriesLoaded){
-//     List<Country> filteredList = (countriesBloc.state as CountriesLoaded).countries
-//                 .where(
-//                     (p) => p.name.toLowerCase().contains(filterString.toLowerCase()))
-//                 .toList();
-//     yield FilteredCountriesFiltered(filteredList);
-//     }
-//   }
-// }

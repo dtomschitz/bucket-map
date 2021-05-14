@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CountrySearchScreen extends SearchDelegate {
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
