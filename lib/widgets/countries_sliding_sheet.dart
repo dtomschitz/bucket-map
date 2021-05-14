@@ -114,7 +114,7 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
@@ -123,7 +123,6 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
                   Text(
                     'Freigeschaltene Länder',
                     style: TextStyle(
-                      color: Colors.black,
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
                     ),

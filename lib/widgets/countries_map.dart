@@ -35,6 +35,9 @@ class _CountriesMapState extends State<CountriesMap>
   AnimationController _animationController;
   Animation<double> _animation;
 
+  CameraPosition _currentCameraPosition;
+  bool _ignoreCameraUpdate = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +66,20 @@ class _CountriesMapState extends State<CountriesMap>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  _onMapCreated(MapboxMapController controller) {
+    _mapController = controller;
+    _mapController.addListener(() {
+      if (_currentCameraPosition != _mapController.cameraPosition &&
+          !_ignoreCameraUpdate) {
+        setState(() {
+          print('dawd');
+          _currentCameraPosition = null;
+          _ignoreCameraUpdate = true;
+        });
+      }
+    });
   }
 
   Future<bool> _setCountriesFilter(List<String> countryCodes) {
@@ -113,7 +130,12 @@ class _CountriesMapState extends State<CountriesMap>
         LatLng(positon.latitude, positon.longitude),
         13,
       );
+      //setState(() => _ignoreCameraUpdate = true);
       await _mapController.animateCamera(cameraUpdate);
+      setState(() {
+        _currentCameraPosition = _mapController.cameraPosition;
+       // _ignoreCameraUpdate = false;
+      });
     }
   }
 
@@ -145,9 +167,7 @@ class _CountriesMapState extends State<CountriesMap>
                 rotateGesturesEnabled: false,
                 trackCameraPosition: true,
                 myLocationEnabled: snapshot.data == PermissionStatus.granted,
-                onMapCreated: (controller) {
-                  _mapController = controller;
-                },
+                onMapCreated: _onMapCreated,
                 onStyleLoadedCallback: () {
                   _animationController.forward();
                 },
@@ -163,7 +183,7 @@ class _CountriesMapState extends State<CountriesMap>
                     child: Align(
                       alignment: locationAlignment,
                       child: AnimatedOpacity(
-                        opacity: true ? 1.0 : 0.0,
+                        opacity: _currentCameraPosition == null ? 1.0 : 0.0,
                         duration: Duration(milliseconds: 250),
                         child: FloatingActionButton(
                           child: Icon(Icons.near_me_outlined),
