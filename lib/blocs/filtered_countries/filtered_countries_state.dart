@@ -11,7 +11,6 @@ abstract class FilteredCountriesState extends Equatable {
 
 class FilteredCountriesLoading extends FilteredCountriesState {}
 
-
 class FilteredCountriesLoaded extends FilteredCountriesState {
   final List<Country> filteredCountries;
   final String filter;

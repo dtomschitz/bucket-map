@@ -1,9 +1,6 @@
 part of blocs.filtered_countries;
 
 class FilteredCountriesBloc extends Bloc<FilteredCountriesEvent, FilteredCountriesState> {
-  final CountriesBloc countriesBloc;
-  StreamSubscription countriesSubscription;
-
   FilteredCountriesBloc({@required this.countriesBloc}) 
     : super(
       countriesBloc.state is CountriesLoaded
@@ -11,7 +8,7 @@ class FilteredCountriesBloc extends Bloc<FilteredCountriesEvent, FilteredCountri
             (countriesBloc.state as CountriesLoaded).countries,
             ""
         )
-        : FilteredCountriesLoading()){
+        : FilteredCountriesLoading()) {
           countriesSubscription = countriesBloc.stream.listen((state) { 
             if (state is CountriesLoaded){
               add(CountriesUpdated((countriesBloc.state as CountriesLoaded).countries));
@@ -19,7 +16,8 @@ class FilteredCountriesBloc extends Bloc<FilteredCountriesEvent, FilteredCountri
           });
         }
 
-
+  final CountriesBloc countriesBloc;
+  StreamSubscription countriesSubscription;
 
   @override
   Stream<FilteredCountriesState> mapEventToState(FilteredCountriesEvent event) async* {
@@ -51,6 +49,7 @@ Stream<FilteredCountriesState> _mapFilterUpdatedToState(
     final visibilityFilter = state is FilteredCountriesLoaded
         ? (state as FilteredCountriesLoaded).filter
         : "";
+
     yield FilteredCountriesLoaded(
       _mapCountriesToFilteredCountries(
         (countriesBloc.state as CountriesLoaded).countries,
@@ -72,23 +71,3 @@ Stream<FilteredCountriesState> _mapFilterUpdatedToState(
     return super.close();
   }
 }
-
-  // @override
-//   Stream<FilteredCountriesState> mapEventToState(FilteredCountriesEvent event) async* {
-//     if (event is FilterCountriesEvent) {
-//       yield* _loadFilteredCountries(event.filterString);
-//     }
-//   }
-
-//   Stream<FilteredCountriesState> _loadFilteredCountries(String filterString) async* {
-//     yield FilteredCountriesFiltering();
-
-//     if(countriesBloc.state is CountriesLoaded){
-//     List<Country> filteredList = (countriesBloc.state as CountriesLoaded).countries
-//                 .where(
-//                     (p) => p.name.toLowerCase().contains(filterString.toLowerCase()))
-//                 .toList();
-//     yield FilteredCountriesFiltered(filteredList);
-//     }
-//   }
-// }

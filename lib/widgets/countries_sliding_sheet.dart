@@ -5,25 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+enum CountriesSlidingSheetMode { unlock, search }
+
 class CountriesSlidingSheet extends StatefulWidget {
-  CountriesSlidingSheet(
-      {this.body,
-      this.onSlidingSheetCreated,
-      this.onPanelSlide,
-      this.onPanelStartScroll,
-      this.onPanelUpdateScroll,
-      this.onPanelEndScroll,
-      this.onListItemEyeTap,
-      this.onListItemTap});
+  CountriesSlidingSheet({
+    this.body,
+    this.mode,
+    this.onSlidingSheetCreated,
+    this.onPanelSlide,
+    this.onPanelStartScroll,
+    this.onPanelUpdateScroll,
+    this.onPanelEndScroll,
+    this.onCountryTap,
+  });
 
   final Widget body;
+  final CountriesSlidingSheetMode mode;
+
   final Function(PanelController controller) onSlidingSheetCreated;
   final Function(double progress) onPanelSlide;
   final Function(ScrollMetrics metrics) onPanelStartScroll;
   final Function(ScrollMetrics metrics) onPanelUpdateScroll;
   final Function(ScrollMetrics metrics) onPanelEndScroll;
-  final Function(Country country) onListItemEyeTap;
-  final Function(Country country) onListItemTap;
+
+  final Function(Country) onCountryTap;
 
   @override
   State createState() => _CountriesSlidingSheetState();
@@ -103,18 +108,13 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
         },
         child: CountryList(
           controller: controller,
-          onTap: widget.onListItemTap,
+          onTap: widget.onCountryTap,
           buildTrailing: (Country country) {
-            return Wrap(spacing: 12, children: <Widget>[
-              IconButton(
-                  icon: Icon(Icons.remove_red_eye, color: Colors.grey),
-                  onPressed: () => widget.onListItemEyeTap(country)),
-              IconButton(
-                  icon: Icon(
-                Icons.lock,
-                color: Colors.grey,
-              ))
-            ]);
+            if (widget.mode == CountriesSlidingSheetMode.search) {
+              return Icon(Icons.remove_red_eye, color: Colors.grey);
+            }
+
+            return Icon(Icons.lock, color: Colors.grey);
           },
         ),
       ),

@@ -10,7 +10,8 @@ class CountryList extends StatelessWidget {
       : super(key: key);
 
   final ScrollController controller;
-  final Wrap Function(Country country) buildTrailing;
+
+  final Widget Function(Country country) buildTrailing;
   final Function(Country country) onTap;
 
   @override
@@ -32,7 +33,6 @@ class CountryList extends StatelessWidget {
                   country: country,
                   onTap: onTap,
                   trailing: buildTrailing(country),
-                  //onTap: onTap(country),
                 );
               },
             );

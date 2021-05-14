@@ -4,11 +4,10 @@ abstract class FilteredCountriesEvent extends Equatable{
   const FilteredCountriesEvent();
 }
 
-
 class FilterUpdated extends FilteredCountriesEvent {
-  final String filter;
-
   const FilterUpdated(this.filter);
+
+  final String filter;
 
   @override
   List<Object> get props => [filter];
@@ -18,9 +17,9 @@ class FilterUpdated extends FilteredCountriesEvent {
 }
 
 class CountriesUpdated extends FilteredCountriesEvent {
-  final List<Country> countries;
-
   const CountriesUpdated(this.countries);
+
+  final List<Country> countries;
 
   @override
   List<Object> get props => [countries];

@@ -1,5 +1,5 @@
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
-import 'package:bucket_map/models/country.dart';
+import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,8 +13,9 @@ class CountriesScreen extends StatefulWidget {
 }
 
 class _CountriesScreenState extends State<CountriesScreen> {
+  final TextEditingController _searchTextController = TextEditingController();
+
   PanelController _panelController;
-  TextEditingController _textController;
   MapboxMapController _mapController;
 
   double _screenHeight;
@@ -27,31 +28,77 @@ class _CountriesScreenState extends State<CountriesScreen> {
   bool _elevateAppHeader = false;
   bool _ignoreOnPanelSlide = false;
 
-  _onListItemEyeTap(Country country){
-    print(country.name);
-    _fullScreenCountriesSheet = false;
-    _panelController.close();
-    _mapController.moveCamera(CameraUpdate.newLatLngZoom(country.latLng, 3));
-    FocusScope.of(context).unfocus();
-    _textController.clear();
-    BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
-  }
-
-  _onSearchBarFocused(){
+  _onSearchBarFocused() {
     _fullScreenCountriesSheet = true;
     _panelController.open();
   }
 
-  _onMapCreated(MapboxMapController controller){
+  _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
-  }
-
-  _onTextFieldCreated(TextEditingController controller) {
-    _textController = controller;
   }
 
   _onSlidingSheetCreated(PanelController controller) {
     _panelController = controller;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _screenHeight = MediaQuery.of(context).size.height;
+    _initFabHeight = _screenHeight * 0.2;
+    if (_fabHeight == null) _fabHeight = _initFabHeight;
+    _panelHeightOpen = _screenHeight * 1;
+
+    final type = _fullScreenCountriesSheet
+        ? SearchBarType.flat
+        : SearchBarType.transparent;
+
+    final backgroundColor = _fullScreenCountriesSheet
+        ? Theme.of(context).appBarTheme.backgroundColor
+        : Colors.transparent;
+
+    final elevation = _elevateAppHeader ? 8.0 : 0.0;
+
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: SearchAppBar(
+        type: type,
+        controller: _searchTextController,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        showCloseButton: _fullScreenCountriesSheet,
+        onClose: () {
+          setState(() {
+            _fullScreenCountriesSheet = false;
+            _elevateAppHeader = false;
+            _ignoreOnPanelSlide = true;
+          });
+
+          _panelController.close();
+          _searchTextController.clear();
+
+          BlocProvider.of<FilteredCountriesBloc>(context)
+              .add(FilterUpdated(""));
+        },
+        onSearchBarFocused: _onSearchBarFocused,
+      ),
+      body: CountriesSlidingSheet(
+        body: CountriesMap(fabHeight: _fabHeight, onMapCreated: _onMapCreated),
+        onSlidingSheetCreated: _onSlidingSheetCreated,
+        onPanelSlide: _onPanelSlide,
+        onPanelUpdateScroll: _onPanelUpdateScroll,
+        onCountryTap: _onCountryTap,
+      ),
+    );
+  }
+
+  _onCountryTap(Country country) {
+   print(country.name);
+    _fullScreenCountriesSheet = false;
+    _panelController.close();
+    _mapController.moveCamera(CameraUpdate.newLatLngZoom(country.latLng, 3));
+    FocusScope.of(context).unfocus();
+    _searchTextController.clear();
+    BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
   }
 
   _onPanelSlide(double progress) {
@@ -87,68 +134,152 @@ class _CountriesScreenState extends State<CountriesScreen> {
       });
     }
   }
+}
+
+enum SearchBarType { transparent, flat }
+
+class SearchAppBar extends StatelessWidget with PreferredSizeWidget {
+  SearchAppBar({
+    this.type,
+    this.controller,
+    this.backgroundColor,
+    this.elevation,
+    this.onSearchBarFocused,
+    this.onClose,
+    this.showCloseButton = false,
+    this.height = kToolbarHeight,
+  });
+
+  final SearchBarType type;
+  final TextEditingController controller;
+
+  final Color backgroundColor;
+  final double elevation;
+  final double height;
+  final bool showCloseButton;
+
+  final Function onSearchBarFocused;
+  final Function onClose;
 
   @override
   Widget build(BuildContext context) {
-    _screenHeight = MediaQuery.of(context).size.height;
-    _initFabHeight = _screenHeight * 0.2;
-    if (_fabHeight == null) _fabHeight = _initFabHeight;
-    _panelHeightOpen = _screenHeight * 1;
+    return AppBar(
+      backgroundColor: backgroundColor,
+      elevation: elevation,
+      title: Padding(
+        padding: EdgeInsets.only(top: 16, bottom: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            AnimatedContainer(
+              width: showCloseButton ? kMinInteractiveDimension : 0,
+              duration: Duration(milliseconds: 100),
+              child: Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: IconButton(
+                  icon: Icon(Icons.close_outlined),
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    onClose();
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: CountriesSearchBar(
+                type: type,
+                controller: controller,
+                onFocused: onSearchBarFocused,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: _fullScreenCountriesSheet
-            ? Theme.of(context).appBarTheme.backgroundColor
-            : Colors.transparent,
-        elevation: _elevateAppHeader ? 8.0 : 0.0,
-        title: Padding(
-          padding: EdgeInsets.only(top: 16, bottom: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              AnimatedContainer(
-                width: _fullScreenCountriesSheet ? kMinInteractiveDimension : 0,
-                duration: Duration(milliseconds: 100),
-                child: Padding(
-                  padding: EdgeInsets.only(right: 16),
-                  child: IconButton(
-                    icon: Icon(Icons.close_outlined),
-                    onPressed: () {
-                      setState(() {
-                        _fullScreenCountriesSheet = false;
-                        _elevateAppHeader = false;
-                        _ignoreOnPanelSlide = true;
-                      });
-                      _panelController.close();
-                      _textController.clear();
-                      BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
-                      FocusScope.of(context).unfocus();
+  @override
+  Size get preferredSize => Size.fromHeight(height);
+}
+
+class CountriesSearchBar extends StatelessWidget {
+  CountriesSearchBar({this.type, this.controller, this.onFocused});
+
+  final SearchBarType type;
+  final TextEditingController controller;
+  final Function onFocused;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        side: type == SearchBarType.flat
+            ? BorderSide(color: Colors.white, width: 1.0)
+            : BorderSide(color: Colors.grey, width: 1.0),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      elevation: type == SearchBarType.flat ? 4 : 0,
+      child: Container(
+        height: 46,
+        width: double.infinity,
+        padding: EdgeInsets.only(right: 16, left: 16),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Icon(Icons.search_outlined),
+            ),
+            Expanded(
+              child: FocusScope(
+                child: Focus(
+                  onFocusChange: (focus) {
+                    if (focus) onFocused();
+                  },
+                  child: CountriesTextField(
+                    controller: controller,
+                    onChange: (value) {
+                      BlocProvider.of<FilteredCountriesBloc>(context)
+                          .add(FilterUpdated(value));
+                    },
+                    onClear: () {
+                      BlocProvider.of<FilteredCountriesBloc>(context)
+                          .add(FilterUpdated(""));
                     },
                   ),
                 ),
               ),
-              Expanded(
-                child: CountriesSearchBar(
-                  onTextFieldCreated: _onTextFieldCreated,
-                  onFocused: _onSearchBarFocused,
-                  type: _fullScreenCountriesSheet
-                      ? CountriesSearchBarType.flat
-                      : CountriesSearchBarType.elevated,
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
-      body: CountriesSlidingSheet(
-        body: CountriesMap(
-          fabHeight: _fabHeight,
-          onMapCreated: _onMapCreated),
-        onSlidingSheetCreated: _onSlidingSheetCreated,
-        onPanelSlide: _onPanelSlide,
-        onPanelUpdateScroll: _onPanelUpdateScroll,
-        onListItemEyeTap: _onListItemEyeTap,
+    );
+  }
+}
+
+class CountriesTextField extends StatelessWidget {
+  CountriesTextField({this.controller, this.onChange, this.onClear});
+
+  final TextEditingController controller;
+  final Function(String value) onChange;
+  final Function() onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      onChanged: onChange,
+      decoration: InputDecoration(
+        labelText: 'Search country',
+        border: InputBorder.none,
+        suffixIcon: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            FocusScope.of(context).unfocus();
+            controller.clear();
+
+            onClear();
+          },
+        ),
       ),
     );
   }
