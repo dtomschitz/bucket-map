@@ -1,3 +1,4 @@
+import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
@@ -11,7 +12,7 @@ class CountryList extends StatelessWidget {
   final ScrollController controller;
 
   final Widget Function(Country country) buildTrailing;
-  final Function(Country country) onTap;
+  final void Function(Country country) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,8 @@ class CountryList extends StatelessWidget {
       child: BlocBuilder<FilteredCountriesBloc, FilteredCountriesState>(
         builder: (context, state) {
           if (state is FilteredCountriesLoaded) {
-            List<Country> countries = state.filteredCountries;
+            List<Country> countries = state.countries;
+
             return ListView.builder(
               key: GlobalKeys.countriesSheetList,
               controller: controller,
@@ -30,8 +32,8 @@ class CountryList extends StatelessWidget {
                 final country = countries[index];
                 return CountryListItem(
                   country: country,
-                  onTap: onTap(country),
-                  trailing: buildTrailing(country),
+                  onTap: onTap,
+                  //trailing: buildTrailing(country),
                 );
               },
             );
@@ -49,7 +51,7 @@ class CountryListItem extends StatelessWidget {
 
   final Country country;
   final Widget trailing;
-  final Function onTap;
+  final void Function(Country country) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class CountryListItem extends StatelessWidget {
       ),
       title: Text(country.name),
       trailing: trailing,
-      //onTap: onTap,
+      //onTap: () => onTap(country),
     );
   }
 }

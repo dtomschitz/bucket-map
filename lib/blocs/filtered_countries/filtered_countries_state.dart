@@ -12,19 +12,19 @@ abstract class FilteredCountriesState extends Equatable {
 class FilteredCountriesLoading extends FilteredCountriesState {}
 
 class FilteredCountriesLoaded extends FilteredCountriesState {
-  final List<Country> filteredCountries;
+  final List<Country> countries;
   final String filter;
 
   const FilteredCountriesLoaded(
-    this.filteredCountries,
+    this.countries,
     this.filter,
   );
 
   @override
-  List<Object> get props => [filteredCountries, filter];
+  List<Object> get props => [countries, filter];
 
   @override
   String toString() {
-    return 'FilteredCountriesLoadSuccess { filteredCountries: $filteredCountries, filter: $filter }';
+    return 'FilteredCountriesLoadSuccess { filteredCountries: $countries, filter: $filter }';
   }
 }

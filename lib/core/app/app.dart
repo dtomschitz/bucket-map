@@ -37,7 +37,7 @@ class App extends StatelessWidget {
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
               countriesBloc: BlocProvider.of<CountriesBloc>(context),
-            )..add(FilterUpdated("")),
+            ),
           ),
         ],
         child: AppView(),

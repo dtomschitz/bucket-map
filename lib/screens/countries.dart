@@ -62,10 +62,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
         onSlidingSheetCreated: _onSlidingSheetCreated,
         onPanelSlide: _onPanelSlide,
         onPanelUpdateScroll: _onPanelUpdateScroll,
-        onCountryTap: (country) {
-              print(country);
-
-        },
+        onCountryTap: _onCountryTap,
       ),
     );
   }
@@ -84,12 +81,12 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   _onCountryTap(Country country) {
     print(country);
-    /*_searchTextController.clear();
+    _searchTextController.clear();
     FocusScope.of(context).unfocus();
     BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
 
     _panelController.close();
-    _mapController.moveCameraToPosition(country.latLng);*/
+    _mapController.moveCameraToPosition(country.latLng);
   }
 
   _onSlidingSheetCreated(PanelController controller) {
