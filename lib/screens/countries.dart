@@ -1,12 +1,11 @@
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
+import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/screens/create_pin.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import 'package:mapbox_gl/mapbox_gl.dart';
 
 class CountriesScreen extends StatefulWidget {
   static Page page() => MaterialPage<void>(child: CountriesScreen());
@@ -16,27 +15,14 @@ class CountriesScreen extends StatefulWidget {
 }
 
 class _CountriesScreenState extends State<CountriesScreen> {
+  final CountriesMapController _mapController = new CountriesMapController();
   final TextEditingController _searchTextController = TextEditingController();
 
   PanelController _panelController;
-  MapboxMapController _mapController;
 
   bool _fullScreenCountriesSheet = false;
   bool _elevateAppHeader = false;
   bool _ignoreOnPanelSlide = false;
-
-  _onSearchBarFocused() {
-    _fullScreenCountriesSheet = true;
-    _panelController.open();
-  }
-
-  _onMapCreated(MapboxMapController controller) {
-    _mapController = controller;
-  }
-
-  _onSlidingSheetCreated(PanelController controller) {
-    _panelController = controller;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,23 +44,19 @@ class _CountriesScreenState extends State<CountriesScreen> {
         backgroundColor: backgroundColor,
         elevation: elevation,
         showCloseButton: _fullScreenCountriesSheet,
-        onClose: () {
-          setState(() {
-            _fullScreenCountriesSheet = false;
-            _elevateAppHeader = false;
-            _ignoreOnPanelSlide = true;
-          });
-
-          _panelController.close();
-          _searchTextController.clear();
-
-          BlocProvider.of<FilteredCountriesBloc>(context)
-              .add(FilterUpdated(""));
-        },
+        onClose: _onSearchBarClose,
         onSearchBarFocused: _onSearchBarFocused,
       ),
       body: CountriesSlidingSheet(
-        body: CountriesMap(fabHeight: _fabHeight, onMapCreated: _onMapCreated),
+        body: Stack(
+          children: [
+            CountriesMap(
+              key: GlobalKeys.countriesMap,
+              controller: _mapController,
+            ),
+            CreatePinButton(),
+          ],
+        ),
         onSlidingSheetCreated: _onSlidingSheetCreated,
         onPanelSlide: _onPanelSlide,
         onPanelUpdateScroll: _onPanelUpdateScroll,
@@ -83,14 +65,37 @@ class _CountriesScreenState extends State<CountriesScreen> {
     );
   }
 
-  _onCountryTap(Country country) {
-   print(country.name);
-    _fullScreenCountriesSheet = false;
+  _onSearchBarClose() {
+    setState(() {
+      _fullScreenCountriesSheet = false;
+      _elevateAppHeader = false;
+      _ignoreOnPanelSlide = true;
+    });
+
     _panelController.close();
-    _mapController.moveCamera(CameraUpdate.newLatLngZoom(country.latLng, 3));
-    FocusScope.of(context).unfocus();
     _searchTextController.clear();
+
     BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
+  }
+
+  _onSearchBarFocused() {
+    _fullScreenCountriesSheet = true;
+    _panelController.open();
+  }
+
+  _onCountryTap(Country country) async {
+    _fullScreenCountriesSheet = false;
+
+    _searchTextController.clear();
+    FocusScope.of(context).unfocus();
+    BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
+
+    await _panelController.close();
+    await _mapController.moveCameraToPosition(country.latLng);
+  }
+
+  _onSlidingSheetCreated(PanelController controller) {
+    _panelController = controller;
   }
 
   _onPanelSlide(double progress) {
@@ -100,30 +105,22 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
     if (!_ignoreOnPanelSlide) {
       if (progress > 0.9 && !_fullScreenCountriesSheet) {
-        setState(() {
-          _fullScreenCountriesSheet = true;
-        });
+        setState(() => _fullScreenCountriesSheet = true);
       }
 
       if (progress < 0.85 && _fullScreenCountriesSheet) {
-        setState(() {
-          _fullScreenCountriesSheet = false;
-        });
+        setState(() => _fullScreenCountriesSheet = false);
       }
     }
   }
 
   _onPanelUpdateScroll(ScrollMetrics metrics) {
     if (metrics.extentBefore > 1 && !_elevateAppHeader) {
-      setState(() {
-        _elevateAppHeader = true;
-      });
+      setState(() => _elevateAppHeader = true);
     }
 
     if (metrics.extentBefore < 1 && _elevateAppHeader) {
-      setState(() {
-        _elevateAppHeader = false;
-      });
+      setState(() => _elevateAppHeader = false);
     }
   }
 }
