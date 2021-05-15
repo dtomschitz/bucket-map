@@ -1,4 +1,3 @@
-import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
@@ -31,7 +30,7 @@ class CountryList extends StatelessWidget {
                 final country = countries[index];
                 return CountryListItem(
                   country: country,
-                  onTap: onTap,
+                  onTap: onTap(country),
                   trailing: buildTrailing(country),
                 );
               },
@@ -63,8 +62,7 @@ class CountryListItem extends StatelessWidget {
       ),
       title: Text(country.name),
       trailing: trailing,
-      // onTap: () => onTap(country),
-      // onTap: onTap,
+      //onTap: onTap,
     );
   }
 }

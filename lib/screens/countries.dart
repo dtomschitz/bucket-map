@@ -20,6 +20,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   PanelController _panelController;
 
+  CountriesSlidingSheetMode _mode;
   bool _fullScreenCountriesSheet = false;
   bool _elevateAppHeader = false;
   bool _ignoreOnPanelSlide = false;
@@ -38,7 +39,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: SearchAppBar(
+      appBar: CountriesSearchAppBar(
         type: type,
         controller: _searchTextController,
         backgroundColor: backgroundColor,
@@ -48,6 +49,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
         onSearchBarFocused: _onSearchBarFocused,
       ),
       body: CountriesSlidingSheet(
+        //mode: _mode,
         body: Stack(
           children: [
             CountriesMap(
@@ -60,18 +62,15 @@ class _CountriesScreenState extends State<CountriesScreen> {
         onSlidingSheetCreated: _onSlidingSheetCreated,
         onPanelSlide: _onPanelSlide,
         onPanelUpdateScroll: _onPanelUpdateScroll,
-        onCountryTap: _onCountryTap,
+        onCountryTap: (country) {
+              print(country);
+
+        },
       ),
     );
   }
 
   _onSearchBarClose() {
-    setState(() {
-      _fullScreenCountriesSheet = false;
-      _elevateAppHeader = false;
-      _ignoreOnPanelSlide = true;
-    });
-
     _panelController.close();
     _searchTextController.clear();
 
@@ -79,19 +78,18 @@ class _CountriesScreenState extends State<CountriesScreen> {
   }
 
   _onSearchBarFocused() {
-    _fullScreenCountriesSheet = true;
+    setState(() => _mode = CountriesSlidingSheetMode.search);
     _panelController.open();
   }
 
-  _onCountryTap(Country country) async {
-    _fullScreenCountriesSheet = false;
-
-    _searchTextController.clear();
+  _onCountryTap(Country country) {
+    print(country);
+    /*_searchTextController.clear();
     FocusScope.of(context).unfocus();
     BlocProvider.of<FilteredCountriesBloc>(context).add(FilterUpdated(""));
 
-    await _panelController.close();
-    await _mapController.moveCameraToPosition(country.latLng);
+    _panelController.close();
+    _mapController.moveCameraToPosition(country.latLng);*/
   }
 
   _onSlidingSheetCreated(PanelController controller) {
@@ -122,155 +120,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
     if (metrics.extentBefore < 1 && _elevateAppHeader) {
       setState(() => _elevateAppHeader = false);
     }
-  }
-}
-
-enum SearchBarType { transparent, flat }
-
-class SearchAppBar extends StatelessWidget with PreferredSizeWidget {
-  SearchAppBar({
-    this.type,
-    this.controller,
-    this.backgroundColor,
-    this.elevation,
-    this.onSearchBarFocused,
-    this.onClose,
-    this.showCloseButton = false,
-    this.height = kToolbarHeight,
-  });
-
-  final SearchBarType type;
-  final TextEditingController controller;
-
-  final Color backgroundColor;
-  final double elevation;
-  final double height;
-  final bool showCloseButton;
-
-  final Function onSearchBarFocused;
-  final Function onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: backgroundColor,
-      elevation: elevation,
-      title: Padding(
-        padding: EdgeInsets.only(top: 16, bottom: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            AnimatedContainer(
-              width: showCloseButton ? kMinInteractiveDimension : 0,
-              duration: Duration(milliseconds: 100),
-              child: Padding(
-                padding: EdgeInsets.only(right: 16),
-                child: IconButton(
-                  icon: Icon(Icons.close_outlined),
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    onClose();
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: CountriesSearchBar(
-                type: type,
-                controller: controller,
-                onFocused: onSearchBarFocused,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(height);
-}
-
-class CountriesSearchBar extends StatelessWidget {
-  CountriesSearchBar({this.type, this.controller, this.onFocused});
-
-  final SearchBarType type;
-  final TextEditingController controller;
-  final Function onFocused;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: type == SearchBarType.flat
-            ? BorderSide(color: Colors.white, width: 1.0)
-            : BorderSide(color: Colors.grey, width: 1.0),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      elevation: type == SearchBarType.flat ? 4 : 0,
-      child: Container(
-        height: 46,
-        width: double.infinity,
-        padding: EdgeInsets.only(right: 16, left: 16),
-        child: Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: Icon(Icons.search_outlined),
-            ),
-            Expanded(
-              child: FocusScope(
-                child: Focus(
-                  onFocusChange: (focus) {
-                    if (focus) onFocused();
-                  },
-                  child: CountriesTextField(
-                    controller: controller,
-                    onChange: (value) {
-                      BlocProvider.of<FilteredCountriesBloc>(context)
-                          .add(FilterUpdated(value));
-                    },
-                    onClear: () {
-                      BlocProvider.of<FilteredCountriesBloc>(context)
-                          .add(FilterUpdated(""));
-                    },
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CountriesTextField extends StatelessWidget {
-  CountriesTextField({this.controller, this.onChange, this.onClear});
-
-  final TextEditingController controller;
-  final Function(String value) onChange;
-  final Function() onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onChanged: onChange,
-      decoration: InputDecoration(
-        labelText: 'Search country',
-        border: InputBorder.none,
-        suffixIcon: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            FocusScope.of(context).unfocus();
-            controller.clear();
-
-            onClear();
-          },
-        ),
-      ),
-    );
   }
 }
 
