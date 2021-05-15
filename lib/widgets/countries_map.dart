@@ -16,7 +16,10 @@ class CountriesMap extends StatefulWidget {
     this.onMapClick,
     this.locationPadding,
     this.locationAlignment,
+    this.onMapCreated
   }) : super(key: key);
+
+  final Function(MapboxMapController controller) onMapCreated;
 
   final CountriesMapController controller;
   final Function(Point<double>, LatLng) onMapClick;
