@@ -1,5 +1,6 @@
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/screens/create_pin.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class CountriesScreen extends StatefulWidget {
+  static Page page() => MaterialPage<void>(child: CountriesScreen());
+
   @override
   State createState() => _CountriesScreenState();
 }
@@ -17,12 +20,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   PanelController _panelController;
   MapboxMapController _mapController;
-
-  double _screenHeight;
-  double _initFabHeight;
-  double _fabHeight;
-  double _panelHeightOpen;
-  double _panelHeightClosed = 95.0;
 
   bool _fullScreenCountriesSheet = false;
   bool _elevateAppHeader = false;
@@ -43,11 +40,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenHeight = MediaQuery.of(context).size.height;
-    _initFabHeight = _screenHeight * 0.2;
-    if (_fabHeight == null) _fabHeight = _initFabHeight;
-    _panelHeightOpen = _screenHeight * 1;
-
     final type = _fullScreenCountriesSheet
         ? SearchBarType.flat
         : SearchBarType.transparent;
@@ -278,6 +270,33 @@ class CountriesTextField extends StatelessWidget {
             controller.clear();
 
             onClear();
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class CreatePinButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 32,
+          right: 16,
+        ),
+        child: FloatingActionButton(
+          child: Icon(Icons.create),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (context) => CreatePinScreen(),
+              ),
+            );
           },
         ),
       ),

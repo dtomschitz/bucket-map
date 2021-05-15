@@ -53,7 +53,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       controller: _panelController,
       maxHeight: maxHeight,
       backdropEnabled: true,
-      backdropColor: Colors.black,
+      backdropColor: Colors.black,    
       onControllerCreated: (scrollController, animationController) {
         _scrollController = scrollController;
       },
@@ -74,7 +74,6 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       },
       child: Material(
         color: Theme.of(context).appBarTheme.backgroundColor,
-        elevation: 7,
         child: FadeTransition(
           opacity: Tween(begin: 1.0, end: 0.0).animate(controller),
           child: Column(
@@ -132,7 +131,7 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
@@ -141,7 +140,6 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
                   Text(
                     'Freigeschaltene Länder',
                     style: TextStyle(
-                      color: Colors.black,
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
                     ),
