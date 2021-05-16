@@ -43,10 +43,7 @@ class CountriesSearchAppBar extends StatelessWidget with PreferredSizeWidget {
                 padding: EdgeInsets.only(right: 16),
                 child: IconButton(
                   icon: Icon(Icons.arrow_back_outlined),
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    onSearchBarClose();
-                  },
+                  onPressed: onSearchBarClose?.call,
                 ),
               ),
             ),
@@ -97,7 +94,6 @@ class SearchBar extends StatelessWidget {
                 },
                 onValueClear: () {
                   controller.clear();
-                  FocusScope.of(context).unfocus();
                   BlocProvider.of<FilteredCountriesBloc>(context)
                       .add(ClearCountriesFilter());
                 },

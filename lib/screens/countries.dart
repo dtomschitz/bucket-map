@@ -60,7 +60,6 @@ class _CountriesScreenState extends State<CountriesScreen>
         onHeaderTap: _onHeaderTap,
         onCountryTap: _onCountryTap,
         onPanelClose: _onPanelClose,
-        onPanelSlide: _onPanelSlide,
         body: Stack(
           children: [
             CountriesMap(
@@ -124,20 +123,6 @@ class _CountriesScreenState extends State<CountriesScreen>
 
     if (_clearSearchBarOnClose) {
       _searchTextController.clear();
-    }
-  }
-
-  _onPanelSlide(double progress) {
-    if (progress < 0.85 && !_animationLock) {
-      /*print('"dawdd');
-      setState(() {
-        _animationLock = true;
-      });
-
-      if (FocusScope.of(context).hasFocus) {
-        print('"dawdd');
-        FocusScope.of(context).unfocus();
-      }*/
     }
   }
 }
