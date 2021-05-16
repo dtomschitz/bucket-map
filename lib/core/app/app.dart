@@ -1,11 +1,11 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
+import 'package:bucket_map/core/app/home.dart';
 import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/core/settings/bloc/bloc.dart';
 import 'package:bucket_map/core/themes.dart';
-import 'package:bucket_map/screens/screens.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

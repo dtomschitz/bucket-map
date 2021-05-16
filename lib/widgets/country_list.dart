@@ -44,7 +44,13 @@ class CountryList extends StatelessWidget {
             );
           }
 
-          return CircularProgressIndicator();
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: CircularProgressIndicator(),
+            ),
+          );
         },
       ),
     );
