@@ -59,7 +59,7 @@ class AppView extends StatelessWidget {
             ) {
               switch (status) {
                 case AppStatus.authenticated:
-                  return [CountriesScreen.page()];
+                  return [HomePage.page()];
                 case AppStatus.unauthenticated:
                 default:
                   return [LoginPage.page()];
