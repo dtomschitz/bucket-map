@@ -1,5 +1,5 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
-import 'package:bucket_map/core/app/home.dart';
+import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
@@ -33,6 +33,11 @@ class App extends StatelessWidget {
           ),
           BlocProvider<CountriesBloc>(
             create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
+          ),
+          BlocProvider<FilteredCountriesBloc>(
+            create: (context) => FilteredCountriesBloc(
+              countriesBloc: BlocProvider.of<CountriesBloc>(context),
+            ),
           ),
         ],
         child: AppView(),

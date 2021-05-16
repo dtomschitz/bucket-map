@@ -16,12 +16,13 @@ class CountriesMap extends StatefulWidget {
     this.onMapClick,
     this.locationPadding,
     this.locationAlignment,
+    this.onMapCreated
   }) : super(key: key);
 
+  final Function(MapboxMapController controller) onMapCreated;
+
   final CountriesMapController controller;
-
   final Function(Point<double>, LatLng) onMapClick;
-
   final EdgeInsets locationPadding;
   final Alignment locationAlignment;
 
@@ -74,7 +75,6 @@ class _CountriesMapState extends State<CountriesMap>
       if (_currentCameraPosition != _mapController.cameraPosition &&
           !_ignoreCameraUpdate) {
         setState(() {
-          print('dawd');
           _currentCameraPosition = null;
           _ignoreCameraUpdate = true;
         });
@@ -95,10 +95,10 @@ class _CountriesMapState extends State<CountriesMap>
     );
   }
 
-  Future<bool> _moveCameraToPosition(LatLng position) {
+  Future<bool> _moveCameraToPosition(LatLng position, {double zoom}) {
     return _animateCamera(CameraUpdate.newLatLngZoom(
       position,
-      13,
+      zoom ?? 13,
     ));
   }
 
@@ -211,7 +211,7 @@ class CountriesMapController {
   /// platform side.
   /// It returns true if the camera was successfully moved and
   /// false if the movement was canceled.
-  Future<bool> Function(LatLng position) moveCameraToPosition;
+  Future<bool> Function(LatLng position, {double zoom}) moveCameraToPosition;
 
   /// Starts an animated change of the map camera position.
   ///
