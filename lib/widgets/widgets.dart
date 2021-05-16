@@ -1,5 +1,5 @@
 export 'countries_map.dart';
-export 'countries_search_bar.dart';
+export 'countries_search_app_bar.dart';
 export 'countries_sliding_sheet.dart';
 export 'country_list.dart';
 export 'expandable_floating_action_button.dart';

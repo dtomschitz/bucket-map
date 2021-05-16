@@ -1,11 +1,11 @@
 part of blocs.filtered_countries;
 
-abstract class FilteredCountriesEvent extends Equatable{
-  const FilteredCountriesEvent();
+abstract class CountriesFilterEvent extends Equatable {
+  const CountriesFilterEvent();
 }
 
-class FilterUpdated extends FilteredCountriesEvent {
-  const FilterUpdated(this.filter);
+class UpdateCountriesFilter extends CountriesFilterEvent {
+  const UpdateCountriesFilter(this.filter);
 
   final String filter;
 
@@ -13,11 +13,21 @@ class FilterUpdated extends FilteredCountriesEvent {
   List<Object> get props => [filter];
 
   @override
-  String toString() => 'FilterUpdated { filter: $filter }';
+  String toString() => 'UpdateCountriesFilter { filter: $filter }';
 }
 
-class CountriesUpdated extends FilteredCountriesEvent {
-  const CountriesUpdated(this.countries);
+class ClearCountriesFilter extends CountriesFilterEvent {
+  const ClearCountriesFilter();
+
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() => 'ClearCountriesFilter { filter: empty }';
+}
+
+class FilteredCountriesUpdated extends CountriesFilterEvent {
+  const FilteredCountriesUpdated(this.countries);
 
   final List<Country> countries;
 
@@ -25,5 +35,5 @@ class CountriesUpdated extends FilteredCountriesEvent {
   List<Object> get props => [countries];
 
   @override
-  String toString() => 'CountriesUpdated { countries: $countries }';
+  String toString() => 'FilteredCountriesUpdated { countries: $countries }';
 }

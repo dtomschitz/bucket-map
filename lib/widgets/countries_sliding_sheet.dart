@@ -10,38 +10,44 @@ enum CountriesSlidingSheetMode { unlock, search }
 class CountriesSlidingSheet extends StatefulWidget {
   CountriesSlidingSheet({
     this.body,
+    this.controller,
+    this.animationController,
     this.mode,
-    this.onSlidingSheetCreated,
+    this.onHeaderTap,
+    this.onCountryTap,
     this.onPanelSlide,
+    this.onPanelClose,
     this.onPanelStartScroll,
     this.onPanelUpdateScroll,
     this.onPanelEndScroll,
-    this.onCountryTap,
   });
 
   final Widget body;
+  final PanelController controller;
+  final AnimationController animationController;
   final CountriesSlidingSheetMode mode;
 
-  final Function(PanelController controller) onSlidingSheetCreated;
-  final Function(double progress) onPanelSlide;
-  final Function(ScrollMetrics metrics) onPanelStartScroll;
-  final Function(ScrollMetrics metrics) onPanelUpdateScroll;
-  final Function(ScrollMetrics metrics) onPanelEndScroll;
+  final void Function() onHeaderTap;
+  final void Function(double progress) onPanelSlide;
+  final void Function() onPanelClose;
+  final void Function(ScrollMetrics metrics) onPanelStartScroll;
+  final void Function(ScrollMetrics metrics) onPanelUpdateScroll;
+  final void Function(ScrollMetrics metrics) onPanelEndScroll;
 
-  final Function(Country) onCountryTap;
+  final void Function(Country) onCountryTap;
 
   @override
   State createState() => _CountriesSlidingSheetState();
 }
 
 class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
-  final PanelController _panelController = PanelController();
-  ScrollController _scrollController;
+  final ScrollController _scrollController = new ScrollController();
+  AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    widget.onSlidingSheetCreated?.call(_panelController);
+    _animationController = widget.animationController;
   }
 
   @override
@@ -50,32 +56,38 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
         MediaQuery.of(context).size.height + kBottomNavigationBarHeight;
 
     return SlidingUpPanel(
-      controller: _panelController,
+      controller: widget.controller,
+      scrollController: _scrollController,
+      animationController: widget.animationController,
       maxHeight: maxHeight,
       backdropEnabled: true,
-      backdropColor: Colors.black,    
-      onControllerCreated: (scrollController, animationController) {
-        _scrollController = scrollController;
-      },
+      backdropColor: Colors.black,
       onPanelClosed: () {
         _scrollController.jumpTo(0);
+        widget.onPanelClose?.call();
       },
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,
-      panelBuilder: (controller) => _buildPanel(controller),
-      collapseBuilder: (controller) => _buildHeader(controller),
+      panelBuilder: _buildPanel,
+      collapseBuilder: _buildHeader,
     );
   }
 
-  Widget _buildHeader(AnimationController controller) {
+  Widget _buildHeader() {
     return GestureDetector(
-      onTap: () {
-        _panelController.open();
-      },
+      onTap: widget.onHeaderTap,
       child: Material(
-        color: Theme.of(context).appBarTheme.backgroundColor,
         child: FadeTransition(
-          opacity: Tween(begin: 1.0, end: 0.0).animate(controller),
+          opacity: Tween(begin: 1.0, end: 0.0).animate(
+            CurvedAnimation(
+              parent: _animationController,
+              curve: Interval(
+                0.5,
+                0.7,
+                curve: Curves.ease,
+              ),
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -91,7 +103,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
     );
   }
 
-  Widget _buildPanel(ScrollController controller) {
+  Widget _buildPanel() {
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       child: NotificationListener<ScrollNotification>(
@@ -106,7 +118,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
           }
         },
         child: CountryList(
-          controller: controller,
+          controller: _scrollController,
           onTap: widget.onCountryTap,
           buildTrailing: (Country country) {
             if (widget.mode == CountriesSlidingSheetMode.search) {
