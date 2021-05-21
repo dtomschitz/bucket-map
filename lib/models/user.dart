@@ -7,14 +7,24 @@ import 'package:flutter/foundation.dart';
 class User extends Equatable {
   /// {@macro user}
   const User({
-    @required this.id,
     this.email,
+    this.password,
+    @required this.id,
     this.name,
     this.photo,
+    this.planned,
+    this.amountCountries,
+    this.amountPins,
+    this.currentCountry,
+    this.countries,
+    this.pinIds,
   });
 
   /// The current user's email address.
   final String email;
+
+  ///The current user's password.
+  final String password;
 
   /// The current user's id.
   final String id;
@@ -24,6 +34,24 @@ class User extends Equatable {
 
   /// Url for the current user's photo.
   final String photo;
+
+  ///The current amount of countries the user want to visit.
+  final int planned;
+
+  ///The current amount of countires the user had visited.
+  final int amountCountries;
+
+  ///The current amount of pins the user had created.
+  final int amountPins;
+
+  ///The country in which the user is currently located.
+  final String currentCountry;
+
+  ///List with created Pins
+  final List<String> countries;
+
+  ///List with Pin Id's
+  final List<int> pinIds;
 
   /// Anonymous user which represents an unauthenticated user.
   static const anonymous = User(id: '');
@@ -35,5 +63,17 @@ class User extends Equatable {
   bool get isNotAnonymous => this != User.anonymous;
 
   @override
-  List<Object> get props => [email, id, name, photo];
+  List<Object> get props => [
+        email,
+        password,
+        id,
+        name,
+        photo,
+        planned,
+        amountCountries,
+        amountPins,
+        currentCountry,
+        countries,
+        pinIds,
+      ];
 }
