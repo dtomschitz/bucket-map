@@ -1,8 +1,10 @@
 import 'package:bucket_map/core/settings/settings_screen.dart';
 import 'package:bucket_map/models/user.dart';
+import 'package:bucket_map/screens/settings_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bucket_map/core/auth/repositories/auth_repository.dart';
+import 'package:flutter/gestures.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -10,13 +12,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
- //final User user;
+  //final User user;
   //_ProfileScreenState({this.user});
 
   @override
   Widget build(BuildContext context) {
     //final users = Provider.of<List<User>>(context);
     //final currentUser = users[0];
+
+    void _showNamePanel() {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              child: SettingsForm(),
+            );
+          });
+    }
 
     return StreamProvider<List<User>>.value(
       value: AuthenticationRepository().users,
@@ -49,9 +62,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               SizedBox(height: 25.0),
-              Text(
-                'Name',
-                style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.normal),
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(
+                      fontSize: 25.0, fontWeight: FontWeight.normal),
+                ),
+                onPressed: () => _showNamePanel(),
+                child: const Text('Name festlegen'),
               ),
               SizedBox(height: 10.0),
               Text(
