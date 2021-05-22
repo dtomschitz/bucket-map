@@ -12,9 +12,6 @@ class User extends Equatable {
     @required this.id,
     this.name,
     this.photo,
-    this.planned,
-    this.amountCountries,
-    this.amountPins,
     this.currentCountry,
     this.countries,
     this.pinIds,
@@ -34,15 +31,6 @@ class User extends Equatable {
 
   /// Url for the current user's photo.
   final String photo;
-
-  ///The current amount of countries the user want to visit.
-  final int planned;
-
-  ///The current amount of countires the user had visited.
-  final int amountCountries;
-
-  ///The current amount of pins the user had created.
-  final int amountPins;
 
   ///The country in which the user is currently located.
   final String currentCountry;
@@ -69,9 +57,6 @@ class User extends Equatable {
         id,
         name,
         photo,
-        planned,
-        amountCountries,
-        amountPins,
         currentCountry,
         countries,
         pinIds,

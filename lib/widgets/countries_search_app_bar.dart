@@ -23,6 +23,7 @@ class CountriesSearchAppBar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
+      elevation: 0,
       title: Padding(
         padding: EdgeInsets.only(top: 16, bottom: 16),
         child: Row(
