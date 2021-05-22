@@ -9,13 +9,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               ? AppState.authenticated(authenticationRepository.currentUser)
               : const AppState.unauthenticated(),
         ) {
-    _userSubscription = _authenticationRepository.user.listen(_onUserChanged);
+    _userSubscription = _authenticationRepository.user.listen((user) {
+      add(AppUserChanged(user));
+    });
   }
 
   final AuthenticationRepository _authenticationRepository;
   StreamSubscription<User> _userSubscription;
-
-  void _onUserChanged(User user) => add(AppUserChanged(user));
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {

@@ -1,42 +1,53 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+enum CountriesSlidingSheetMode { unlock, search }
+
 class CountriesSlidingSheet extends StatefulWidget {
   CountriesSlidingSheet({
     this.body,
-    this.onSlidingSheetCreated,
+    this.controller,
+    this.animationController,
+    this.mode,
+    this.onHeaderTap,
+    this.onCountryTap,
     this.onPanelSlide,
+    this.onPanelClose,
     this.onPanelStartScroll,
     this.onPanelUpdateScroll,
     this.onPanelEndScroll,
   });
 
   final Widget body;
-  final Function(PanelController controller) onSlidingSheetCreated;
-  final Function(double progress) onPanelSlide;
-  final Function(ScrollMetrics metrics) onPanelStartScroll;
-  final Function(ScrollMetrics metrics) onPanelUpdateScroll;
-  final Function(ScrollMetrics metrics) onPanelEndScroll;
+  final PanelController controller;
+  final AnimationController animationController;
+  final CountriesSlidingSheetMode mode;
+
+  final void Function() onHeaderTap;
+  final void Function(double progress) onPanelSlide;
+  final void Function() onPanelClose;
+  final void Function(ScrollMetrics metrics) onPanelStartScroll;
+  final void Function(ScrollMetrics metrics) onPanelUpdateScroll;
+  final void Function(ScrollMetrics metrics) onPanelEndScroll;
+
+  final void Function(Country) onCountryTap;
 
   @override
   State createState() => _CountriesSlidingSheetState();
 }
 
 class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
-  final PanelController _panelController = PanelController();
-  ScrollController _scrollController;
-
-  _onScrollControllerCreated(ScrollController controller) {
-    _scrollController = controller;
-  }
+  final ScrollController _scrollController = new ScrollController();
+  AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    widget.onSlidingSheetCreated?.call(_panelController);
+    _animationController = widget.animationController;
   }
 
   @override
@@ -45,48 +56,58 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
         MediaQuery.of(context).size.height + kBottomNavigationBarHeight;
 
     return SlidingUpPanel(
-      controller: _panelController,
+      controller: widget.controller,
+      scrollController: _scrollController,
+      animationController: widget.animationController,
       maxHeight: maxHeight,
-      minHeight: 80,
       backdropEnabled: true,
       backdropColor: Colors.black,
-      onScrollControllerCreated: _onScrollControllerCreated,
       onPanelClosed: () {
-        _scrollController.jumpTo(0);
+         _scrollController.jumpTo(0);
+         widget.onPanelClose?.call();
       },
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,
       panelBuilder: _buildPanel,
-      collapsed: _buildHeader(),
+      collapseBuilder: _buildHeader,
     );
   }
 
   Widget _buildHeader() {
     return GestureDetector(
-      onTap: () {
-        _panelController.open();
-      },
+      onTap: widget.onHeaderTap,
       child: Material(
-        color: Theme.of(context).appBarTheme.backgroundColor,
-        elevation: 7,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SlidingSheetDragger(
-              padding: EdgeInsets.only(left: 8, right: 8, top: 4),
+        child: FadeTransition(
+          opacity: Tween(begin: 1.0, end: 0.0).animate(
+            CurvedAnimation(
+              parent: _animationController,
+              curve: Interval(
+                0.5,
+                0.7,
+                curve: Curves.ease,
+              ),
             ),
-            CountriesSlidingSheetHeader(),
-          ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SlidingSheetDragger(
+                padding: EdgeInsets.only(left: 8, right: 8, top: 4),
+              ),
+              CountriesSlidingSheetHeader(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPanel(ScrollController controller) {
+  Widget _buildPanel() {
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       child: NotificationListener<ScrollNotification>(
+        // ignore: missing_return
         onNotification: (notification) {
           if (notification is ScrollStartNotification) {
             widget.onPanelStartScroll?.call(notification.metrics);
@@ -97,7 +118,15 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
           }
         },
         child: CountryList(
-          controller: controller,
+          controller: _scrollController,
+          onTap: widget.onCountryTap,
+          buildTrailing: (Country country) {
+            if (widget.mode == CountriesSlidingSheetMode.search) {
+              return Icon(Icons.remove_red_eye, color: Colors.grey);
+            }
+
+            return Icon(Icons.lock, color: Colors.grey);
+          },
         ),
       ),
     );
@@ -113,7 +142,8 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding:
+                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
@@ -122,7 +152,6 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
                   Text(
                     'Freigeschaltene Länder',
                     style: TextStyle(
-                      color: Colors.black,
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
                     ),

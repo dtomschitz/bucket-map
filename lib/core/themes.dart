@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 class Themes {
   static ThemeData buildDarkTheme() {
     return ThemeData(
+      /*
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.primaryBackground,
-      primaryColor: AppColors.primaryBackground,
-      focusColor: AppColors.focusColor,
-      appBarTheme: const AppBarTheme(brightness: Brightness.dark, elevation: 0),
-      accentColor: Colors.red,
+      scaffoldBackgroundColor: AppColors.backgroundColor,
+      primaryColor: AppColors.primaryColor,
+      appBarTheme: const AppBarTheme(color: AppColors.surfaceColor),
+      accentColor: AppColors.accentColor,
       visualDensity: VisualDensity.standard,
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
@@ -17,12 +17,14 @@ class Themes {
             color: Colors.white
           )
         )
-      ),
+      ),*/
+      brightness: Brightness.dark,
     );
   }
 
   static ThemeData buildLightTheme() {
     return ThemeData(
+      /*
       brightness: Brightness.light,
       primaryColor: Colors.green[700],
       backgroundColor: Colors.white,
@@ -51,7 +53,8 @@ class Themes {
             color: Colors.black
           )
         )
-      ),
+      ),*/
+      brightness: Brightness.light,
     );
   }
 }

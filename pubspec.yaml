@@ -17,7 +17,7 @@ dependencies:
   equatable: ^2.0.0
   cupertino_icons: ^1.0.2
   firebase_core: ^1.0.3
-  firebase_auth: ^1.0.2
+  firebase_auth: ^1.0.3
   cloud_firestore: ^1.0.4
   permission_handler: ^6.1.1
   http: ^0.13.1
@@ -31,7 +31,7 @@ dependencies:
   sliding_up_panel:
     path: packages/sliding_up_panel
   mapbox_gl:
-    path: mapbox
+    path: packages/mapbox
 
 dev_dependencies:
   flutter_test:
@@ -42,4 +42,6 @@ flutter:
   assets:
     - countries.geojson
     - countries.json
-    - style.json
+    - style_dark.json
+    - style_light.json
+    - default_profile_picture.png
