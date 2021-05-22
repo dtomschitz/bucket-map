@@ -87,6 +87,11 @@ class AuthenticationRepository {
     }
   }
 
+  Future<void> updatePassword(String password) async {
+    final currentUser = _firebaseAuth.currentUser;
+    await currentUser.updatePassword(password);
+  }
+
   //user list from snapshot
   List<User> _userListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {

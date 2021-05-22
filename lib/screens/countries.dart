@@ -16,7 +16,6 @@ class CountriesScreen extends StatefulWidget {
 
 class _CountriesScreenState extends State<CountriesScreen>
     with SingleTickerProviderStateMixin {
-      
   final PanelController _panelController = new PanelController();
   final CountriesMapController _mapController = new CountriesMapController();
   final TextEditingController _searchTextController = TextEditingController();
@@ -61,14 +60,19 @@ class _CountriesScreenState extends State<CountriesScreen>
         onHeaderTap: _onHeaderTap,
         onCountryTap: _onCountryTap,
         onPanelClose: _onPanelClose,
-        body: Stack(
-          children: [
-            CountriesMap(
-              key: GlobalKeys.countriesMap,
-              controller: _mapController,
-            ),
-            CreatePinButton(),
-          ],
+        body: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 48,
+          ),
+          child: Stack(
+            children: [
+              CountriesMap(
+                key: GlobalKeys.countriesMap,
+                controller: _mapController,
+              ),
+              CreatePinButton(),
+            ],
+          ),
         ),
       ),
     );
