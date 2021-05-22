@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/screens/screens.dart';
@@ -100,13 +102,45 @@ class _CountriesMapState extends State<CountriesMap> {
   gotoCreatePin(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CreatePinScreen()),
+      MaterialPageRoute(builder: (context) => CreatePinScreen(openSymbolMenu)),
     );
 
     setState(() {
       allPins.add(result.options);
     });
     _mapController.addSymbols(allPins);
+    _mapController.onSymbolTapped.add((argument) {
+      openSymbolMenu(argument);
+    });
+  }
+
+  openSymbolMenu(Symbol symbol) {
+    print("Symbol-ID:" + symbol.id);
+    /*_mapController.removeSymbol(_mapController.symbols
+        .firstWhere((element) => element.id == symbol.id));*/
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          color: Colors.amber,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text('Modal BottomSheet'),
+                ElevatedButton(
+                  child: const Text('Close BottomSheet'),
+                  onPressed: () => Navigator.pop(context),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -152,9 +186,7 @@ class _CountriesMapState extends State<CountriesMap> {
         },
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: 180
-        ),
+        padding: EdgeInsets.only(bottom: 180),
         child: ExpandableFloatingActionButton(
           children: [
             FloatingActionButton(

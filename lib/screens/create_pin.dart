@@ -1,15 +1,20 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+import 'package:uuid/uuid.dart';
 
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CreatePinScreen extends StatefulWidget {
-  CreatePinScreen() : super();
+  Function(Symbol symbol) openSymbolMenu;
+
+  CreatePinScreen(Function(Symbol symbol) openSymbolMenu) : super();
 
   @override
   State createState() => _CreatePinScreenState();
@@ -41,14 +46,20 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
   void _onStyleLoadedCallback() {}
 
-  addPin(Point<double> point, LatLng position) {
+  addPin(Point<double> point, LatLng position) async {
+    /*
+    final ByteData bytes = await rootBundle.load("assets/location_pin.png");
+    final Uint8List list = bytes.buffer.asUint8List();
+    await _mapController.addImage("assetImage", list);*/
+
     _mapController.clearSymbols();
-    _mapController.addSymbol(SymbolOptions(
+    SymbolOptions options = SymbolOptions(
       geometry: position,
       iconImage: "airport-15",
-      iconSize: 1.3,
+      iconSize: 5,
       draggable: true,
-    ));
+    );
+    _mapController.addSymbol(options);
     print("added pin");
   }
 
