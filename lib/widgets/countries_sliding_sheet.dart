@@ -63,8 +63,8 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       backdropEnabled: true,
       backdropColor: Colors.black,
       onPanelClosed: () {
-        _scrollController.jumpTo(0);
-        widget.onPanelClose?.call();
+         _scrollController.jumpTo(0);
+         widget.onPanelClose?.call();
       },
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,

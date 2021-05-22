@@ -16,6 +16,7 @@ class CountriesScreen extends StatefulWidget {
 
 class _CountriesScreenState extends State<CountriesScreen>
     with SingleTickerProviderStateMixin {
+      
   final PanelController _panelController = new PanelController();
   final CountriesMapController _mapController = new CountriesMapController();
   final TextEditingController _searchTextController = TextEditingController();
