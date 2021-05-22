@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bucket_map/models/models.dart';
-import 'package:bucket_map/utils/cache.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
 
@@ -31,7 +30,7 @@ class AuthenticationRepository {
   /// User cache key.
   /// Should only be used for testing purposes.
   @visibleForTesting
-  static const userCacheKey = '__user_cache_key__';
+  static const userCacheKey = '__user_cache__';
 
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
@@ -55,24 +54,14 @@ class AuthenticationRepository {
   ///
   /// Throws a [SignUpFailure] if an exception occurs.
   Future<void> signUp(
-      {@required String email, @required String password, String name, int age, String originCountry}) async {
+      {@required String email, @required String password, String name, int age, String originCountry,}) async {
     try {
       final userCredentials = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password
       );
-
-      
-  // collection reference
-  final CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('users');
-
-  await userCollection.doc(userCredentials.user.uid).set({
-      'name': name,
-      'age': age,
-      'originCountry': originCountry,
-    });
-    } on Exception {
+    } on Exception catch (e) {
+      print(e);
       throw SignUpFailure();
     }
   }

@@ -1,4 +1,5 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/core/app/home.dart';
 import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
@@ -32,7 +33,12 @@ class App extends StatelessWidget {
           ),
           BlocProvider<CountriesBloc>(
             create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
-          )
+          ),
+          BlocProvider<FilteredCountriesBloc>(
+            create: (context) => FilteredCountriesBloc(
+              countriesBloc: BlocProvider.of<CountriesBloc>(context),
+            ),
+          ),
         ],
         child: AppView(),
       ),
@@ -41,19 +47,6 @@ class App extends StatelessWidget {
 }
 
 class AppView extends StatelessWidget {
-  List<Page> onGenerateAppViewPages(
-    AppStatus state,
-    List<Page<dynamic>> pages,
-  ) {
-    switch (state) {
-      case AppStatus.authenticated:
-        return [HomePage.page()];
-      case AppStatus.unauthenticated:
-      default:
-        return [LoginPage.page()];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsBloc, SettingsState>(
@@ -65,7 +58,18 @@ class AppView extends StatelessWidget {
           darkTheme: Themes.buildDarkTheme(),
           home: FlowBuilder<AppStatus>(
             state: context.select((AppBloc bloc) => bloc.state.status),
-            onGeneratePages: onGenerateAppViewPages,
+            onGeneratePages: (
+              AppStatus status,
+              List<Page<dynamic>> pages,
+            ) {
+              switch (status) {
+                case AppStatus.authenticated:
+                  return [HomePage.page()];
+                case AppStatus.unauthenticated:
+                default:
+                  return [LoginPage.page()];
+              }
+            },
           ),
         );
       },
