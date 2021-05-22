@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bucket_map/models/models.dart';
 import 'package:cache/cache.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
 import 'package:bucket_map/models/user.dart';
@@ -67,16 +68,16 @@ class AuthenticationRepository {
     String currentCountry,
   }) async {
     try {
-      final userCredentials = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final userCredentials =
+          await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
       await userCollection.doc(userCredentials.user.uid).set({
         'id': userCredentials.user.uid,
         'name': name,
         'photo': photo,
-        //'planned': planned,
-        //'amountCountries': amountCountries,
-        //'amountPins': amountPins,
         'currentCountry': currentCountry,
         'countries': [],
         'pinIds': [],
