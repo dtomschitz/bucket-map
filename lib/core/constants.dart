@@ -1,8 +1,8 @@
 class AppConstants {
   static const MAPBOX_ACCESS_TOKEN =
-      "pk.eyJ1IjoiZGF2aWRkbzMzOTkiLCJhIjoiY2ttbnFwZHB2MHNucjJ2bXprcjRhdjRiMSJ9.axNI3vuHm13Mt5yjWXQnMQ";
+      "pk.eyJ1IjoiY3MyNjciLCJhIjoiY2tvMng3a29uMDNmMDJwbXhpZThtd2VxcCJ9.IhFQPBiydcOv8XPVWiamfQ";
   static const MAPBOX_LIGHT_STYLE_URL =
-      "mapbox://styles/daviddo3399/cknbq7w7y0vlc17r0i37seyc3";
+      "mapbox://styles/cs267/cko2zeu4o0oii19lec4kur8p5";
   static const MAPBOX_DARK_STYLE_URL =
-      "mapbox://styles/daviddo3399/cknbq7w7y0vlc17r0i37seyc3";
+      "mapbox://styles/cs267/cko2zh03u09je19pjd7pt3ge5";
 }

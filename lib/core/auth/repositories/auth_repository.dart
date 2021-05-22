@@ -1,9 +1,10 @@
 import 'dart:async';
-
 import 'package:bucket_map/models/models.dart';
 import 'package:cache/cache.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
+import 'package:bucket_map/models/user.dart';
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
@@ -27,6 +28,10 @@ class AuthenticationRepository {
 
   final CacheClient _cache;
   final firebase_auth.FirebaseAuth _firebaseAuth;
+
+  // collection reference for firebase
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('users');
 
   /// User cache key.
   /// Should only be used for testing purposes.
@@ -57,16 +62,51 @@ class AuthenticationRepository {
   Future<void> signUp({
     @required String email,
     @required String password,
+    String id,
+    String name,
+    String photo,
+    String currentCountry,
   }) async {
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      final userCredentials =
+          await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-    } on Exception catch (e) {
-      print(e);
+
+      await userCollection.doc(userCredentials.user.uid).set({
+        'id': userCredentials.user.uid,
+        'name': name,
+        'photo': photo,
+        'currentCountry': currentCountry,
+        'countries': [],
+        'pinIds': [],
+      });
+    } on Exception {
       throw SignUpFailure();
     }
+  }
+
+  //user list from snapshot
+  List<User> _userListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return User(
+        id: doc.data()['id'] ?? '',
+        name: doc.data()['name'] ?? 'Test',
+        photo: doc.data()['photo'] ?? '',
+        planned: doc.data()['planned'] ?? 0,
+        amountCountries: doc.data()['amountCountries'] ?? 0,
+        amountPins: doc.data()['amountPins'] ?? 0,
+        currentCountry: doc.data()['currentCountry'] ?? 'Deutschland',
+        countries: doc.data()['countries'] ?? [],
+        pinIds: doc.data()['pinIds'] ?? [],
+      );
+    }).toList();
+  }
+
+  //get users stream from firebase
+  Stream<List<User>> get users {
+    return userCollection.snapshots().map(_userListFromSnapshot);
   }
 
   /// Signs in with the provided [email] and [password].

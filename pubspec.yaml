@@ -42,4 +42,6 @@ flutter:
   assets:
     - countries.geojson
     - countries.json
-    - style.json
+    - style_dark.json
+    - style_light.json
+    - default_profile_picture.png
