@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
+import 'package:bucket_map/core/settings/bloc/bloc.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -16,7 +18,7 @@ class CountriesMap extends StatefulWidget {
     this.onMapClick,
     this.locationPadding,
     this.locationAlignment,
-    this.onMapCreated
+    this.onMapCreated,
   }) : super(key: key);
 
   final Function(MapboxMapController controller) onMapCreated;
@@ -134,7 +136,7 @@ class _CountriesMapState extends State<CountriesMap>
       await _mapController.animateCamera(cameraUpdate);
       setState(() {
         _currentCameraPosition = _mapController.cameraPosition;
-       // _ignoreCameraUpdate = false;
+        // _ignoreCameraUpdate = false;
       });
     }
   }
@@ -155,23 +157,33 @@ class _CountriesMapState extends State<CountriesMap>
           children: [
             FadeTransition(
               opacity: _animation,
-              child: MapboxMap(
-                key: GlobalKeys.mapbox,
-                accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-                styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(0.0, 0.0),
-                ),
-                compassEnabled: false,
-                tiltGesturesEnabled: false,
-                rotateGesturesEnabled: false,
-                trackCameraPosition: true,
-                myLocationEnabled: snapshot.data == PermissionStatus.granted,
-                onMapCreated: _onMapCreated,
-                onStyleLoadedCallback: () {
-                  _animationController.forward();
+              child: BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (context, state) {
+                  final accessToken = AppConstants.MAPBOX_ACCESS_TOKEN;
+                  final style = Theme.of(context).brightness == Brightness.dark
+                      ? AppConstants.MAPBOX_DARK_STYLE_URL
+                      : AppConstants.MAPBOX_LIGHT_STYLE_URL;
+
+                  return MapboxMap(
+                    key: GlobalKeys.mapbox,
+                    accessToken: accessToken,
+                    styleString: style,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(0.0, 0.0),
+                    ),
+                    compassEnabled: false,
+                    tiltGesturesEnabled: false,
+                    rotateGesturesEnabled: false,
+                    trackCameraPosition: true,
+                    myLocationEnabled:
+                        snapshot.data == PermissionStatus.granted,
+                    onMapCreated: _onMapCreated,
+                    onStyleLoadedCallback: () {
+                      _animationController.forward();
+                    },
+                    onMapClick: widget.onMapClick,
+                  );
                 },
-                onMapClick: widget.onMapClick,
               ),
             ),
             PermissionBuilder(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/core/app/home.dart';
@@ -5,7 +7,9 @@ import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/core/settings/bloc/bloc.dart';
+import 'package:bucket_map/core/settings/models/models.dart';
 import 'package:bucket_map/core/themes.dart';
+import 'package:bucket_map/utils/utils.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,9 +17,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class App extends StatelessWidget {
   const App({
     @required AuthenticationRepository authenticationRepository,
-  }) : _authenticationRepository = authenticationRepository;
+    @required SharedPreferencesService sharedPreferencesService,
+    Settings initialSettings,
+  })  : _authenticationRepository = authenticationRepository,
+        _sharedPreferencesService = sharedPreferencesService,
+        _initialSettings = initialSettings;
 
   final AuthenticationRepository _authenticationRepository;
+  final SharedPreferencesService _sharedPreferencesService;
+  final Settings _initialSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +39,10 @@ class App extends StatelessWidget {
             ),
           ),
           BlocProvider<SettingsBloc>(
-            create: (context) => SettingsBloc()..add(LoadSettings()),
+            create: (context) => SettingsBloc(
+              sharedPreferencesService: _sharedPreferencesService,
+              initialSettings: _initialSettings,
+            ),
           ),
           BlocProvider<CountriesBloc>(
             create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
@@ -51,6 +64,8 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
+        print(state.settings.themeMode);
+
         return MaterialApp(
           title: 'Bucket Map',
           themeMode: state.settings.themeMode,
