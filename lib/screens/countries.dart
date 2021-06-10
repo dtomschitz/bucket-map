@@ -113,7 +113,16 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<FilteredCountriesBloc>(context)
           .add(ClearCountriesFilter());
 
-      await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: country.northeast)));      
+      if(country.southwest.longitude>0 && country.northeast.longitude<0){
+        double lngOverflow = 180 + country.northeast.longitude;
+        double lngDifference = 180 + lngOverflow-country.southwest.longitude;
+        double rightPadding = lngOverflow / lngDifference * MediaQuery.of(context).size.width;
+        LatLng modifiedNe = LatLng(country.northeast.latitude, 179.99);
+        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: modifiedNe), right: rightPadding));
+      }else{ 
+        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: country.northeast)));
+      }      
+
       await _panelController.close();
     }
   }
