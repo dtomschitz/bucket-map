@@ -1,6 +1,6 @@
 import 'package:bucket_map/core/app/bloc/bloc.dart';
 import 'package:bucket_map/core/settings/bloc/bloc.dart';
-import 'package:bucket_map/core/settings/views/theme_login.dart';
+import 'package:bucket_map/core/settings/views/login_settings.dart';
 import 'package:bucket_map/core/settings/views/views.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';

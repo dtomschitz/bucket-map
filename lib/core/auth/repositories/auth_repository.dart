@@ -99,9 +99,6 @@ class AuthenticationRepository {
         id: doc.data()['id'] ?? '',
         name: doc.data()['name'] ?? 'Test',
         photo: doc.data()['photo'] ?? '',
-        //planned: doc.data()['planned'] ?? 0,
-        //mountCountries: doc.data()['amountCountries'] ?? 0,
-        //amountPins: doc.data()['amountPins'] ?? 0,
         currentCountry: doc.data()['currentCountry'] ?? 'Deutschland',
         countries: doc.data()['countries'] ?? [],
         pinIds: doc.data()['pinIds'] ?? [],
@@ -109,9 +106,25 @@ class AuthenticationRepository {
     }).toList();
   }
 
+  //userData from Snapshot
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    return UserData(
+      uid: currentUser.id,
+      name: snapshot.data()['name'],
+    );
+  }
+
   //get users stream from firebase
   Stream<List<User>> get users {
     return userCollection.snapshots().map(_userListFromSnapshot);
+  }
+
+  //get user doc stream
+  Stream<UserData> get userData {
+    return userCollection
+        .doc(currentUser.id)
+        .snapshots()
+        .map(_userDataFromSnapshot);
   }
 
   /// Signs in with the provided [email] and [password].
