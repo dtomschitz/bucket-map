@@ -8,7 +8,6 @@ import 'package:bucket_map/screens/create_pin.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -132,15 +131,7 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<FilteredCountriesBloc>(context)
           .add(ClearCountriesFilter());
 
-      if(country.southwest.longitude>0 && country.northeast.longitude<0){
-        double lngOverflow = 180 + country.northeast.longitude;
-        double lngDifference = 180 + lngOverflow-country.southwest.longitude;
-        double rightPadding = lngOverflow / lngDifference * MediaQuery.of(context).size.width;
-        LatLng modifiedNe = LatLng(country.northeast.latitude, 179.99);
-        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: modifiedNe), right: rightPadding));
-      }else{ 
-        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: country.northeast)));
-      }      
+      _mapController.animateCameraToCountry(country); 
 
       await _panelController.close();
     }
