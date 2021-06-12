@@ -25,3 +25,15 @@ class UnlockCountry extends ProfileEvent {
   @override
   String toString() => 'UnlockCountry { code: $code }';
 }
+
+class RenameProfile extends ProfileEvent {
+  const RenameProfile({this.firstName, this.lastName});
+  final String firstName;
+  final String lastName;
+
+  @override
+  List<Object> get props => [firstName, lastName];
+
+  @override
+  String toString() => 'UnlockCountry';
+}
