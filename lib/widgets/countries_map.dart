@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/core/settings/bloc/bloc.dart';
+import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +65,7 @@ class _CountriesMapState extends State<CountriesMap>
       _controller.moveCameraToPosition = _moveCameraToPosition;
       _controller.addPin = _addPin;
       _controller.removePin = _removePin;
+      _controller.animateCameraToCountry = _animateCameraToCountry;
     }
   }
 
@@ -135,6 +137,18 @@ class _CountriesMapState extends State<CountriesMap>
 
   Future<void> _removePin(Symbol symbol) {
     return _mapController.removeSymbol(symbol);
+  }
+
+  Future<void> _animateCameraToCountry(Country country) async {
+    if(country.southwest.longitude>0 && country.northeast.longitude<0){
+        double lngOverflow = 180 + country.northeast.longitude;
+        double lngDifference = 180 + lngOverflow-country.southwest.longitude;
+        double rightPadding = lngOverflow / lngDifference * MediaQuery.of(context).size.width;
+        LatLng modifiedNe = LatLng(country.northeast.latitude, 179.99);
+        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: modifiedNe), right: rightPadding));
+      }else{ 
+        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: country.northeast)));
+      }
   }
 
   _moveCameraToCurrentLocation() async {
@@ -248,4 +262,6 @@ class CountriesMapController {
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
 
   Future<void> Function(Symbol symbol) removePin;
+
+  Future<void> Function(Country country) animateCameraToCountry;
 }

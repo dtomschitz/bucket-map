@@ -131,8 +131,9 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<FilteredCountriesBloc>(context)
           .add(ClearCountriesFilter());
 
+      _mapController.animateCameraToCountry(country); 
+
       await _panelController.close();
-      await _mapController.moveCameraToPosition(country.latLng, zoom: 5);
     }
   }
 
