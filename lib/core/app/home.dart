@@ -1,4 +1,3 @@
-import 'package:bucket_map/screens/profile.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +18,7 @@ class _HomePageState extends State<HomePage> {
         index: _currentIndex,
         children: [
           CountriesScreen(),
-          CountriesScreen(),
+          JourneysScreen(),
           ProfileScreen(),
         ],
       ),

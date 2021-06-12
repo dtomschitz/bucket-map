@@ -1,7 +1,4 @@
-import 'dart:developer';
-
-import 'package:bucket_map/blocs/countries/bloc.dart';
-import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
+import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/app/home.dart';
 import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
@@ -17,13 +14,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class App extends StatelessWidget {
   const App({
     @required AuthenticationRepository authenticationRepository,
+    @required ProfileRepository profileRepository,
     @required SharedPreferencesService sharedPreferencesService,
     Settings initialSettings,
   })  : _authenticationRepository = authenticationRepository,
+        _profileRepository = profileRepository,
         _sharedPreferencesService = sharedPreferencesService,
         _initialSettings = initialSettings;
 
   final AuthenticationRepository _authenticationRepository;
+  final ProfileRepository _profileRepository;
+
   final SharedPreferencesService _sharedPreferencesService;
   final Settings _initialSettings;
 
@@ -42,6 +43,12 @@ class App extends StatelessWidget {
             create: (context) => SettingsBloc(
               sharedPreferencesService: _sharedPreferencesService,
               initialSettings: _initialSettings,
+            ),
+          ),
+          BlocProvider<ProfileBloc>(
+            create: (context) => ProfileBloc(
+              authenticationRepository: _authenticationRepository,
+              profileRepository: _profileRepository,
             ),
           ),
           BlocProvider<CountriesBloc>(
@@ -64,8 +71,6 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
-        print(state.settings.themeMode);
-
         return MaterialApp(
           title: 'Bucket Map',
           themeMode: state.settings.themeMode,

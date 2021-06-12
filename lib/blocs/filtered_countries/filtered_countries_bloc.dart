@@ -7,7 +7,7 @@ class FilteredCountriesBloc
             ? FilteredCountriesLoaded(
                 (countriesBloc.state as CountriesLoaded).countries, "")
             : FilteredCountriesLoading()) {
-    countriesSubscription = countriesBloc.stream.listen((state) {
+    _subscription = countriesBloc.stream.listen((state) {
       if (state is CountriesLoaded) {
         add(FilteredCountriesUpdated(
             (countriesBloc.state as CountriesLoaded).countries));
@@ -16,11 +16,11 @@ class FilteredCountriesBloc
   }
 
   final CountriesBloc countriesBloc;
-  StreamSubscription countriesSubscription;
+  StreamSubscription _subscription;
 
   @override
   Future<void> close() {
-    countriesSubscription.cancel();
+    _subscription.cancel();
     return super.close();
   }
 
