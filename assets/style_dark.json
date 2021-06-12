@@ -578,8 +578,8 @@
             }
         }
     },
-    "center": [116.30022276475557, 2.842170943040401e-14],
-    "zoom": 0.9381093057612481,
+    "center": [88.17751036245068, 33.35544372284144],
+    "zoom": 2.368376620188206,
     "bearing": 0,
     "pitch": 0,
     "sources": {
@@ -1938,7 +1938,7 @@
             "source": "composite",
             "source-layer": "country_boundaries",
             "maxzoom": 8,
-            "filter": ["match", ["get", "iso_3166_1_alpha_3"], "", true, false],
+            "filter": ["==", ["get", "iso_3166_1"], ""],
             "layout": {},
             "paint": {
                 "fill-color": "hsla(174, 97%, 43%, 0.5)",
@@ -3110,7 +3110,7 @@
         }
     ],
     "created": "2021-04-29T14:29:30.214Z",
-    "modified": "2021-05-03T08:42:00.493Z",
+    "modified": "2021-06-12T11:18:23.294Z",
     "id": "cko2zh03u09je19pjd7pt3ge5",
     "owner": "cs267",
     "visibility": "private",
