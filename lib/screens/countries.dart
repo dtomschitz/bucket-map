@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/screens/create_pin.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountriesScreen extends StatefulWidget {
@@ -23,6 +27,8 @@ class _CountriesScreenState extends State<CountriesScreen>
   AnimationController _animationController;
   CountriesSlidingSheetMode _mode;
 
+  StreamSubscription _profileSubscription;
+
   bool _animationLock = false;
   bool _clearSearchBarOnClose = true;
 
@@ -40,7 +46,17 @@ class _CountriesScreenState extends State<CountriesScreen>
   @override
   void dispose() {
     _animationController.dispose();
+    _profileSubscription.cancel();
     super.dispose();
+  }
+
+  initProfileListener() {
+    _profileSubscription =
+        BlocProvider.of<ProfileBloc>(context).stream.listen((state) {
+      if (state is ProfileLoaded) {
+        _mapController.setUnlockedCountries(state.profile.unlockedCountries);
+      }
+    });
   }
 
   @override
@@ -69,6 +85,9 @@ class _CountriesScreenState extends State<CountriesScreen>
               CountriesMap(
                 key: GlobalKeys.countriesMap,
                 controller: _mapController,
+                onStyleLoaded: () {
+                  initProfileListener();
+                },
               ),
               CreatePinButton(),
             ],
@@ -101,7 +120,8 @@ class _CountriesScreenState extends State<CountriesScreen>
     setState(() => _clearSearchBarOnClose = false);
 
     if (_mode == CountriesSlidingSheetMode.unlock) {
-      //TODO: unlock country
+      BlocProvider.of<ProfileBloc>(context).add(UnlockCountry(country.code));
+      await _panelController.close();
     } else {
       _searchTextController.text = country.name;
 
@@ -112,8 +132,17 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<FilteredCountriesBloc>(context)
           .add(ClearCountriesFilter());
 
+      if(country.southwest.longitude>0 && country.northeast.longitude<0){
+        double lngOverflow = 180 + country.northeast.longitude;
+        double lngDifference = 180 + lngOverflow-country.southwest.longitude;
+        double rightPadding = lngOverflow / lngDifference * MediaQuery.of(context).size.width;
+        LatLng modifiedNe = LatLng(country.northeast.latitude, 179.99);
+        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: modifiedNe), right: rightPadding));
+      }else{ 
+        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: country.northeast)));
+      }      
+
       await _panelController.close();
-      await _mapController.moveCameraToPosition(country.latLng, zoom: 5);
     }
   }
 
