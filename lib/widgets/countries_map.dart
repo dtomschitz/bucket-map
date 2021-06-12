@@ -19,9 +19,11 @@ class CountriesMap extends StatefulWidget {
     this.locationPadding,
     this.locationAlignment,
     this.onMapCreated,
+    this.onStyleLoaded,
   }) : super(key: key);
 
-  final Function(MapboxMapController controller) onMapCreated;
+  final Function() onMapCreated;
+  final Function() onStyleLoaded;
 
   final CountriesMapController controller;
   final Function(Point<double>, LatLng) onMapClick;
@@ -46,7 +48,7 @@ class _CountriesMapState extends State<CountriesMap>
     super.initState();
 
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
@@ -57,7 +59,7 @@ class _CountriesMapState extends State<CountriesMap>
 
     CountriesMapController _controller = widget.controller;
     if (_controller != null) {
-      _controller.setCountriesFilter = _setCountriesFilter;
+      _controller.setUnlockedCountries = _setUnlockedCountries;
       _controller.animateCamera = _animateCamera;
       _controller.moveCameraToPosition = _moveCameraToPosition;
       _controller.addPin = _addPin;
@@ -73,6 +75,7 @@ class _CountriesMapState extends State<CountriesMap>
 
   _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
+
     _mapController.addListener(() {
       if (_currentCameraPosition != _mapController.cameraPosition &&
           !_ignoreCameraUpdate) {
@@ -84,13 +87,22 @@ class _CountriesMapState extends State<CountriesMap>
     });
   }
 
-  Future<bool> _setCountriesFilter(List<String> countryCodes) {
+  _onStyleLoaded() {
+    _animationController.forward();
+    widget.onStyleLoaded?.call();
+  }
+
+  Future<void> _setUnlockedCountries(List<String> countries) async {
+    if (countries.isEmpty) {
+      return;
+    }
+
     return _mapController.setFilter(
       'country-boundaries',
       [
         "match",
         ["get", "iso_3166_1_alpha_3"],
-        countryCodes,
+        countries,
         true,
         false
       ],
@@ -178,9 +190,7 @@ class _CountriesMapState extends State<CountriesMap>
                     myLocationEnabled:
                         snapshot.data == PermissionStatus.granted,
                     onMapCreated: _onMapCreated,
-                    onStyleLoadedCallback: () {
-                      _animationController.forward();
-                    },
+                    onStyleLoaded: _onStyleLoaded,
                     onMapClick: widget.onMapClick,
                   );
                 },
@@ -233,7 +243,7 @@ class CountriesMapController {
   /// false if the movement was canceled.
   Future<bool> Function(CameraUpdate) animateCamera;
 
-  Future<bool> Function(List<String> countryCodes) setCountriesFilter;
+  Future<void> Function(List<String> countries) setUnlockedCountries;
 
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
 

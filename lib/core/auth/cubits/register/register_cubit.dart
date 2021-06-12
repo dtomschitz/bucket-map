@@ -1,65 +1,90 @@
 part of cubits.register;
 
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit(this._authenticationRepository) : super(const RegisterState());
+  RegisterCubit(this._authRepository) : super(const RegisterState());
 
-  final AuthenticationRepository _authenticationRepository;
+  final AuthenticationRepository _authRepository;
+
+  void firstNameChanged(String firstName) {
+    emit(state.copyWith(firstName: firstName));
+  }
+
+  void lastNameChanged(String lastName) {
+    emit(state.copyWith(lastName: lastName));
+  }
+
+  void countryChanged(Country country) {
+    emit(state.copyWith(country: country));
+  }
 
   void emailChanged(String value) {
     final email = Email.dirty(value);
+    //final status = Formz.validate([email]);
+    final status = FormzStatus.valid;
+
     emit(state.copyWith(
       email: email,
-      status: Formz.validate([
-        email,
-        state.password,
-        //state.confirmedPassword,
-      ]),
+      emailStatus: status,
+      error: status.isInvalid ? 'Die E-Mail ist nicht korrekt' : null,
     ));
+  }
+
+  Future<bool> checkIfEmailExists() async {
+    emit(state.copyWith(loading: true));
+    final verifiedEmail = await _authRepository.verifyEmail(state.email.value);
+
+    emit(
+      state.copyWith(
+        loading: false,
+        error: verifiedEmail != null
+            ? 'Diese E-Mail wird bereits verwendet'
+            : null,
+      ),
+    );
+
+    return verifiedEmail != null;
   }
 
   void passwordChanged(String value) {
     final password = Password.dirty(value);
-    /*final confirmedPassword = ConfirmedPassword.dirty(
-      password: password.value,
-      value: state.confirmedPassword.value,
-    );*/
     emit(state.copyWith(
       password: password,
-      //confirmedPassword: confirmedPassword,
-      status: Formz.validate([
-        state.email,
-        password,
-        //state.confirmedPassword,
-      ]),
+      passwordStatus: Formz.validate([password]),
+      error: null,
     ));
   }
 
-  void confirmedPasswordChanged(String value) {
-    /*final confirmedPassword = ConfirmedPassword.dirty(
-      password: state.password.value,
-      value: value,
-    );*/
+  Future<bool> registerUser() async {
     emit(state.copyWith(
-      //confirmedPassword: confirmedPassword,
-      status: Formz.validate([
-        state.email,
-        state.password,
-        //confirmedPassword,
-      ]),
+      passwordStatus: FormzStatus.submissionInProgress,
+      loading: true,
+      error: null,
     ));
-  }
 
-  Future<void> signUpFormSubmitted() async {
-    if (!state.status.isValidated) return;
-    emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await _authenticationRepository.signUp(
+      await _authRepository.signUp(
         email: state.email.value,
         password: state.password.value,
+        firstName: state.firstName,
+        lastName: state.lastName,
+        country: state.country.code,
       );
-      emit(state.copyWith(status: FormzStatus.submissionSuccess));
+
+      emit(state.copyWith(
+        passwordStatus: FormzStatus.submissionSuccess,
+        loading: false,
+        error: null,
+      ));
+
+      return true;
     } on Exception {
-      emit(state.copyWith(status: FormzStatus.submissionFailure));
+      emit(state.copyWith(
+        passwordStatus: FormzStatus.submissionFailure,
+        loading: false,
+        error: null,
+      ));
+
+      return false;
     }
   }
 }

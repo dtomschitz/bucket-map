@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:cache/cache.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
 import 'package:bucket_map/models/user.dart';
@@ -21,17 +21,16 @@ class LogOutFailure implements Exception {}
 /// Repository which manages user authentication.
 class AuthenticationRepository {
   AuthenticationRepository({
+    @required ProfileRepository profileRepository,
     CacheClient cache,
     firebase_auth.FirebaseAuth firebaseAuth,
-  })  : _cache = cache ?? CacheClient(),
+  })  : _profileRepository = profileRepository,
+        _cache = cache ?? CacheClient(),
         _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance;
 
+  final ProfileRepository _profileRepository;
   final CacheClient _cache;
   final firebase_auth.FirebaseAuth _firebaseAuth;
-
-  // collection reference for firebase
-  final CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('users');
 
   /// User cache key.
   /// Should only be used for testing purposes.
@@ -62,27 +61,27 @@ class AuthenticationRepository {
   Future<void> signUp({
     @required String email,
     @required String password,
-    String id,
-    String name,
-    String photo,
-    String currentCountry,
+    String firstName,
+    String lastName,
+    String country,
   }) async {
     try {
-      final userCredentials =
-          await _firebaseAuth.createUserWithEmailAndPassword(
+      final credentials = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      await userCollection.doc(userCredentials.user.uid).set({
-        'id': userCredentials.user.uid,
-        'name': name,
-        'photo': photo,
-        'currentCountry': currentCountry,
-        'countries': [],
-        'pinIds': [],
-      });
-    } on Exception {
+      await _profileRepository.createProfile(
+        Profile(
+          id: credentials.user.uid,
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          country: country,
+          unlockedCountries: [country],
+        ),
+      );
+    } on Exception catch (e) {
       throw SignUpFailure();
     }
   }
@@ -90,28 +89,6 @@ class AuthenticationRepository {
   Future<void> updatePassword(String password) async {
     final currentUser = _firebaseAuth.currentUser;
     await currentUser.updatePassword(password);
-  }
-
-  //user list from snapshot
-  List<User> _userListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return User(
-        id: doc.data()['id'] ?? '',
-        name: doc.data()['name'] ?? 'Test',
-        photo: doc.data()['photo'] ?? '',
-        //planned: doc.data()['planned'] ?? 0,
-        //mountCountries: doc.data()['amountCountries'] ?? 0,
-        //amountPins: doc.data()['amountPins'] ?? 0,
-        currentCountry: doc.data()['currentCountry'] ?? 'Deutschland',
-        countries: doc.data()['countries'] ?? [],
-        pinIds: doc.data()['pinIds'] ?? [],
-      );
-    }).toList();
-  }
-
-  //get users stream from firebase
-  Stream<List<User>> get users {
-    return userCollection.snapshots().map(_userListFromSnapshot);
   }
 
   /// Signs in with the provided [email] and [password].
@@ -141,6 +118,13 @@ class AuthenticationRepository {
     } on Exception {
       throw LogOutFailure();
     }
+  }
+
+  Future<String> verifyEmail(String email) async {
+    final profile = await _profileRepository.getProfileByEmail(email);
+    if (profile == null) return null;
+
+    return profile.email;
   }
 }
 

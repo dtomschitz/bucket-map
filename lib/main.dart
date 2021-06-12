@@ -1,3 +1,4 @@
+import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/app/app.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/core/bloc_observer.dart';
@@ -13,7 +14,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  final authenticationRepository = AuthenticationRepository();
+  final profileRepository = ProfileRepository();
+  final authenticationRepository = AuthenticationRepository(
+    profileRepository: profileRepository,
+  );
+
   await authenticationRepository.user.first;
 
   final sharedPreferencesService = await SharedPreferencesService.instance;
@@ -26,8 +31,9 @@ void main() async {
   runApp(
     App(
       authenticationRepository: authenticationRepository,
+      profileRepository: profileRepository,
       sharedPreferencesService: sharedPreferencesService,
-      initialSettings: initialSettings
+      initialSettings: initialSettings,
     ),
   );
 }

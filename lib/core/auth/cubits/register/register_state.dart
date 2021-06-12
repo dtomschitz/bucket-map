@@ -6,38 +6,61 @@ class RegisterState extends Equatable {
   const RegisterState({
     this.email = const Email.pure(),
     this.password = const Password.pure(),
-    this.id,
-    this.name,
-    this.photo,
-    this.status = FormzStatus.pure,
+    this.firstName = '',
+    this.lastName = '',
+    this.country,
+    this.emailStatus,
+    this.passwordStatus,
+    this.error,
+    this.loading = false,
   });
 
   final Email email;
   final Password password;
-  final String id;
-  final String name;
-  final String photo;
+  final String firstName;
+  final String lastName;
+  final Country country;
 
-  final FormzStatus status;
+  final String error;
+  final bool loading;
+
+  final FormzStatus emailStatus;
+  final FormzStatus passwordStatus;
 
   @override
-  List<Object> get props => [email, password, id, name, photo, status];
+  List<Object> get props => [
+        email,
+        password,
+        firstName,
+        lastName,
+        country,
+        error,
+        loading,
+        emailStatus,
+        passwordStatus,
+      ];
 
   RegisterState copyWith({
     Email email,
     Password password,
-    String id,
-    String name,
-    String photo,
-    FormzStatus status,
+    String firstName,
+    String lastName,
+    Country country,
+    FormzStatus emailStatus,
+    FormzStatus passwordStatus,
+    String error,
+    bool loading,
   }) {
     return RegisterState(
       email: email ?? this.email,
       password: password ?? this.password,
-      id: id ?? this.id,
-      name: name ?? this.name,
-      photo: photo ?? this.photo,
-      status: status ?? this.status,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      country: country ?? this.country,
+      emailStatus: emailStatus ?? this.emailStatus,
+      passwordStatus: passwordStatus ?? this.passwordStatus,
+      loading: loading ?? this.loading,
+      error: error ?? this.error,
     );
   }
 }
