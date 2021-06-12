@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
+import 'package:bucket_map/core/settings/bloc/bloc.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -16,10 +18,12 @@ class CountriesMap extends StatefulWidget {
     this.onMapClick,
     this.locationPadding,
     this.locationAlignment,
-    this.onMapCreated
+    this.onMapCreated,
+    this.onStyleLoaded,
   }) : super(key: key);
 
-  final Function(MapboxMapController controller) onMapCreated;
+  final Function() onMapCreated;
+  final Function() onStyleLoaded;
 
   final CountriesMapController controller;
   final Function(Point<double>, LatLng) onMapClick;
@@ -44,7 +48,7 @@ class _CountriesMapState extends State<CountriesMap>
     super.initState();
 
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
@@ -55,7 +59,7 @@ class _CountriesMapState extends State<CountriesMap>
 
     CountriesMapController _controller = widget.controller;
     if (_controller != null) {
-      _controller.setCountriesFilter = _setCountriesFilter;
+      _controller.setUnlockedCountries = _setUnlockedCountries;
       _controller.animateCamera = _animateCamera;
       _controller.moveCameraToPosition = _moveCameraToPosition;
       _controller.addPin = _addPin;
@@ -71,6 +75,7 @@ class _CountriesMapState extends State<CountriesMap>
 
   _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
+
     _mapController.addListener(() {
       if (_currentCameraPosition != _mapController.cameraPosition &&
           !_ignoreCameraUpdate) {
@@ -82,13 +87,22 @@ class _CountriesMapState extends State<CountriesMap>
     });
   }
 
-  Future<bool> _setCountriesFilter(List<String> countryCodes) {
+  _onStyleLoaded() {
+    _animationController.forward();
+    widget.onStyleLoaded?.call();
+  }
+
+  Future<void> _setUnlockedCountries(List<String> countries) async {
+    if (countries.isEmpty) {
+      return;
+    }
+
     return _mapController.setFilter(
       'country-boundaries',
       [
         "match",
         ["get", "iso_3166_1_alpha_3"],
-        countryCodes,
+        countries,
         true,
         false
       ],
@@ -134,7 +148,7 @@ class _CountriesMapState extends State<CountriesMap>
       await _mapController.animateCamera(cameraUpdate);
       setState(() {
         _currentCameraPosition = _mapController.cameraPosition;
-       // _ignoreCameraUpdate = false;
+        // _ignoreCameraUpdate = false;
       });
     }
   }
@@ -155,23 +169,31 @@ class _CountriesMapState extends State<CountriesMap>
           children: [
             FadeTransition(
               opacity: _animation,
-              child: MapboxMap(
-                key: GlobalKeys.mapbox,
-                accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-                styleString: AppConstants.MAPBOX_LIGHT_STYLE_URL,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(0.0, 0.0),
-                ),
-                compassEnabled: false,
-                tiltGesturesEnabled: false,
-                rotateGesturesEnabled: false,
-                trackCameraPosition: true,
-                myLocationEnabled: snapshot.data == PermissionStatus.granted,
-                onMapCreated: _onMapCreated,
-                onStyleLoadedCallback: () {
-                  _animationController.forward();
+              child: BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (context, state) {
+                  final accessToken = AppConstants.MAPBOX_ACCESS_TOKEN;
+                  final style = Theme.of(context).brightness == Brightness.dark
+                      ? AppConstants.MAPBOX_DARK_STYLE_URL
+                      : AppConstants.MAPBOX_LIGHT_STYLE_URL;
+
+                  return MapboxMap(
+                    key: GlobalKeys.mapbox,
+                    accessToken: accessToken,
+                    styleString: style,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(0.0, 0.0),
+                    ),
+                    compassEnabled: false,
+                    tiltGesturesEnabled: false,
+                    rotateGesturesEnabled: false,
+                    trackCameraPosition: true,
+                    myLocationEnabled:
+                        snapshot.data == PermissionStatus.granted,
+                    onMapCreated: _onMapCreated,
+                    onStyleLoaded: _onStyleLoaded,
+                    onMapClick: widget.onMapClick,
+                  );
                 },
-                onMapClick: widget.onMapClick,
               ),
             ),
             PermissionBuilder(
@@ -221,7 +243,7 @@ class CountriesMapController {
   /// false if the movement was canceled.
   Future<bool> Function(CameraUpdate) animateCamera;
 
-  Future<bool> Function(List<String> countryCodes) setCountriesFilter;
+  Future<void> Function(List<String> countries) setUnlockedCountries;
 
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
 

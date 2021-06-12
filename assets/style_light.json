@@ -446,7 +446,7 @@
     "pitch": 0,
     "sources": {
         "composite": {
-            "url": "mapbox://mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2,mapbox.country-boundaries-v1",
+            "url": "mapbox://mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v8,mapbox.country-boundaries-v1",
             "type": "vector"
         }
     },
@@ -1832,7 +1832,7 @@
             "source": "composite",
             "source-layer": "country_boundaries",
             "maxzoom": 8,
-            "filter": ["match", ["get", "iso_3166_1_alpha_3"], "", true, false],
+            "filter": ["==", ["get", "iso_3166_1"], ""],
             "layout": {},
             "paint": {
                 "fill-color": "hsla(180, 99%, 36%, 0.4)",
@@ -2986,7 +2986,7 @@
         }
     ],
     "created": "2021-04-29T14:27:49.147Z",
-    "modified": "2021-05-03T08:45:11.489Z",
+    "modified": "2021-06-12T11:19:05.337Z",
     "id": "cko2zeu4o0oii19lec4kur8p5",
     "owner": "cs267",
     "visibility": "private",

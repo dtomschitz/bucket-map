@@ -2,122 +2,163 @@ import 'package:bucket_map/core/auth/cubits/login/cubit.dart';
 import 'package:bucket_map/core/auth/register.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/core/auth/widgets/widgets.dart';
-import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 class LoginPage extends StatelessWidget {
-  static Page page() => MaterialPage<void>(child: LoginPage());
+  final PageController controller = PageController(initialPage: 0);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Anmelden'),
-        actions: [
-          TextButton(
-            key: const Key('loginForm_createAccount_flatButton'),
-            child: const Text('Registrieren'),
-            onPressed: () => Navigator.of(context).push<void>(
-              RegisterPage.route(),
-            ),
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: BlocProvider(
-          create: (_) => LoginCubit(context.read<AuthenticationRepository>()),
-          child: LoginForm(),
-        ),
-      ),
+  jumpToPage(int page) {
+    controller.animateToPage(
+      page,
+      duration: Duration(milliseconds: 250),
+      curve: Curves.ease,
     );
   }
-}
 
-class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
-      listener: (context, state) {
-        if (state.status.isSubmissionFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
-            );
-        }
-      },
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 16.0),
-            _EmailInput(),
-            const SizedBox(height: 8.0),
-            _PasswordInput(),
-            const SizedBox(height: 8.0),
-            _LoginButton(),
+    return BlocProvider(
+      create: (context) => LoginCubit(
+        context.read<AuthenticationRepository>(),
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Bucket Map'),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(6.0),
+            child: BlocBuilder<LoginCubit, LoginState>(
+              builder: (context, state) {
+                if (state.loading) {
+                  return LinearProgressIndicator();
+                }
+
+                return Container();
+              },
+            ),
+          ),
+        ),
+        body: PageView(
+          controller: controller,
+          scrollDirection: Axis.horizontal,
+          physics: NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            EmailView(
+              onNextView: () => jumpToPage(1),
+              onRegister: () => Navigator.push(context, RegisterPage.page()),
+            ),
+            PasswordView(
+              onPreviouseView: () => jumpToPage(0),
+            ),
           ],
         ),
       ),
     );
   }
+
+  static Page page() => MaterialPage<void>(child: LoginPage());
 }
 
-class _EmailInput extends StatelessWidget {
+class EmailView extends StatelessWidget {
+  const EmailView({this.onNextView, this.onRegister});
+
+  final Function() onNextView;
+  final Function() onRegister;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
-        return FormInputField(
-          key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
-          keyboardType: TextInputType.emailAddress,
-          labelText: 'E-Mail',
-          errorText: state.email.invalid ? 'Ungültige E-Mail Adresse' : null,
+        final String labelText = 'E-Mail';
+        final isEmailValid = state.emailStatus == FormzStatus.valid;
+
+        return AuthViewContainer(
+          title: 'Anmeldung',
+          subtitle: 'Melde dich mit deinem Konto an.',
+          children: [
+            FormInputField(
+              onChanged: context.read<LoginCubit>().emailChanged,
+              keyboardType: TextInputType.emailAddress,
+              labelText: labelText,
+              errorText: state.error,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    child: Text('Konto erstellen'),
+                    onPressed: () {
+                      onRegister?.call();
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text('Weiter'),
+                    onPressed: !isEmailValid
+                        ? null
+                        : () async {
+                            final result =
+                                await context.read<LoginCubit>().verifyEmail();
+                            if (!result) return;
+
+                            onNextView?.call();
+                          },
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
     );
   }
 }
 
-class _PasswordInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) => previous.password != current.password,
-      builder: (context, state) {
-        return FormInputField(
-          key: const Key('loginForm_passwordInput_textField'),
-          obscureText: true,
-          onChanged: (password) =>
-              context.read<LoginCubit>().passwordChanged(password),
-          labelText: 'Passwort',
-          errorText: state.email.invalid ? 'Ungültiges Passwort' : null,
-        );
-      },
-    );
-  }
-}
+class PasswordView extends StatelessWidget {
+  const PasswordView({this.onPreviouseView});
+  final Function() onPreviouseView;
 
-class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? LoadingSpinner()
-            : FormButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                text: 'Anmelden',
-                onPressed: state.status.isValidated
-                    ? () => context.read<LoginCubit>().logInWithCredentials()
-                    : null,
-              );
+        final String labelText = 'Password';
+
+        return AuthViewContainer(
+          title: 'Willkommen',
+          subtitle: state.email.value,
+          children: [
+            FormInputField(
+              obscureText: true,
+              onChanged: context.read<LoginCubit>().passwordChanged,
+              keyboardType: TextInputType.emailAddress,
+              labelText: labelText,
+              errorText: state.error,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    child: Text(
+                      'Zurück',
+                    ),
+                    onPressed: onPreviouseView?.call,
+                  ),
+                  ElevatedButton(
+                    child: Text('Anmelden'),
+                    onPressed: () {
+                      context.read<LoginCubit>().logInWithCredentials();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
       },
     );
   }
