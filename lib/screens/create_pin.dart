@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:uuid/uuid.dart';
 
-import 'package:bucket_map/core/constants.dart';
+import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,40 +11,61 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CreatePinScreen extends StatefulWidget {
+<<<<<<< HEAD
   Function(Symbol symbol) openSymbolMenu;
 
   CreatePinScreen(Function(Symbol symbol) openSymbolMenu) : super();
 
+=======
+>>>>>>> develop
   @override
-  State createState() => _CreatePinScreenState();
+  State createState() {
+    return _CreatePinScreenState();
+  }
 }
 
 class _CreatePinScreenState extends State<CreatePinScreen> {
-  MapboxMapController _mapController;
+  final CountriesMapController _controller = new CountriesMapController();
 
-  LatLng currentMarkerPosition;
+  Symbol _currentSymbol;
+  bool _showClearButton = false;
+  bool _showMap = false;
 
   @override
   void initState() {
     super.initState();
-    currentMarkerPosition = new LatLng(45.45, 45.45);
+    _delayMapRendering();
   }
 
-  static final _initialCameraPosition = CameraPosition(
-    target: LatLng(0.0, 0.0),
-  );
-
-  @override
-  void dispose() {
-    super.dispose();
+  _onMapClick(Point<double> point, LatLng position) async {
+    Symbol symbol = await _controller.addPin(position, clearBefore: true);
+    setState(() {
+      _currentSymbol = symbol;
+      _showClearButton = true;
+    });
   }
 
-  void _onMapCreated(MapboxMapController controller) {
-    _mapController = controller;
+  _clearCurrentSymbol() {
+    _controller.removePin(_currentSymbol);
+    setState(() {
+      _currentSymbol = null;
+      _showClearButton = false;
+    });
   }
 
-  void _onStyleLoadedCallback() {}
+  _saveCurrentSymbol() async {
+    //TODO: Save pin in global state
+    _closeScreen();
+  }
 
+  _closeScreen() async {
+    setState(() => _showMap = false);
+    await new Future.delayed(new Duration(milliseconds: 50));
+
+    Navigator.pop(context);
+  }
+
+<<<<<<< HEAD
   addPin(Point<double> point, LatLng position) async {
     /*
     final ByteData bytes = await rootBundle.load("assets/location_pin.png");
@@ -61,53 +81,75 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     );
     _mapController.addSymbol(options);
     print("added pin");
+=======
+  _delayMapRendering() async {
+    await new Future.delayed(new Duration(milliseconds: 250));
+    setState(() => _showMap = true);
+>>>>>>> develop
   }
 
   @override
   Widget build(BuildContext context) {
+    final locationPadding = MediaQuery.of(context).padding.bottom + 86;
+
     return PermissionBuilder(
       permission: Permission.location,
       builder: (context, snapshot) {
-        bool isLocationGranted = snapshot.data.isGranted;
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.blue,
-            toolbarHeight: 60.0,
-            title: Text(
-              'Click to create a Pin at any Location.',
-              style: TextStyle(fontSize: 14.0),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: _closeScreen,
             ),
-            actions: <Widget>[
-              FlatButton(
-                textColor: Colors.white,
-                onPressed: () {
-                  Symbol sym = _mapController.symbols.first;
-                  sym.options =
-                      sym.options.copyWith(new SymbolOptions(draggable: false));
-                  Navigator.pop(context, sym);
-                },
-                child: Text("Ok"),
+            title: Text('Ziel auswählen'),
+            actions: [
+              AnimatedOpacity(
+                opacity: _showClearButton ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 150),
+                curve: Curves.easeOutQuint,
+                child: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: _clearCurrentSymbol,
+                ),
               ),
             ],
           ),
-          body: MapboxMap(
-            accessToken: AppConstants.MAPBOX_ACCESS_TOKEN,
-            initialCameraPosition: _initialCameraPosition,
-            styleString: new File("assets/style.json").path,
-            onMapCreated: _onMapCreated,
-            onStyleLoadedCallback: _onStyleLoadedCallback,
-            onMapClick: (point, latlng) {
-              addPin(point, latlng);
-            },
-          ),
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: 50),
-            child: FloatingActionButton(
-              child: isLocationGranted
-                  ? Icon(Icons.my_location)
-                  : Icon(Icons.location_disabled),
-              onPressed: () {},
-            ),
+          body: Stack(
+            children: [
+              _showMap
+                  ? CountriesMap(
+                      key: GlobalKeys.countriesMap,
+                      controller: _controller,
+                      onMapClick: _onMapClick,
+                      locationPadding: EdgeInsets.only(
+                        bottom: locationPadding,
+                      ),
+                    )
+                  : SizedBox(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Material(
+                  elevation: 8,
+                  child: Container(
+                    color: Theme.of(context).appBarTheme.color,
+                    width: double.infinity,
+                    child: SafeArea(
+                      child: Container(
+                        child: SizedBox(
+                          height: 70.0,
+                          child: TextButton(
+                            child: Text('Speichern'),
+                            onPressed: _currentSymbol != null
+                                ? _saveCurrentSymbol
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

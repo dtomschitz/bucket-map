@@ -271,7 +271,7 @@ packages:
   mapbox_gl:
     dependency: "direct main"
     description:
-      path: mapbox
+      path: "packages/mapbox"
       relative: true
     source: path
     version: "0.12.0"
@@ -285,14 +285,14 @@ packages:
   mapbox_gl_platform_interface:
     dependency: transitive
     description:
-      path: "mapbox/mapbox_gl_platform_interface"
+      path: "packages/mapbox/mapbox_gl_platform_interface"
       relative: true
     source: path
     version: "0.12.0"
   mapbox_gl_web:
     dependency: transitive
     description:
-      path: "mapbox/mapbox_gl_web"
+      path: "packages/mapbox/mapbox_gl_web"
       relative: true
     source: path
     version: "0.12.0"

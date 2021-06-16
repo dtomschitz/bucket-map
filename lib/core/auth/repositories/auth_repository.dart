@@ -1,10 +1,10 @@
 import 'dart:async';
-
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
-
+import 'package:bucket_map/models/user.dart';
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
@@ -21,11 +21,14 @@ class LogOutFailure implements Exception {}
 /// Repository which manages user authentication.
 class AuthenticationRepository {
   AuthenticationRepository({
+    @required ProfileRepository profileRepository,
     CacheClient cache,
     firebase_auth.FirebaseAuth firebaseAuth,
-  })  : _cache = cache ?? CacheClient(),
+  })  : _profileRepository = profileRepository,
+        _cache = cache ?? CacheClient(),
         _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance;
 
+  final ProfileRepository _profileRepository;
   final CacheClient _cache;
   final firebase_auth.FirebaseAuth _firebaseAuth;
 
@@ -39,7 +42,7 @@ class AuthenticationRepository {
   ///
   /// Emits [User.anonymous] if the user is not authenticated.
   Stream<User> get user {
-    return _firebaseAuth.userChanges().map((firebaseUser) {
+    return _firebaseAuth.authStateChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.anonymous : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
@@ -55,16 +58,37 @@ class AuthenticationRepository {
   /// Creates a new user with the provided [email] and [password].
   ///
   /// Throws a [SignUpFailure] if an exception occurs.
-  Future<void> signUp(
-      {@required String email, @required String password}) async {
+  Future<void> signUp({
+    @required String email,
+    @required String password,
+    String firstName,
+    String lastName,
+    String country,
+  }) async {
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      final credentials = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-    } on Exception {
+
+      await _profileRepository.createProfile(
+        Profile(
+          id: credentials.user.uid,
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          country: country,
+          unlockedCountries: [country],
+        ),
+      );
+    } on Exception catch (e) {
       throw SignUpFailure();
     }
+  }
+
+  Future<void> updatePassword(String password) async {
+    final currentUser = _firebaseAuth.currentUser;
+    await currentUser.updatePassword(password);
   }
 
   /// Signs in with the provided [email] and [password].
@@ -94,6 +118,13 @@ class AuthenticationRepository {
     } on Exception {
       throw LogOutFailure();
     }
+  }
+
+  Future<String> verifyEmail(String email) async {
+    final profile = await _profileRepository.getProfileByEmail(email);
+    if (profile == null) return null;
+
+    return profile.email;
   }
 }
 

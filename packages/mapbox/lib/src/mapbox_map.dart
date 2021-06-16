@@ -14,7 +14,7 @@ class MapboxMap extends StatefulWidget {
     required this.initialCameraPosition,
     this.accessToken,
     this.onMapCreated,
-    this.onStyleLoadedCallback,
+    this.onStyleLoaded,
     this.gestureRecognizers,
     this.compassEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
@@ -70,12 +70,12 @@ class MapboxMap extends StatefulWidget {
   /// Note: You should not use this parameter AND set the access token through external files at the same time, and you should use the same token throughout the entire app.
   final String? accessToken;
 
-  /// Please note: you should only add annotations (e.g. symbols or circles) after `onStyleLoadedCallback` has been called.
+  /// Please note: you should only add annotations (e.g. symbols or circles) after `onStyleLoaded` has been called.
   final MapCreatedCallback? onMapCreated;
 
   /// Called when the map style has been successfully loaded and the annotation managers have been enabled.
   /// Please note: you should only add annotations (e.g. symbols or circles) after this callback has been called.
-  final OnStyleLoadedCallback? onStyleLoadedCallback;
+  final OnStyleLoadedCallback? onStyleLoaded;
 
   /// The initial position of the map's camera.
   final CameraPosition initialCameraPosition;
@@ -253,13 +253,13 @@ class _MapboxMapState extends State<MapboxMap> {
       widget.initialCameraPosition,
       onStyleLoadedCallback: () {
         if (_controller.isCompleted) {
-          if (widget.onStyleLoadedCallback != null) {
-            widget.onStyleLoadedCallback!();
+          if (widget.onStyleLoaded != null) {
+            widget.onStyleLoaded!();
           }
         } else {
           _controller.future.then((_) {
-            if (widget.onStyleLoadedCallback != null) {
-              widget.onStyleLoadedCallback!();
+            if (widget.onStyleLoaded != null) {
+              widget.onStyleLoaded!();
             }
           });
         }

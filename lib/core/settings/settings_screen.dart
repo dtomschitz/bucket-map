@@ -1,5 +1,6 @@
 import 'package:bucket_map/core/app/bloc/bloc.dart';
 import 'package:bucket_map/core/settings/bloc/bloc.dart';
+import 'package:bucket_map/core/settings/views/theme_login.dart';
 import 'package:bucket_map/core/settings/views/views.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
                 delegate: SliverChildListDelegate.fixed(
                   [
                     _buildThemeSettingsSection(context, state),
+                    _buildThemeLoginSection(context, state),
                     _buildLogOutButton(context),
                   ],
                 ),
@@ -52,6 +54,24 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+   _buildThemeLoginSection(BuildContext context, SettingsState state) {
+    return SettingsSection(
+      header: SettingsHeader('Login'),
+      tiles: [
+        SettingsTile(
+          title: 'E-Mail',
+          subtitle: 'Hier steht dann die E-Mail',
+          onTap: () => _openLoginSection(context, ThemeLoginView()),
+        ),
+        SettingsTile(
+          title: 'Password',
+          subtitle: 'ändern',
+          onTap: () => _openLoginSection(context, ThemeLoginView()),
+        ),
+      ],
+    );
+  }
+
   _buildLogOutButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
@@ -66,6 +86,13 @@ class SettingsScreen extends StatelessWidget {
   }
 
   _openSettingsSection(BuildContext context, Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => screen),
+    );
+  }
+
+  _openLoginSection(BuildContext context, Widget screen) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (BuildContext context) => screen),
