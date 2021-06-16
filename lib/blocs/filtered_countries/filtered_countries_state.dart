@@ -1,4 +1,3 @@
-  
 part of blocs.filtered_countries;
 
 @immutable

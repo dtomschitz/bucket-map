@@ -1,8 +1,10 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -45,6 +47,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
   _saveCurrentSymbol() async {
     //TODO: Save pin in global state
+
     _closeScreen();
   }
 

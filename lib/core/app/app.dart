@@ -1,4 +1,5 @@
 import 'package:bucket_map/blocs/blocs.dart';
+import 'package:bucket_map/blocs/pins/bloc.dart';
 import 'package:bucket_map/core/app/home.dart';
 import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
@@ -53,6 +54,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider<CountriesBloc>(
             create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
+          ),
+          BlocProvider<PinsBloc>(
+            create: (context) => PinsBloc()..add(LoadPinsEvent()),
           ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
