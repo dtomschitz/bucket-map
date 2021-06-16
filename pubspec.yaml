@@ -31,13 +31,7 @@ dependencies:
   sliding_up_panel:
     path: packages/sliding_up_panel
   mapbox_gl:
-<<<<<<< HEAD
-    path: mapbox
-  uuid: ^3.0.4
-=======
     path: packages/mapbox
->>>>>>> develop
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

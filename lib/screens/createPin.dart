@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:bucket_map/config/constants.dart';
 import 'package:bucket_map/core/constants.dart';
 
 import 'package:flutter/foundation.dart';
