@@ -1,4 +1,5 @@
 import 'package:bucket_map/blocs/journeys/bloc.dart';
+import 'package:bucket_map/widgets/country_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +14,7 @@ class _CreateJourneyScreenState extends State<CreateJourneyScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Neue Reise hinzufügen'),
+        title: Text('Reise hinzufügen'),
         actions: [
           TextButton(
             child: Text("Speichern"),
@@ -32,12 +33,7 @@ class _CreateJourneyScreenState extends State<CreateJourneyScreen> {
               ),
             ),
             SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Land',
-              ),
-            ),
+            CountryInputField(),
             SizedBox(height: 64),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

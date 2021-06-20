@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -70,38 +69,14 @@ class Profile {
     };
   }
 
-  Map<String, Object> toDocument() {
-    return {
-      "id": id,
-      "email": email,
-      "firstName": firstName,
-      "lastName": lastName,
-      "country": country,
-      "unlockedCountries": unlockedCountries,
-    };
-  }
-
-  static Profile fromJson(Map<String, Object> json) {
+  static Profile fromJson(Map<String, dynamic> json) {
     return Profile(
       id: json["id"] as String,
       email: json["email"] as String,
       firstName: json["firstName"] as String,
       lastName: json["lastName"] as String,
       country: json["country"] as String,
-      unlockedCountries: json["unlockedCountries"] as List<String>,
-    );
-  }
-
-  static Profile fromSnapshot(DocumentSnapshot snapshot) {
-    final data = snapshot.data();
-
-    return Profile(
-      id: data['id'],
-      email: data['email'],
-      firstName: data["firstName"] as String,
-      lastName: data["lastName"] as String,
-      country: data["country"] as String,
-      unlockedCountries: data['unlockedCountries'].cast<String>(),
+      unlockedCountries: new List<String>.from(json["unlockedCountries"]),
     );
   }
 }

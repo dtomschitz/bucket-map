@@ -77,7 +77,8 @@ class _CountriesScreenState extends State<CountriesScreen>
         onPanelClose: _onPanelClose,
         body: Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 48,
+            bottom:
+                MediaQuery.of(context).padding.bottom + kToolbarHeight + 126,
           ),
           child: Stack(
             children: [
@@ -86,6 +87,15 @@ class _CountriesScreenState extends State<CountriesScreen>
                 controller: _mapController,
                 onStyleLoaded: () {
                   initProfileListener();
+                },
+                onMapClick: (point, location) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (context) => CreatePinScreen(),
+                    ),
+                  );
                 },
               ),
               CreatePinButton(),
@@ -131,7 +141,7 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<FilteredCountriesBloc>(context)
           .add(ClearCountriesFilter());
 
-      _mapController.animateCameraToCountry(country); 
+      _mapController.animateCameraToCountry(country);
 
       await _panelController.close();
     }

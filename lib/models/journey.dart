@@ -1,21 +1,29 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 @immutable
 class Journey {
-  const Journey(this.title, {String id}) : this.id = id;
+  const Journey({
+    String id,
+    this.userId,
+    this.title,
+    this.pins,
+  }) : this.id = id;
 
   final String id;
+  final String userId;
   final String title;
+  final List<dynamic> pins;
 
   Journey copyWith({
     String id,
+    String userId,
     String title,
   }) {
     return Journey(
-      title ?? this.title,
       id: id ?? this.id,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      pins: pins ?? this.pins,
     );
   }
 
@@ -25,66 +33,29 @@ class Journey {
       other is Journey && runtimeType == other.runtimeType && id == other.id;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode =>
+      id.hashCode ^ userId.hashCode ^ title.hashCode ^ pins.hashCode;
 
   @override
   String toString() {
-    return 'Journey { id: $id, title: $title }';
+    return 'Journey { id: $id, userId: $userId, title: $title, pins: $pins }';
   }
 
-  JourneyEntity toEntity() {
-    return JourneyEntity(
-      title,
-      id,
-    );
-  }
-
-  static Journey fromEntity(JourneyEntity entity) {
-    return Journey(
-      entity.title,
-      id: entity.id,
-    );
-  }
-}
-
-class JourneyEntity extends Equatable {
-  const JourneyEntity(this.id, this.title);
-
-  final String id;
-  final String title;
-
-  Map<String, Object> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       "id": id,
-    };
-  }
-
-  @override
-  List<Object> get props => [id];
-
-  @override
-  String toString() {
-    return 'TodoEntity { id: $id, title: $title }';
-  }
-
-  static JourneyEntity fromJson(Map<String, Object> json) {
-    return JourneyEntity(
-      json["id"] as String,
-      json["title"] as String,
-    );
-  }
-
-  static JourneyEntity fromSnapshot(DocumentSnapshot snap) {
-    final data = snap.data();
-    return JourneyEntity(
-      data['id'],
-      data['title'],
-    );
-  }
-
-  Map<String, Object> toDocument() {
-    return {
+      "userId": userId,
       "title": title,
+      "pins": pins,
     };
+  }
+
+  static Journey fromJson(Map<String, Object> json) {
+    return Journey(
+      id: json["id"] as String,
+      userId: json["userId"] as String,
+      title: json["title"] as String,
+      pins: json["pins"] as List<String>,
+    );
   }
 }

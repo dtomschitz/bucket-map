@@ -5,7 +5,9 @@ class ProfileRepository {
 
   Future<Profile> getProfile(String id) async {
     final snapshot = await profileCollection.doc(id).get();
-    return Profile.fromSnapshot(snapshot);
+    print(snapshot.data());
+
+    return Profile.fromJson(snapshot.data());
   }
 
   Future<Profile> getProfileByEmail(String email) async {
@@ -17,14 +19,14 @@ class ProfileRepository {
         .get();
 
     if (snapshot.docs.isEmpty) return null;
-    return Profile.fromSnapshot(snapshot.docs.first);
+    return Profile.fromJson(snapshot.docs.first.data());
   }
 
   Future<void> createProfile(Profile profile) {
-    return profileCollection.doc(profile.id).set(profile.toDocument());
+    return profileCollection.doc(profile.id).set(profile.toJson());
   }
 
   Future<void> updateProfile(Profile update) {
-    return profileCollection.doc(update.id).update(update.toDocument());
+    return profileCollection.doc(update.id).update(update.toJson());
   }
 }

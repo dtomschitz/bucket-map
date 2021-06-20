@@ -140,15 +140,20 @@ class _CountriesMapState extends State<CountriesMap>
   }
 
   Future<void> _animateCameraToCountry(Country country) async {
-    if(country.southwest.longitude>0 && country.northeast.longitude<0){
-        double lngOverflow = 180 + country.northeast.longitude;
-        double lngDifference = 180 + lngOverflow-country.southwest.longitude;
-        double rightPadding = lngOverflow / lngDifference * MediaQuery.of(context).size.width;
-        LatLng modifiedNe = LatLng(country.northeast.latitude, 179.99);
-        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: modifiedNe), right: rightPadding));
-      }else{ 
-        await _mapController.animateCamera(CameraUpdate.newLatLngBounds(LatLngBounds(southwest: country.southwest, northeast: country.northeast)));
-      }
+    if (country.southwest.longitude > 0 && country.northeast.longitude < 0) {
+      double lngOverflow = 180 + country.northeast.longitude;
+      double lngDifference = 180 + lngOverflow - country.southwest.longitude;
+      double rightPadding =
+          lngOverflow / lngDifference * MediaQuery.of(context).size.width;
+      LatLng modifiedNe = LatLng(country.northeast.latitude, 179.99);
+      await _mapController.animateCamera(CameraUpdate.newLatLngBounds(
+          LatLngBounds(southwest: country.southwest, northeast: modifiedNe),
+          right: rightPadding));
+    } else {
+      await _mapController.animateCamera(CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+              southwest: country.southwest, northeast: country.northeast)));
+    }
   }
 
   _moveCameraToCurrentLocation() async {
@@ -215,9 +220,14 @@ class _CountriesMapState extends State<CountriesMap>
               builder: (context, snapshot) {
                 if (snapshot.data == PermissionStatus.granted) {
                   return Padding(
-                    padding: locationPadding,
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.bottom +
+                          kToolbarHeight +
+                          48,
+                          right: 16
+                    ),
                     child: Align(
-                      alignment: locationAlignment,
+                      alignment: Alignment.topRight,
                       child: AnimatedOpacity(
                         opacity: _currentCameraPosition == null ? 1.0 : 0.0,
                         duration: Duration(milliseconds: 250),
