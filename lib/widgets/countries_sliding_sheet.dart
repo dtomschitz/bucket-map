@@ -1,8 +1,11 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum CountriesSlidingSheetMode { unlock, search }
@@ -63,8 +66,8 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       backdropEnabled: true,
       backdropColor: Colors.black,
       onPanelClosed: () {
-         _scrollController.jumpTo(0);
-         widget.onPanelClose?.call();
+        _scrollController.jumpTo(0);
+        widget.onPanelClose?.call();
       },
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,
@@ -104,30 +107,29 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
   }
 
   Widget _buildPanel() {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      child: NotificationListener<ScrollNotification>(
-        // ignore: missing_return
-        onNotification: (notification) {
-          if (notification is ScrollStartNotification) {
-            widget.onPanelStartScroll?.call(notification.metrics);
-          } else if (notification is ScrollUpdateNotification) {
-            widget.onPanelUpdateScroll?.call(notification.metrics);
-          } else if (notification is ScrollEndNotification) {
-            widget.onPanelEndScroll?.call(notification.metrics);
-          }
-        },
-        child: CountryList(
-          controller: _scrollController,
-          onTap: widget.onCountryTap,
-          buildTrailing: (Country country) {
-            if (widget.mode == CountriesSlidingSheetMode.search) {
-              return Icon(Icons.remove_red_eye, color: Colors.grey);
-            }
-
-            return Icon(Icons.lock, color: Colors.grey);
-          },
+    return NotificationListener<ScrollNotification>(
+      // ignore: missing_return
+      onNotification: (notification) {
+        if (notification is ScrollStartNotification) {
+          widget.onPanelStartScroll?.call(notification.metrics);
+        } else if (notification is ScrollUpdateNotification) {
+          widget.onPanelUpdateScroll?.call(notification.metrics);
+        } else if (notification is ScrollEndNotification) {
+          widget.onPanelEndScroll?.call(notification.metrics);
+        }
+      },
+      child: FadeTransition(
+        opacity: Tween(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Interval(
+              0.3,
+              0.8,
+              curve: Curves.ease,
+            ),
+          ),
         ),
+        child: FilterdCountriesList(controller: _scrollController)
       ),
     );
   }

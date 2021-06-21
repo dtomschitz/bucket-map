@@ -2,6 +2,7 @@ library blocs.journeys;
 
 import 'dart:async';
 
+import 'package:bucket_map/core/auth/repositories/auth_repository.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';

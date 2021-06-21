@@ -1,12 +1,13 @@
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountrySearchDelegate extends SearchDelegate<Country> {
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
+    return [];
   }
 
   @override
@@ -32,11 +33,14 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
       onTap: (country) => close(context, country),
     );
   }
+
+  @override
+  String get searchFieldLabel => 'Nach Land suchen';
 }
 
 class _CountrySearchList extends StatelessWidget {
   _CountrySearchList({this.query, this.onTap});
-  
+
   final String query;
   final Function(Country country) onTap;
 
@@ -51,22 +55,13 @@ class _CountrySearchList extends StatelessWidget {
             },
           ).toList();
 
-          return ListView.builder(
-            padding: EdgeInsets.only(top: 8, bottom: 8),
-            itemCount: countries.length,
-            itemBuilder: (BuildContext context, int index) {
-              final country = countries[index];
-              final code = country.code.toLowerCase();
-
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage:
-                      NetworkImage('https://flagcdn.com/w160/$code.png'),
-                  backgroundColor: Colors.grey.shade100,
-                ),
-                title: Text(country.name),
-                onTap: () => onTap?.call(country),
-              );
+          return CountryList(
+            countries: countries,
+            onTap: (country) {
+              print(country);
+              if (country != null) {
+                onTap?.call(country);
+              }
             },
           );
         }

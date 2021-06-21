@@ -13,12 +13,11 @@ class JourneysScreen extends StatefulWidget {
 class _JourneysScreenState extends State<JourneysScreen> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text('Meine Reisen'),
       ),
-      /*body: BlocBuilder<JourneysBloc, JourneysState>(
+      body: BlocBuilder<JourneysBloc, JourneysState>(
         builder: (context, state) {
           return ListView(
             children: [
@@ -38,7 +37,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
             ],
           );
         },
-      ),*/
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add_outlined),
         onPressed: () {

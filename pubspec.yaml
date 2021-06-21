@@ -32,6 +32,8 @@ dependencies:
     path: packages/sliding_up_panel
   mapbox_gl:
     path: packages/mapbox
+  grouped_list: ^3.0.1
+  sliding_sheet: ^0.5.0
 
 dev_dependencies:
   flutter_test:

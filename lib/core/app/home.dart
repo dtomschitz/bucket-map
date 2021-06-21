@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.explore_outlined),
-            label: "Meine Reisen",
+            label: "Meine Länder",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),

@@ -9,8 +9,11 @@ class FilteredCountriesBloc
             : FilteredCountriesLoading()) {
     _subscription = countriesBloc.stream.listen((state) {
       if (state is CountriesLoaded) {
-        add(FilteredCountriesUpdated(
-            (countriesBloc.state as CountriesLoaded).countries));
+        add(
+          FilteredCountriesUpdated(
+            (countriesBloc.state as CountriesLoaded).countries,
+          ),
+        );
       }
     });
   }

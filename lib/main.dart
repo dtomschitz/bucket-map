@@ -15,6 +15,8 @@ void main() async {
   await Firebase.initializeApp();
 
   final profileRepository = ProfileRepository();
+  final journeysRepository = JourneysRepository();
+  
   final authenticationRepository = AuthenticationRepository(
     profileRepository: profileRepository,
   );
@@ -32,6 +34,7 @@ void main() async {
     App(
       authenticationRepository: authenticationRepository,
       profileRepository: profileRepository,
+      journeysRepository: journeysRepository,
       sharedPreferencesService: sharedPreferencesService,
       initialSettings: initialSettings,
     ),

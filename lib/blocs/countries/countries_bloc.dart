@@ -2,7 +2,6 @@ part of blocs.countries;
 
 class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   CountriesBloc() : super(CountriesUninitialized());
-  final databaseReference = FirebaseFirestore.instance;
 
   @override
   Stream<CountriesState> mapEventToState(CountriesEvent event) async* {
@@ -19,17 +18,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
 
     yield CountriesLoaded(countries);
   }
-
-  Stream<CountriesState> _fetchCountriesFromFirestore() async* {
-    yield CountriesLoading();
-    QuerySnapshot countriesSnapshot =
-        await databaseReference.collection("countries").orderBy("name").get();
-    List<Country> countriesList = countriesSnapshot.docs.map<Country>((doc) {
-      return Country.fromJson(doc.data());
-    }).toList();
-    yield CountriesLoaded(countriesList);
-  }
-
+  
   Future<String> _loadCountriesAssets() {
     return rootBundle.loadString('assets/countries.json');
   }

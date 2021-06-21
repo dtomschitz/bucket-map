@@ -1,7 +1,8 @@
-part of widgets.auth;
 
-class FormInputField extends StatelessWidget {
-  const FormInputField({
+import 'package:flutter/material.dart';
+
+class InputField extends StatelessWidget {
+  const InputField({
     this.key,
     this.initialValue,
     this.controller,
@@ -50,7 +51,6 @@ class FormInputField extends StatelessWidget {
       enableInteractiveSelection: enableInteractiveSelection,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
-        filled: true,
         labelText: labelText,
         errorText: errorText,
       ),

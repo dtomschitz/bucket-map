@@ -19,22 +19,23 @@ class JourneysLoading extends JourneysState {
 }
 
 class JourneysLoaded extends JourneysState {
-  final List<Country> countries;
-  const JourneysLoaded(this.countries);
+  const JourneysLoaded(this.journeys);
+
+  final List<Journey> journeys;
 
   JourneysLoaded copyWith({
-    List<Country> countries,
+    List<Journey> journeys,
   }) {
-    return JourneysLoaded(countries ?? this.countries);
+    return JourneysLoaded(journeys ?? this.journeys);
   }
 
   @override
   String toString() {
-    return 'JourneysLoaded[countries: $countries]';
+    return 'JourneysLoaded[journeys: $journeys]';
   }
 
   @override
-  List<Object> get props => [countries];
+  List<Object> get props => [journeys];
 }
 
 class JourneysError extends JourneysState {
