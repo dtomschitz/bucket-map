@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

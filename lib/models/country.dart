@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class Country extends Equatable {
@@ -21,6 +20,24 @@ class Country extends Equatable {
   final LatLng southwest;
   final LatLng northeast;
   final bool unlocked;
+
+  Country copyWith({
+    String name,
+    String code,
+    LatLng latLng,
+    LatLng southwest,
+    LatLng northeast,
+    bool unlocked,
+  }) {
+    return Country(
+      name: name ?? this.name,
+      code: code ?? this.code,
+      latLng: latLng ?? this.latLng,
+      southwest: southwest ?? this.southwest,
+      northeast: northeast ?? this.northeast,
+      unlocked: unlocked ?? this.unlocked,
+    );
+  }
 
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(

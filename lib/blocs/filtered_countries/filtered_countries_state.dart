@@ -1,4 +1,3 @@
-  
 part of blocs.filtered_countries;
 
 @immutable
@@ -12,13 +11,13 @@ abstract class FilteredCountriesState extends Equatable {
 class FilteredCountriesLoading extends FilteredCountriesState {}
 
 class FilteredCountriesLoaded extends FilteredCountriesState {
-  final List<Country> countries;
-  final String filter;
-
-  const FilteredCountriesLoaded(
+  const FilteredCountriesLoaded({
     this.countries,
     this.filter,
-  );
+  });
+
+  final List<Country> countries;
+  final String filter;
 
   @override
   List<Object> get props => [countries, filter];

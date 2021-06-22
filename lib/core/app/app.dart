@@ -54,7 +54,7 @@ class App extends StatelessWidget {
           ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
-              countriesBloc: BlocProvider.of<CountriesBloc>(context),
+              profileBloc: BlocProvider.of<ProfileBloc>(context),
             ),
           ),
           BlocProvider<JourneysBloc>(

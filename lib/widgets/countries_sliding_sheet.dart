@@ -1,11 +1,9 @@
 import 'package:bucket_map/blocs/countries/bloc.dart';
-import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grouped_list/grouped_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum CountriesSlidingSheetMode { unlock, search }
@@ -64,6 +62,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       animationController: widget.animationController,
       maxHeight: maxHeight,
       backdropEnabled: true,
+      parallaxEnabled: true,
       backdropColor: Colors.black,
       onPanelClosed: () {
         _scrollController.jumpTo(0);
@@ -85,8 +84,8 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
             CurvedAnimation(
               parent: _animationController,
               curve: Interval(
-                0.5,
-                0.7,
+                0.3,
+                0.8,
                 curve: Curves.ease,
               ),
             ),
@@ -129,7 +128,40 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
             ),
           ),
         ),
-        child: FilterdCountriesList(controller: _scrollController)
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoaded) {
+              return SafeArea(
+                child: CountryList(
+                  countries: state.countries,
+                  controller: _scrollController,
+                  shrinkWrap: false,
+                  onTap: widget.onCountryTap,
+                  disabled: (country) => country.unlocked,
+                  buildTrailing: (Country country) {
+                    if (widget.mode == CountriesSlidingSheetMode.search) {
+                      return Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        color: Colors.grey,
+                      );
+                    }
+
+                    return Icon(
+                      country.unlocked
+                          ? Icons.lock_open_outlined
+                          : Icons.lock_outline,
+                      color: country.unlocked
+                          ? Colors.green
+                          : Colors.grey,
+                    );
+                  },
+                ),
+              );
+            }
+
+            return Container();
+          },
+        ),
       ),
     );
   }
@@ -144,8 +176,12 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 32,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,

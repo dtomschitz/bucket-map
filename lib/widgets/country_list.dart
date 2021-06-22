@@ -1,9 +1,6 @@
-import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grouped_list/grouped_list.dart';
 
 class CountryList extends StatelessWidget {
   const CountryList({
@@ -11,7 +8,9 @@ class CountryList extends StatelessWidget {
     this.controller,
     this.physics,
     this.padding,
+    this.shrinkWrap,
     this.countries,
+    this.disabled,
     this.buildTrailing,
     this.onTap,
   }) : super(key: key);
@@ -19,10 +18,14 @@ class CountryList extends StatelessWidget {
   final ScrollController controller;
   final ScrollPhysics physics;
   final EdgeInsets padding;
+  final bool shrinkWrap;
+
   final List<Country> countries;
 
-  final Widget Function(Country country) buildTrailing;
   final void Function(Country country) onTap;
+  final bool Function(Country country) disabled;
+
+  final Widget Function(Country country) buildTrailing;
 
   @override
   Widget build(BuildContext context) {
@@ -30,72 +33,20 @@ class CountryList extends StatelessWidget {
       key: GlobalKeys.countriesSheetList,
       controller: controller,
       padding: padding ?? EdgeInsets.only(top: 8, bottom: 8),
-      shrinkWrap: true,
+      shrinkWrap: shrinkWrap ?? true,
       itemCount: countries.length,
       physics: physics,
       itemBuilder: (BuildContext context, int index) {
         final country = countries[index];
-        final code = country.code.toLowerCase();
 
         return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage('https://flagcdn.com/w160/$code.png'),
-            backgroundColor: Colors.grey.shade100,
-          ),
+          leading: CountryAvatar(country.code),
           title: Text(country.name),
-          onTap: () => onTap(country),
+          onTap: disabled != null && disabled.call(country)
+              ? null
+              : () => onTap(country),
           trailing: buildTrailing != null ? buildTrailing(country) : null,
         );
-      },
-    );
-  }
-}
-
-class FilterdCountriesList extends StatelessWidget {
-  FilterdCountriesList({this.controller});
-  final ScrollController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FilteredCountriesBloc, FilteredCountriesState>(
-      builder: (context, state) {
-        if (state is FilteredCountriesLoaded) {
-          return GroupedListView<Country, int>(
-            elements: state.countries,
-            controller: controller,
-            scrollDirection: Axis.vertical,
-            //shrinkWrap: true,
-            groupBy: (country) => country.unlocked ? 0 : 1,
-            groupHeaderBuilder: (country) {
-              return Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  country.unlocked
-                      ? 'Freigeschaltene Länder'
-                      : 'Gesperrte Länder',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              );
-            },
-            itemBuilder: (context, country) => CountryListItem(
-              country: country,
-              onTap: () {
-                if (country.unlocked) {
-                  //TODO: open country screen
-                } else {
-                  BlocProvider.of<ProfileBloc>(context)
-                      .add(UnlockCountry(country.code));
-                }
-              },
-              trailing: country.unlocked
-                  ? Icon(Icons.arrow_forward_ios_outlined)
-                  : Icon(Icons.lock_outline),
-            ),
-            itemComparator: (a, b) => a.name.compareTo(b.name), // optional
-          );
-        }
-
-        return Container();
       },
     );
   }
@@ -111,16 +62,24 @@ class CountryListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final code = country.code.toLowerCase();
-
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage('https://flagcdn.com/w160/$code.png'),
-        backgroundColor: Colors.grey.shade100,
-      ),
+      leading: CountryAvatar(country.code),
       title: Text(country.name),
       onTap: () => onTap?.call(),
       trailing: trailing != null ? trailing : null,
+    );
+  }
+}
+
+class CountryAvatar extends StatelessWidget {
+  CountryAvatar(String code) : this.code = code.toLowerCase();
+  final String code;
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      backgroundImage: NetworkImage('https://flagcdn.com/w160/$code.png'),
+      backgroundColor: Colors.grey.shade100,
     );
   }
 }

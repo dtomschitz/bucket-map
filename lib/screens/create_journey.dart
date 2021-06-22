@@ -1,7 +1,5 @@
-import 'package:bucket_map/blocs/journeys/bloc.dart';
 import 'package:bucket_map/widgets/country_input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CreateJourneyScreen extends StatefulWidget {
   @override
@@ -9,6 +7,9 @@ class CreateJourneyScreen extends StatefulWidget {
 }
 
 class _CreateJourneyScreenState extends State<CreateJourneyScreen> {
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController countryController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,60 +28,18 @@ class _CreateJourneyScreenState extends State<CreateJourneyScreen> {
         child: Column(
           children: [
             TextField(
+              controller: nameController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Name',
               ),
             ),
             SizedBox(height: 16),
-            CountryInputField(),
+            CountryInputField(controller: countryController,),
             SizedBox(height: 64),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Begin',
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Ende',
-                    ),
-                  ),
-                )
-              ],
-            )
           ],
         ),
       ),
-      /*body: BlocBuilder<JourneysBloc, JourneysState>(
-        builder: (context, state) {
-          return ListView(
-            children: [
-              Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const ListTile(
-                      leading: Icon(Icons.album),
-                      title: Text('The Enchanted Nightingale'),
-                      subtitle:
-                          Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          );
-        },
-      ),*/
     );
   }
 }

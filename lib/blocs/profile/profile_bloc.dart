@@ -34,18 +34,54 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapLoadProfileToState(LoadProfile event) async* {
     yield ProfileLoading();
-    final profile = await _profileRepository.getProfile(event.id);
-    yield ProfileLoaded(profile);
+
+    var profile = await _profileRepository.getProfile(event.id);
+    var countries = await _loadCountries(profile.unlockedCountries);
+
+    yield ProfileLoaded(profile: profile, countries: countries);
   }
 
   Stream<ProfileState> _mapUnlockCountryToProfile(UnlockCountry event) async* {
     if (state is ProfileLoaded) {
-      final profile = (state as ProfileLoaded).profile;
-      final countries = [...profile.unlockedCountries, event.code].toList();
-      final updatedProfile = profile.copyWith(unlockedCountries: countries);
+      var profile = (state as ProfileLoaded).profile;
+      var countries = (state as ProfileLoaded).countries;
 
-      await _profileRepository.updateProfile(updatedProfile);
-      yield ProfileLoaded(updatedProfile);
+      var unlockedCountries = [
+        ...profile.unlockedCountries,
+        event.code,
+      ].toList();
+
+      profile = profile.copyWith(unlockedCountries: unlockedCountries);
+      countries = [
+        ...countries.map(
+          (country) => country.copyWith(
+            unlocked: unlockedCountries.contains(country.code),
+          ),
+        )
+      ];
+
+      await _profileRepository.updateProfile(profile);
+
+      yield ProfileLoaded(
+        profile: profile,
+        countries: countries,
+      );
     }
+  }
+
+  Future<List<Country>> _loadCountries(List<String> unlockedCountries) async {
+    List<dynamic> json = jsonDecode(await _loadCountriesAssets());
+    var countries = json.map((country) => Country.fromJson(country)).toList();
+
+    countries = countries.map((country) {
+      bool unlocked = unlockedCountries.contains(country.code);
+      return country.copyWith(unlocked: unlocked);
+    }).toList();
+
+    return countries;
+  }
+
+  Future<String> _loadCountriesAssets() {
+    return rootBundle.loadString('assets/countries.json');
   }
 }

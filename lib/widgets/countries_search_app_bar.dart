@@ -1,25 +1,22 @@
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
-import 'package:bucket_map/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountriesSearchAppBar extends StatelessWidget with PreferredSizeWidget {
   CountriesSearchAppBar({
-    this.mode,
     this.controller,
     this.animationController,
     this.backgroundColor,
-    this.onSearchBarTap,
+    this.onSearchBarFocused,
     this.onSearchBarClose,
   });
 
-  final CountriesScreenMode mode;
   final TextEditingController controller;
   final AnimationController animationController;
 
   final Color backgroundColor;
 
-  final void Function() onSearchBarTap;
+  final void Function() onSearchBarFocused;
   final void Function() onSearchBarClose;
 
   @override
@@ -47,14 +44,13 @@ class CountriesSearchAppBar extends StatelessWidget with PreferredSizeWidget {
                 padding: EdgeInsets.only(right: 16),
                 child: IconButton(
                   icon: Icon(Icons.arrow_back_outlined),
-                  onPressed: () => onSearchBarClose?.call(),
+                  onPressed: onSearchBarClose?.call,
                 ),
               ),
             ),
             SearchBar(
-              mode: mode,
               controller: controller,
-              onSearchBarTap: onSearchBarTap,
+              onSearchBarFocused: onSearchBarFocused,
             ),
           ],
         ),
@@ -67,15 +63,16 @@ class CountriesSearchAppBar extends StatelessWidget with PreferredSizeWidget {
 }
 
 class SearchBar extends StatelessWidget {
-  SearchBar({this.mode, this.controller, this.onSearchBarTap});
+  SearchBar({
+    this.controller,
+    this.onSearchBarFocused,
+  });
 
-  final CountriesScreenMode mode;
   final TextEditingController controller;
-  final void Function() onSearchBarTap;
+  final void Function() onSearchBarFocused;
 
   @override
   Widget build(BuildContext context) {
-    print(mode);
     return Expanded(
       child: Card(
         shape: RoundedRectangleBorder(
@@ -84,16 +81,25 @@ class SearchBar extends StatelessWidget {
         ),
         child: Container(
           height: 46,
-          alignment: Alignment.center,
           padding: EdgeInsets.only(right: 16, left: 16),
-          child: CountriesTextField(
-            controller: controller,
-            readOnly: mode != CountriesScreenMode.unlock,
-            onTap: onSearchBarTap?.call,
-            onValueChange: (value) {
-              BlocProvider.of<FilteredCountriesBloc>(context)
-                  .add(UpdateCountriesFilter(value));
-            },
+          child: FocusScope(
+            child: Focus(
+              onFocusChange: (focus) {
+                if (focus) onSearchBarFocused();
+              },
+              child: CountriesTextField(
+                controller: controller,
+                onValueChange: (value) {
+                  BlocProvider.of<FilteredCountriesBloc>(context)
+                      .add(UpdateCountriesFilter(value));
+                },
+                onValueClear: () {
+                  controller.clear();
+                  BlocProvider.of<FilteredCountriesBloc>(context)
+                      .add(ClearCountriesFilter());
+                },
+              ),
+            ),
           ),
         ),
       ),
@@ -104,18 +110,15 @@ class SearchBar extends StatelessWidget {
 class CountriesTextField extends StatefulWidget {
   CountriesTextField({
     this.controller,
-    this.readOnly,
-    this.onTap,
     this.onFocusChange,
     this.onValueChange,
+    this.onValueClear,
   });
 
   final TextEditingController controller;
-  final bool readOnly;
-
-  final Function() onTap;
   final Function(bool focus) onFocusChange;
   final Function(String value) onValueChange;
+  final Function onValueClear;
 
   @override
   State createState() => _CountriesTextFieldState();
@@ -139,13 +142,16 @@ class _CountriesTextFieldState extends State<CountriesTextField> {
     return TextField(
       controller: widget.controller,
       onChanged: widget.onValueChange?.call,
-      readOnly: widget.readOnly ?? false,
-      autofocus: false,
-      onTap: widget.onTap?.call,
       decoration: InputDecoration(
         labelText: _isEmpty && !hasFocus ? 'Nach Land suchen' : null,
         border: InputBorder.none,
         icon: Icon(Icons.search_outlined),
+        suffixIcon: !_isEmpty && hasFocus
+            ? IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: widget.onValueClear?.call,
+              )
+            : null,
       ),
     );
   }

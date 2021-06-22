@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
@@ -10,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-enum CountriesScreenMode { unlock, search, searched }
-
 class CountriesScreen extends StatefulWidget {
   static Page page() => MaterialPage<void>(child: CountriesScreen());
 
@@ -20,22 +19,26 @@ class CountriesScreen extends StatefulWidget {
 }
 
 class _CountriesScreenState extends State<CountriesScreen>
-    with SingleTickerProviderStateMixin {
-  final PanelController panelController = new PanelController();
-  final CountriesMapController mapController = new CountriesMapController();
-  final TextEditingController searchController = TextEditingController();
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<CountriesScreen> {
+  final PanelController _panelController = new PanelController();
+  final CountriesMapController _mapController = new CountriesMapController();
+  final TextEditingController _searchTextController = TextEditingController();
 
-  CountriesScreenMode mode = CountriesScreenMode.unlock;
-  AnimationController animationController;
-  StreamSubscription profileSubscription;
+  AnimationController _animationController;
+  CountriesSlidingSheetMode _mode;
 
-  bool clearSearchBarOnClose = true;
+  StreamSubscription _profileSubscription;
+
+  bool _animationLock = false;
+  bool _clearSearchBarOnClose = true;
 
   @override
   void initState() {
     super.initState();
 
-    animationController = new AnimationController(
+    _animationController = new AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
       value: 0.0,
@@ -44,125 +47,123 @@ class _CountriesScreenState extends State<CountriesScreen>
 
   @override
   void dispose() {
-    animationController.dispose();
-    profileSubscription.cancel();
+    _animationController.dispose();
+    _profileSubscription.cancel();
     super.dispose();
-  }
-
-  initProfileListener() {
-    profileSubscription =
-        BlocProvider.of<ProfileBloc>(context).stream.listen((state) {
-      if (state is ProfileLoaded) {
-        mapController.setUnlockedCountries(state.profile.unlockedCountries);
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CountriesSearchAppBar(
-        mode: mode,
-        controller: searchController,
-        animationController: animationController,
-        onSearchBarTap: onSearchBarTap,
-        onSearchBarClose: onSearchBarClose,
+        controller: _searchTextController,
+        animationController: _animationController,
+        onSearchBarFocused: _onSearchBarFocused,
+        onSearchBarClose: _onSearchBarClose,
       ),
       body: CountriesSlidingSheet(
-        controller: panelController,
-        animationController: animationController,
+        mode: _mode,
+        controller: _panelController,
+        animationController: _animationController,
         onHeaderTap: _onHeaderTap,
+        onCountryTap: _onCountryTap,
         onPanelClose: _onPanelClose,
-        body: Padding(
-          padding: EdgeInsets.only(
-            bottom:
-                MediaQuery.of(context).padding.bottom + kToolbarHeight + 126,
-          ),
-          child: Stack(
-            children: [
-              CountriesMap(
-                key: GlobalKeys.countriesMap,
-                controller: mapController,
-                onStyleLoaded: () {
-                  initProfileListener();
-                },
-                onMapClick: (point, location) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) => CreatePinScreen(),
+        body: BlocBuilder<CountriesBloc, CountriesState>(
+          builder: (context, state) {
+            if (state is CountriesLoaded) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom +
+                      kToolbarHeight +
+                      48,
+                ),
+                child: Stack(
+                  children: [
+                    CountriesMap(
+                      key: GlobalKeys.countriesMap,
+                      controller: _mapController,
+                      onStyleLoaded: () => _initProfileListener(),
+                      onMapLongClick: (point, latLng) {},
                     ),
-                  );
-                },
-              ),
-              CreatePinButton(),
-            ],
-          ),
+                    CreatePinButton(),
+                  ],
+                ),
+              );
+            }
+
+            return Container();
+          },
         ),
       ),
     );
   }
 
-  onSearchBarTap() async {
-    setState(() {
-      clearSearchBarOnClose = true;
-      mode = panelController.isPanelClosed
-          ? CountriesScreenMode.search
-          : CountriesScreenMode.unlock;
+  @override
+  bool get wantKeepAlive => true;
+
+  _initProfileListener() {
+    _profileSubscription =
+        BlocProvider.of<ProfileBloc>(context).stream.listen((state) {
+      if (state is ProfileLoaded) {
+        _mapController.setUnlockedCountries(state.profile.unlockedCountries);
+      }
     });
-
-    if (mode == CountriesScreenMode.search) {
-      final Country country = await showSearch(
-        context: context,
-        delegate: CountrySearchDelegate(),
-      );
-
-      setState(() => mode = CountriesScreenMode.searched);
-
-      if (FocusScope.of(context).hasFocus) {
-        FocusScope.of(context).unfocus();
-      }
-
-      if (country != null) {
-        searchController.text = country.name;
-        mapController.animateCameraToCountry(country);
-      }
-    }
   }
 
-  onSearchBarClose() async {
+  _onSearchBarFocused() async {
+    setState(() {
+      _clearSearchBarOnClose = true;
+      if (_panelController.isPanelClosed) {
+        _mode = CountriesSlidingSheetMode.search;
+      }
+    });
+    await _panelController.open();
+  }
+
+  _onSearchBarClose() async {
     if (FocusScope.of(context).hasFocus) {
       FocusScope.of(context).unfocus();
     }
 
+    _searchTextController.clear();
+    await _panelController.close();
+  }
 
-    searchController.clear();
-    await panelController.close();
+  _onCountryTap(Country country) async {
+    setState(() => _clearSearchBarOnClose = false);
+
+    if (_mode == CountriesSlidingSheetMode.unlock) {
+      BlocProvider.of<ProfileBloc>(context).add(UnlockCountry(country.code));
+      return;
+    }
+    
+    _searchTextController.text = country.name;
+
+    if (FocusScope.of(context).hasFocus) {
+      FocusScope.of(context).unfocus();
+    }
+
+    BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
+
+    _mapController.animateCameraToCountry(country);
+
+    await _panelController.close();
   }
 
   _onHeaderTap() async {
-    setState(() => mode = CountriesScreenMode.unlock);
-
-    if (FocusScope.of(context).hasFocus) {
-      FocusScope.of(context).unfocus();
-    }
-
-    searchController.clear();
-    await panelController.open();
+    setState(() => _mode = CountriesSlidingSheetMode.unlock);
+    await _panelController.open();
   }
 
   _onPanelClose() {
-    setState(() => mode = CountriesScreenMode.unlock);
+    setState(() => _mode = CountriesSlidingSheetMode.unlock);
     BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
 
-    if (FocusScope.of(context).hasFocus) {
-      FocusScope.of(context).unfocus();
-    }
-
-    if (clearSearchBarOnClose) {
-      searchController.clear();
+    if (_clearSearchBarOnClose) {
+      _searchTextController.clear();
     }
   }
 }
