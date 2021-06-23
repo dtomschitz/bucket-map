@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
@@ -31,6 +32,7 @@ class _CountriesScreenState extends State<CountriesScreen>
   bool _clearSearchBarOnClose = true;
 
   StreamSubscription _profileSubscription;
+  StreamSubscription _pinsSubscription;
 
   @override
   void initState() {
@@ -47,6 +49,7 @@ class _CountriesScreenState extends State<CountriesScreen>
   void dispose() {
     _animationController.dispose();
     _profileSubscription.cancel();
+    _pinsSubscription.cancel();
     super.dispose();
   }
 
@@ -81,10 +84,13 @@ class _CountriesScreenState extends State<CountriesScreen>
               CountriesMap(
                 key: GlobalKeys.countriesMap,
                 controller: mapController,
-                onStyleLoaded: () => _initProfileListener(),
                 onMapLongClick: (point, latLng) async {
-                  final country = await GeoUtils.fetchCountry(latLng);
-                  print(country);
+                  //final country = await GeoUtils.fetchCountry(latLng);
+                  //print(country);
+                },
+                onStyleLoaded: () {
+                  _initProfileListener();
+                  _initPinsListener();
                 },
               ),
               CreatePinButton(),
@@ -103,6 +109,15 @@ class _CountriesScreenState extends State<CountriesScreen>
         }
       },
     );
+  }
+
+  _initPinsListener() {
+    _pinsSubscription =
+        BlocProvider.of<PinsBloc>(context).stream.listen((state) {
+      if (state is PinsLoaded) {
+        mapController.addPins(state.pins);
+      }
+    });
   }
 
   _onSearchBarFocused() async {

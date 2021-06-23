@@ -15,14 +15,15 @@ class App extends StatelessWidget {
   const App({
     @required this.authenticationRepository,
     @required this.profileRepository,
-    @required this.journeysRepository,
+    @required this.pinRepository,
     @required this.sharedPreferencesService,
     this.initialSettings,
   });
 
   final AuthenticationRepository authenticationRepository;
   final ProfileRepository profileRepository;
-  final JourneysRepository journeysRepository;
+  final PinRepository pinRepository;
+
   final SharedPreferencesService sharedPreferencesService;
   final Settings initialSettings;
 
@@ -52,15 +53,15 @@ class App extends StatelessWidget {
           BlocProvider<CountriesBloc>(
             create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
           ),
+          BlocProvider<PinsBloc>(
+            create: (context) => PinsBloc(
+              authRepository: authenticationRepository,
+              pinRepository: pinRepository,
+            ),
+          ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
               profileBloc: BlocProvider.of<ProfileBloc>(context),
-            ),
-          ),
-          BlocProvider<JourneysBloc>(
-            create: (context) => JourneysBloc(
-              authenticationRepository: authenticationRepository,
-              journeysRepository: journeysRepository,
             ),
           ),
         ],
