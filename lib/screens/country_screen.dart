@@ -1,4 +1,5 @@
 import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/screens/country_locations.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/utils/utils.dart';
 import 'package:bucket_map/widgets/widgets.dart';
@@ -20,23 +21,85 @@ class _CountryScreenState extends State<CountryScreen> {
       appBar: AppBar(
         centerTitle: false,
         title: Text(widget.country.name),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(Icons.lock_open_outlined),
+          ),
+        ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [Map(widget.country)],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_outlined),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              fullscreenDialog: true,
-              builder: (context) => CreatePinScreen(),
+        padding: EdgeInsets.all(0),
+        children: [
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: SizedBox(
+              height: 255,
+              child: Map(widget.country),
             ),
-          );
-        },
+          ),
+        ],
       ),
+      floatingActionButton: CreatePinButton(),
+    );
+  }
+}
+
+class PinListItem extends StatelessWidget {
+  PinListItem(this.country);
+  final Country country;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: Key('test'),
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {},
+      child: ListTile(title: Text("TEst")),
+      background: Container(
+        color: Colors.red,
+        child: Align(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+              Text(
+                "Pin löschen",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.right,
+              ),
+              SizedBox(
+                width: 20,
+              ),
+            ],
+          ),
+          alignment: Alignment.centerRight,
+        ),
+      ),
+    );
+  }
+}
+
+class CreatePinButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      child: Icon(Icons.add_outlined),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => CreatePinScreen(),
+          ),
+        );
+      },
     );
   }
 }
@@ -50,74 +113,51 @@ class Map extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.all(Radius.circular(16));
-    final targetBounds =
-        GeoUtils.calculateLatLngBounds(context, country).bounds;
-    return Container(
-      height: 215,
-      //height: double.infinity,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        child: ClipRRect(
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: InkWell(
+          splashColor: Colors.black,
           borderRadius: borderRadius,
-          child: InkWell(
-            borderRadius: borderRadius,
-            onTap: () {
-              /*Navigator.push(
-                context,
-                MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context) => FullScreenMap(country),
+          onTap: () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, __, ___) => CountryLocations(country),
+                transitionsBuilder: (context, opacity, a2, child) {
+                  return FadeTransition(
+                    opacity: opacity,
+                    child: child,
+                  );
+                },
+                transitionDuration: Duration(milliseconds: 250),
+              ),
+            );
+            //Navigator.pop(context);
+          },
+          child: AbsorbPointer(
+            child: Opacity(
+              opacity: .87,
+              child: CountriesMap(
+                controller: controller,
+                initialCameraPosition: CameraPosition(
+                  target: country.latLng,
+                  zoom: 1,
                 ),
-              );*/
-              //Navigator.pop(context);
-            },
-            child: AbsorbPointer(
-              child: Opacity(
-                opacity: .87,
-                child: Hero(
-                  tag: 'country_screen_map',
-                  child: CountriesMap(
-                    controller: controller,
-                    initialCameraPosition: CameraPosition(
-                      target: country.latLng,
-                      zoom: 1,
-                    ),
-                    cameraTargetBounds: CameraTargetBounds(targetBounds),
-                    zoomGesturesEnabled: false,
-                    scrollGesturesEnabled: false,
-                    disableUserLocation: true,
-                    onStyleLoaded: () async {
-                      await controller.setUnlockedCountries([country.code]);
-                      await controller.animateCameraToCountry(country);
-                    },
-                  ),
-                ),
+                zoomGesturesEnabled: false,
+                scrollGesturesEnabled: false,
+                disableUserLocation: true,
+                onMapCreated: () async {
+                  await controller.setUnlockedCountries([country.code]);
+                  Future.delayed(const Duration(milliseconds: 200), () async {
+                    await controller.moveCameraToCountry(country);
+                  });
+                },
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class FullScreenMap extends StatelessWidget {
-  FullScreenMap(this.country);
-  final Country country;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(country.name),
-      ),
-      body: Hero(
-        tag: 'country_screen_map',
-        child: CountriesMap(
-          zoomGesturesEnabled: false,
-          scrollGesturesEnabled: false,
-          disableUserLocation: true,
         ),
       ),
     );

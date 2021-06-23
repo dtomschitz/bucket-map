@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/screens/create_pin.dart';
+import 'package:bucket_map/utils/utils.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,17 +22,15 @@ class _CountriesScreenState extends State<CountriesScreen>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<CountriesScreen> {
-  final PanelController _panelController = new PanelController();
-  final CountriesMapController _mapController = new CountriesMapController();
-  final TextEditingController _searchTextController = TextEditingController();
+  final PanelController panelController = new PanelController();
+  final CountriesMapController mapController = new CountriesMapController();
+  final TextEditingController searchTextController = TextEditingController();
 
   AnimationController _animationController;
   CountriesSlidingSheetMode _mode;
+  bool _clearSearchBarOnClose = true;
 
   StreamSubscription _profileSubscription;
-
-  bool _animationLock = false;
-  bool _clearSearchBarOnClose = true;
 
   @override
   void initState() {
@@ -53,74 +51,68 @@ class _CountriesScreenState extends State<CountriesScreen>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CountriesSearchAppBar(
-        controller: _searchTextController,
+        controller: searchTextController,
         animationController: _animationController,
         onSearchBarFocused: _onSearchBarFocused,
         onSearchBarClose: _onSearchBarClose,
       ),
       body: CountriesSlidingSheet(
         mode: _mode,
-        controller: _panelController,
+        controller: panelController,
         animationController: _animationController,
         onHeaderTap: _onHeaderTap,
         onCountryTap: _onCountryTap,
         onPanelClose: _onPanelClose,
-        body: BlocBuilder<CountriesBloc, CountriesState>(
-          builder: (context, state) {
-            if (state is CountriesLoaded) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom +
-                      kToolbarHeight +
-                      48,
-                ),
-                child: Stack(
-                  children: [
-                    CountriesMap(
-                      key: GlobalKeys.countriesMap,
-                      controller: _mapController,
-                      onStyleLoaded: () => _initProfileListener(),
-                      onMapLongClick: (point, latLng) {},
-                    ),
-                    CreatePinButton(),
-                  ],
-                ),
-              );
-            }
-
-            return Container();
-          },
+        body: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 48,
+          ),
+          child: Stack(
+            children: [
+              CountriesMap(
+                key: GlobalKeys.countriesMap,
+                controller: mapController,
+                onStyleLoaded: () => _initProfileListener(),
+                onMapLongClick: (point, latLng) async {
+                  final country = await GeoUtils.fetchCountry(latLng);
+                  print(country);
+                },
+              ),
+              CreatePinButton(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
-
   _initProfileListener() {
-    _profileSubscription =
-        BlocProvider.of<ProfileBloc>(context).stream.listen((state) {
-      if (state is ProfileLoaded) {
-        _mapController.setUnlockedCountries(state.profile.unlockedCountries);
-      }
-    });
+    _profileSubscription = BlocProvider.of<ProfileBloc>(context).stream.listen(
+      (state) {
+        if (state is ProfileLoaded) {
+          mapController.setUnlockedCountries(state.profile.unlockedCountries);
+        }
+      },
+    );
   }
 
   _onSearchBarFocused() async {
     setState(() {
       _clearSearchBarOnClose = true;
-      if (_panelController.isPanelClosed) {
+      if (panelController.isPanelClosed) {
         _mode = CountriesSlidingSheetMode.search;
       }
     });
-    await _panelController.open();
+    await panelController.open();
   }
 
   _onSearchBarClose() async {
@@ -128,8 +120,8 @@ class _CountriesScreenState extends State<CountriesScreen>
       FocusScope.of(context).unfocus();
     }
 
-    _searchTextController.clear();
-    await _panelController.close();
+    searchTextController.clear();
+    await panelController.close();
   }
 
   _onCountryTap(Country country) async {
@@ -139,23 +131,21 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<ProfileBloc>(context).add(UnlockCountry(country.code));
       return;
     }
-    
-    _searchTextController.text = country.name;
+
+    searchTextController.text = country.name;
 
     if (FocusScope.of(context).hasFocus) {
       FocusScope.of(context).unfocus();
     }
 
     BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
-
-    _mapController.animateCameraToCountry(country);
-
-    await _panelController.close();
+    mapController.animateCameraToCountry(country);
+    panelController.close();
   }
 
   _onHeaderTap() async {
     setState(() => _mode = CountriesSlidingSheetMode.unlock);
-    await _panelController.open();
+    await panelController.open();
   }
 
   _onPanelClose() {
@@ -163,7 +153,7 @@ class _CountriesScreenState extends State<CountriesScreen>
     BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
 
     if (_clearSearchBarOnClose) {
-      _searchTextController.clear();
+      searchTextController.clear();
     }
   }
 }

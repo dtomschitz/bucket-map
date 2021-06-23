@@ -1,6 +1,5 @@
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/screens/country_screen.dart';
-import 'package:bucket_map/screens/create_journey.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,18 +52,6 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
 
               return Container();
             },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_outlined),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              fullscreenDialog: true,
-              builder: (context) => CreateJourneyScreen(),
-            ),
           );
         },
       ),

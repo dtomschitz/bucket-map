@@ -137,7 +137,13 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
                   controller: _scrollController,
                   shrinkWrap: false,
                   onTap: widget.onCountryTap,
-                  disabled: (country) => country.unlocked,
+                  disabled: (country) {
+                    if (widget.mode == CountriesSlidingSheetMode.search) {
+                      return false;
+                    }
+
+                    return country.unlocked;
+                  },
                   buildTrailing: (Country country) {
                     if (widget.mode == CountriesSlidingSheetMode.search) {
                       return Icon(
@@ -150,9 +156,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
                       country.unlocked
                           ? Icons.lock_open_outlined
                           : Icons.lock_outline,
-                      color: country.unlocked
-                          ? Colors.green
-                          : Colors.grey,
+                      color: country.unlocked ? Colors.green : Colors.grey,
                     );
                   },
                 ),

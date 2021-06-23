@@ -40,8 +40,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
-                        activeIcon: Icon(Icons.account_circle),
-
+            activeIcon: Icon(Icons.account_circle),
             label: "Profil",
           )
         ],

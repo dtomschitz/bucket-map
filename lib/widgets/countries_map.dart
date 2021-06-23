@@ -90,9 +90,10 @@ class _CountriesMapState extends State<CountriesMap>
     CountriesMapController _controller = widget.controller;
     if (_controller != null) {
       _controller.setUnlockedCountries = _setUnlockedCountries;
+      _controller.moveCameraToPosition = _moveCameraToPosition;
+      _controller.moveCameraToCountry = _moveCameraToCountry;
       _controller.animateCamera = _animateCamera;
       _controller.animateCameraToCountry = _animateCameraToCountry;
-      _controller.moveCameraToPosition = _moveCameraToPosition;
       _controller.addPin = _addPin;
       _controller.removePin = _removePin;
     }
@@ -106,6 +107,7 @@ class _CountriesMapState extends State<CountriesMap>
 
   _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
+    widget.onMapCreated?.call();
 
     _mapController.addListener(() {
       if (_currentCameraPosition != _mapController.cameraPosition &&
@@ -147,6 +149,16 @@ class _CountriesMapState extends State<CountriesMap>
     ));
   }
 
+  Future<bool> _moveCameraToCountry(Country country) {
+    final cameraUpdate = GeoUtils.calculateLatLngBounds(
+      context,
+      country,
+    ).cameraUpdate;
+
+    return _mapController.moveCamera(cameraUpdate);
+  }
+
+
   Future<bool> _animateCamera(CameraUpdate cameraUpdate) {
     return _mapController.animateCamera(cameraUpdate);
   }
@@ -157,7 +169,9 @@ class _CountriesMapState extends State<CountriesMap>
       country,
     ).cameraUpdate;
 
-    await _mapController.animateCamera(cameraUpdate);
+    print(cameraUpdate);
+
+    return _mapController.animateCamera(cameraUpdate);
   }
 
   Future<Symbol> _addPin(LatLng geometry, {bool clearBefore}) {
@@ -277,6 +291,8 @@ class CountriesMapController {
   /// false if the movement was canceled.
   Future<bool> Function(LatLng position, {double zoom}) moveCameraToPosition;
 
+  Future<bool> Function(Country country) moveCameraToCountry;
+
   /// Starts an animated change of the map camera position.
   ///
   /// The returned [Future] completes after the change has been started on the
@@ -285,11 +301,12 @@ class CountriesMapController {
   /// false if the movement was canceled.
   Future<bool> Function(CameraUpdate) animateCamera;
 
+  Future<void> Function(Country country) animateCameraToCountry;
+
   Future<void> Function(List<String> countries) setUnlockedCountries;
 
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
 
   Future<void> Function(Symbol symbol) removePin;
 
-  Future<void> Function(Country country) animateCameraToCountry;
 }
