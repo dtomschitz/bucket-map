@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
@@ -27,6 +28,7 @@ class _CountriesScreenState extends State<CountriesScreen>
   CountriesSlidingSheetMode _mode;
 
   StreamSubscription _profileSubscription;
+  StreamSubscription _pinsSubscription;
 
   bool _animationLock = false;
   bool _clearSearchBarOnClose = true;
@@ -46,6 +48,7 @@ class _CountriesScreenState extends State<CountriesScreen>
   void dispose() {
     _animationController.dispose();
     _profileSubscription.cancel();
+    _pinsSubscription.cancel();
     super.dispose();
   }
 
@@ -54,6 +57,15 @@ class _CountriesScreenState extends State<CountriesScreen>
         BlocProvider.of<ProfileBloc>(context).stream.listen((state) {
       if (state is ProfileLoaded) {
         _mapController.setUnlockedCountries(state.profile.unlockedCountries);
+      }
+    });
+  }
+
+  initPinsListener() {
+    _pinsSubscription =
+        BlocProvider.of<PinsBloc>(context).stream.listen((state) {
+      if (state is PinsLoaded) {
+        _mapController.addPins(state.pins);
       }
     });
   }
@@ -86,6 +98,7 @@ class _CountriesScreenState extends State<CountriesScreen>
                 controller: _mapController,
                 onStyleLoaded: () {
                   initProfileListener();
+                  initPinsListener();
                 },
               ),
               CreatePinButton(),
@@ -131,7 +144,7 @@ class _CountriesScreenState extends State<CountriesScreen>
       BlocProvider.of<FilteredCountriesBloc>(context)
           .add(ClearCountriesFilter());
 
-      _mapController.animateCameraToCountry(country); 
+      _mapController.animateCameraToCountry(country);
 
       await _panelController.close();
     }

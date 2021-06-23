@@ -23,9 +23,14 @@ class PinAdding extends PinsState {
   String toString() => 'PinAdding';
 }
 
+class PinRemoving extends PinsState {
+  @override
+  String toString() => 'PinRemoving';
+}
+
 class PinsLoaded extends PinsState {
-  final List<Pin> pins;
   const PinsLoaded(this.pins);
+  final List<Pin> pins;
 
   PinsLoaded copyWith({
     List<Pin> pins,

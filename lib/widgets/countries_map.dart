@@ -1,13 +1,14 @@
-import 'dart:developer';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/core/settings/bloc/bloc.dart';
-import 'package:bucket_map/models/country.dart';
+import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -65,6 +66,7 @@ class _CountriesMapState extends State<CountriesMap>
       _controller.animateCamera = _animateCamera;
       _controller.moveCameraToPosition = _moveCameraToPosition;
       _controller.addPin = _addPin;
+      _controller.addPins = _addPins;
       _controller.removePin = _removePin;
       _controller.animateCameraToCountry = _animateCameraToCountry;
     }
@@ -76,8 +78,12 @@ class _CountriesMapState extends State<CountriesMap>
     super.dispose();
   }
 
-  _onMapCreated(MapboxMapController controller) {
+  _onMapCreated(MapboxMapController controller) async {
     _mapController = controller;
+
+    final ByteData bytes = await rootBundle.load("assets/location_pin.jpg");
+    final Uint8List list = bytes.buffer.asUint8List();
+    await controller.addImage("locationPin", list);
 
     _mapController.addListener(() {
       if (_currentCameraPosition != _mapController.cameraPosition &&
@@ -93,6 +99,19 @@ class _CountriesMapState extends State<CountriesMap>
   _onStyleLoaded() {
     _animationController.forward();
     widget.onStyleLoaded?.call();
+  }
+
+  Future<void> _addPins(List<Pin> pins) async {
+    final symbols = pins.map(
+      (pin) => SymbolOptions(
+        geometry: LatLng(pin.lat, pin.lng),
+        iconImage: "locationPin",
+        iconSize: 1.3,
+        draggable: true,
+      ),
+    );
+
+    await _mapController.addSymbols(symbols);
   }
 
   Future<void> _setUnlockedCountries(List<String> countries) async {
@@ -266,6 +285,8 @@ class CountriesMapController {
   Future<void> Function(List<String> countries) setUnlockedCountries;
 
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
+
+  Future<Symbol> Function(List<Pin> pin) addPins;
 
   Future<void> Function(Symbol symbol) removePin;
 

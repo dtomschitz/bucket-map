@@ -1,5 +1,4 @@
 import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/blocs/pins/bloc.dart';
 import 'package:bucket_map/core/app/home.dart';
 import 'package:bucket_map/core/auth/login.dart';
 import 'package:bucket_map/core/app/bloc/bloc.dart';
@@ -16,15 +15,18 @@ class App extends StatelessWidget {
   const App({
     @required AuthenticationRepository authenticationRepository,
     @required ProfileRepository profileRepository,
+    @required PinRepository pinRepository,
     @required SharedPreferencesService sharedPreferencesService,
     Settings initialSettings,
   })  : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
+        _pinRepository = pinRepository,
         _sharedPreferencesService = sharedPreferencesService,
         _initialSettings = initialSettings;
 
   final AuthenticationRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
+  final PinRepository _pinRepository;
 
   final SharedPreferencesService _sharedPreferencesService;
   final Settings _initialSettings;
@@ -56,7 +58,10 @@ class App extends StatelessWidget {
             create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
           ),
           BlocProvider<PinsBloc>(
-            create: (context) => PinsBloc()..add(LoadPinsEvent()),
+            create: (context) => PinsBloc(
+              authRepository: _authenticationRepository,
+              pinRepository: _pinRepository,
+            ),
           ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
