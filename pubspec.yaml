@@ -46,3 +46,4 @@ flutter:
     - style_light.json
     - default_profile_picture.png
     - location_pin.png
+    - cities.json

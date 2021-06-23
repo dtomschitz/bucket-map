@@ -5,7 +5,9 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 class Pin extends Equatable {
   const Pin({
-    @required this.id,
+    this.id,
+    this.userId,
+    this.country,
     @required this.name,
     @required this.lat,
     @required this.lng,
@@ -13,24 +15,30 @@ class Pin extends Equatable {
   });
 
   final String id;
+  final String userId;
   final String name;
+  final String country;
   final double lat;
   final double lng;
   final String description;
 
   @override
-  List<Object> get props => [id, name, lat, lng, description];
+  List<Object> get props => [id, userId, name, country, lat, lng, description];
 
   Pin copyWith({
     String id,
+    String userId,
     String name,
+    String country,
     double lat,
     double lng,
     String description,
   }) {
     return Pin(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       name: name ?? this.name,
+      country: country ?? this.country,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
       description: description ?? this.description,
@@ -45,30 +53,35 @@ class Pin extends Equatable {
   @override
   int get hashCode =>
       id.hashCode ^
+      userId.hashCode ^
       name.hashCode ^
+      country.hashCode ^
       lat.hashCode ^
       lng.hashCode ^
       description.hashCode;
 
   @override
   String toString() {
-    return 'Profile { id: $id, name: $name, lat: $lat, lon: $lng, description: $description}';
+    return 'Profile { id: $id, name: $name, country: $country lat: $lat, lon: $lng, description: $description}';
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "userId": userId,
       "name": name,
+      "country": country,
       "lat": lat,
       "lng": lng,
       "description": description
     };
   }
 
-  static Pin fromJson(Map<String, Object> json) {
+  static Pin fromJson(String id, Map<String, Object> json) {
     return Pin(
-      id: json["id"] as String,
+      id: id,
+      userId: json["userId"] as String,
       name: json["name"] as String,
+      country: json["country"] as String,
       lat: json["lat"] as double,
       lng: json["lng"] as double,
       description: json["description"] as String,

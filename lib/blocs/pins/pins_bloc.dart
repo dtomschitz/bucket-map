@@ -27,6 +27,8 @@ class PinsBloc extends Bloc<PinsEvents, PinsState> {
 
   @override
   Stream<PinsState> mapEventToState(PinsEvents event) async* {
+    print("ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ");
+    print(event.toString() + "sdasdadadasdasdad");
     if (event is LoadPins) {
       yield* _mapLoadPinsToState(event);
     } else if (event is AddPin) {
@@ -41,14 +43,16 @@ class PinsBloc extends Bloc<PinsEvents, PinsState> {
   }
 
   Stream<PinsState> _mapLoadPinsToState(LoadPins event) async* {
-    _pinsSubscription.cancel();
-    _pinsSubscription = _pinRepository.pins().listen((pins) {
+    //_pinsSubscription.cancel();
+    _pinsSubscription =
+        _pinRepository.pins(_authRepository.currentUser.id).listen((pins) {
       add(PinsUpdated(pins));
     });
   }
 
   Stream<PinsState> _mapAddPinToState(AddPin event) async* {
-    _pinRepository.addPin(event.pin);
+    _pinRepository
+        .addPin(event.pin.copyWith(userId: _authRepository.currentUser.id));
   }
 
   Stream<PinsState> _mapUpdatePinToState(UpdatePin event) async* {

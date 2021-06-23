@@ -81,7 +81,7 @@ class _CountriesMapState extends State<CountriesMap>
   _onMapCreated(MapboxMapController controller) async {
     _mapController = controller;
 
-    final ByteData bytes = await rootBundle.load("assets/location_pin.jpg");
+    final ByteData bytes = await rootBundle.load("assets/location_pin.png");
     final Uint8List list = bytes.buffer.asUint8List();
     await controller.addImage("locationPin", list);
 
@@ -102,14 +102,16 @@ class _CountriesMapState extends State<CountriesMap>
   }
 
   Future<void> _addPins(List<Pin> pins) async {
-    final symbols = pins.map(
-      (pin) => SymbolOptions(
-        geometry: LatLng(pin.lat, pin.lng),
-        iconImage: "locationPin",
-        iconSize: 1.3,
-        draggable: true,
-      ),
-    );
+    final symbols = pins
+        .map(
+          (pin) => SymbolOptions(
+            geometry: LatLng(pin.lat, pin.lng),
+            iconImage: "locationPin",
+            iconSize: 0.3,
+            draggable: false,
+          ),
+        )
+        .toList();
 
     await _mapController.addSymbols(symbols);
   }
@@ -149,8 +151,8 @@ class _CountriesMapState extends State<CountriesMap>
 
     return _mapController.addSymbol(SymbolOptions(
       geometry: geometry,
-      iconImage: "airport-15",
-      iconSize: 1.3,
+      iconImage: "locationPin",
+      iconSize: 0.3,
       draggable: true,
     ));
   }
@@ -286,7 +288,7 @@ class CountriesMapController {
 
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
 
-  Future<Symbol> Function(List<Pin> pin) addPins;
+  Future<void> Function(List<Pin> pin) addPins;
 
   Future<void> Function(Symbol symbol) removePin;
 
