@@ -2,8 +2,8 @@ import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-class CountryLocations extends StatelessWidget {
-  CountryLocations(this.country);
+class CountryMap extends StatelessWidget {
+  CountryMap(this.country);
 
   final Country country;
 

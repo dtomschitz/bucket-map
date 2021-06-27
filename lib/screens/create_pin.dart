@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/core/auth/repositories/auth_repository.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/city.dart';
 import 'package:bucket_map/models/models.dart';

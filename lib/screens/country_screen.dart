@@ -1,9 +1,10 @@
+import 'package:bucket_map/blocs/pins/bloc.dart';
+import 'package:bucket_map/dialogs/dialogs.dart';
 import 'package:bucket_map/models/models.dart';
-import 'package:bucket_map/screens/country_locations.dart';
 import 'package:bucket_map/screens/screens.dart';
-import 'package:bucket_map/utils/utils.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class CountryScreen extends StatefulWidget {
@@ -38,68 +39,77 @@ class _CountryScreenState extends State<CountryScreen> {
               child: Map(widget.country),
             ),
           ),
+          BlocBuilder<PinsBloc, PinsState>(builder: (context, state) {
+            if (state is PinsLoaded) {
+              final pins = state.pins;
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: pins.length,
+                itemBuilder: (context, index) {
+                  final pin = pins[index];
+
+                  return PinListTile(pin);
+                },
+              );
+            }
+
+            return Container();
+          })
         ],
       ),
-      floatingActionButton: CreatePinButton(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add_outlined),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              fullscreenDialog: true,
+              builder: (context) => CreatePinScreen(),
+            ),
+          );
+        },
+      ),
     );
   }
 }
 
-class PinListItem extends StatelessWidget {
-  PinListItem(this.country);
-  final Country country;
+class PinListTile extends StatelessWidget {
+  PinListTile(this.pin);
+  final Pin pin;
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key('test'),
+      key: Key(pin.toString()),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {},
-      child: ListTile(title: Text("TEst")),
+      confirmDismiss: (direction) {
+        return showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return ConfirmPinDeletionDialog();
+          },
+        );
+      },
+      child: ListTile(title: Text(pin.name)),
       background: Container(
         color: Colors.red,
         child: Align(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
-              Text(
-                "Pin löschen",
-                style: TextStyle(
+              Padding(
+                padding: EdgeInsets.only(left: 32, right: 32),
+                child: Icon(
+                  Icons.delete,
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
                 ),
-                textAlign: TextAlign.right,
-              ),
-              SizedBox(
-                width: 20,
               ),
             ],
           ),
           alignment: Alignment.centerRight,
         ),
       ),
-    );
-  }
-}
-
-class CreatePinButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      child: Icon(Icons.add_outlined),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (context) => CreatePinScreen(),
-          ),
-        );
-      },
     );
   }
 }
@@ -125,7 +135,7 @@ class Map extends StatelessWidget {
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (context, __, ___) => CountryLocations(country),
+                pageBuilder: (context, __, ___) => CountryMap(country),
                 transitionsBuilder: (context, opacity, a2, child) {
                   return FadeTransition(
                     opacity: opacity,
