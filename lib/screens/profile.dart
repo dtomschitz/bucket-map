@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:bucket_map/core/auth/repositories/auth_repository.dart';
 import 'package:flutter/gestures.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -17,6 +19,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   //final User user;
   //_ProfileScreenState({this.user});
+
+  PickedFile _imageFile;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CircleAvatar(
-                      radius: 60,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child:
-                            Image.asset("assets/default_profile_picture.png"),
-                      ),
-                    ),
+                    imageProfile(),
                     SizedBox(height: 25.0),
                     TextButton(
                       style: TextButton.styleFrom(
@@ -146,11 +144,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             );
+            return Container();
           }
-
-          return CircularProgressIndicator();
         },
       ),
     );
+  }
+
+  Widget imageProfile() {
+    return Center(
+      child: Stack(children: <Widget>[
+        CircleAvatar(
+          radius: 60,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(60),
+            child: _imageFile == null
+                ? AssetImage("assets/default_profile_picture.png")
+                : FileImage(File(_imageFile.path)),
+          ),
+        ),
+        Positioned(
+          bottom: 20.0,
+          right: 20.0,
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: ((builder) => bottomSheet()),
+              );
+            },
+            child: Icon(
+              Icons.camera_alt,
+              color: Colors.teal,
+              size: 28.0,
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(children: <Widget>[
+        Text(
+          "Choose Profile Photo",
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FlatButton.icon(
+              icon: Icon(Icons.camera),
+              onPressed: () {
+                takePhoto(ImageSource.camera);
+              },
+              label: Text("Camera"),
+            ),
+            FlatButton.icon(
+              icon: Icon(Icons.image),
+              onPressed: () {
+                takePhoto(ImageSource.gallery);
+              },
+              label: Text("Gallery"),
+            ),
+          ],
+        )
+      ]),
+    );
+  }
+
+  void takePhoto(ImageSource source) async {
+    final pickedFile = await _picker.getImage(
+      source: source,
+    );
+    setState(() {
+      _imageFile = pickedFile;
+    });
   }
 }
