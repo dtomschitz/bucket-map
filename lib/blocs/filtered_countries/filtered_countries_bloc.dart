@@ -2,20 +2,21 @@ part of blocs.filtered_countries;
 
 class FilteredCountriesBloc
     extends Bloc<CountriesFilterEvent, FilteredCountriesState> {
-  FilteredCountriesBloc({@required this.countriesBloc})
-      : super(countriesBloc.state is CountriesLoaded
+  FilteredCountriesBloc({@required this.profileBloc})
+      : super(profileBloc.state is ProfileLoaded
             ? FilteredCountriesLoaded(
-                (countriesBloc.state as CountriesLoaded).countries, "")
+                countries: (profileBloc.state as ProfileLoaded).countries,
+                filter: "",
+              )
             : FilteredCountriesLoading()) {
-    _subscription = countriesBloc.stream.listen((state) {
-      if (state is CountriesLoaded) {
-        add(FilteredCountriesUpdated(
-            (countriesBloc.state as CountriesLoaded).countries));
+    _subscription = profileBloc.stream.listen((state) {
+      if (state is ProfileLoaded) {
+        add(FilteredCountriesUpdated(state.countries));
       }
     });
   }
 
-  final CountriesBloc countriesBloc;
+  final ProfileBloc profileBloc;
   StreamSubscription _subscription;
 
   @override
@@ -39,13 +40,12 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapUpdateFilterToState(
     UpdateCountriesFilter event,
   ) async* {
-    if (countriesBloc.state is CountriesLoaded) {
+    if (profileBloc.state is ProfileLoaded) {
+      var countries = (profileBloc.state as ProfileLoaded).countries;
+
       yield FilteredCountriesLoaded(
-        _filterCountries(
-          (countriesBloc.state as CountriesLoaded).countries,
-          event.filter,
-        ),
-        event.filter,
+        countries: _filterCountries(countries, event.filter),
+        filter: event.filter,
       );
     }
   }
@@ -53,14 +53,13 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapClearFilterToState(
     ClearCountriesFilter event,
   ) async* {
-    if (countriesBloc.state is CountriesLoaded) {
-      final filter = "";
+    if (profileBloc.state is ProfileLoaded) {
+      var countries = (profileBloc.state as ProfileLoaded).countries;
+      var filter = "";
+
       yield FilteredCountriesLoaded(
-        _filterCountries(
-          (countriesBloc.state as CountriesLoaded).countries,
-          filter,
-        ),
-        filter,
+        countries: _filterCountries(countries, filter),
+        filter: filter,
       );
     }
   }
@@ -68,16 +67,14 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapCountriesToState(
     FilteredCountriesUpdated event,
   ) async* {
-    final filter = state is FilteredCountriesLoaded
+    var countries = (profileBloc.state as ProfileLoaded).countries;
+    var filter = state is FilteredCountriesLoaded
         ? (state as FilteredCountriesLoaded).filter
         : "";
 
     yield FilteredCountriesLoaded(
-      _filterCountries(
-        (countriesBloc.state as CountriesLoaded).countries,
-        filter,
-      ),
-      filter,
+      countries: _filterCountries(countries, filter),
+      filter: filter,
     );
   }
 

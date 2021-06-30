@@ -13,50 +13,52 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
   const App({
-    @required AuthenticationRepository authenticationRepository,
-    @required ProfileRepository profileRepository,
-    @required SharedPreferencesService sharedPreferencesService,
-    Settings initialSettings,
-  })  : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository,
-        _sharedPreferencesService = sharedPreferencesService,
-        _initialSettings = initialSettings;
+    @required this.authenticationRepository,
+    @required this.profileRepository,
+    @required this.pinRepository,
+    @required this.sharedPreferencesService,
+    this.initialSettings,
+  });
 
-  final AuthenticationRepository _authenticationRepository;
-  final ProfileRepository _profileRepository;
+  final AuthenticationRepository authenticationRepository;
+  final ProfileRepository profileRepository;
+  final PinRepository pinRepository;
 
-  final SharedPreferencesService _sharedPreferencesService;
-  final Settings _initialSettings;
+  final SharedPreferencesService sharedPreferencesService;
+  final Settings initialSettings;
 
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: _authenticationRepository,
+      value: authenticationRepository,
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (_) => AppBloc(
-              authenticationRepository: _authenticationRepository,
+              authenticationRepository: authenticationRepository,
             ),
           ),
           BlocProvider<SettingsBloc>(
             create: (context) => SettingsBloc(
-              sharedPreferencesService: _sharedPreferencesService,
-              initialSettings: _initialSettings,
+              sharedPreferencesService: sharedPreferencesService,
+              initialSettings: initialSettings,
             ),
           ),
           BlocProvider<ProfileBloc>(
             create: (context) => ProfileBloc(
-              authenticationRepository: _authenticationRepository,
-              profileRepository: _profileRepository,
+              authenticationRepository: authenticationRepository,
+              profileRepository: profileRepository,
             ),
           ),
-          BlocProvider<CountriesBloc>(
-            create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
+          BlocProvider<PinsBloc>(
+            create: (context) => PinsBloc(
+              authRepository: authenticationRepository,
+              pinRepository: pinRepository,
+            ),
           ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
-              countriesBloc: BlocProvider.of<CountriesBloc>(context),
+              profileBloc: BlocProvider.of<ProfileBloc>(context),
             ),
           ),
         ],

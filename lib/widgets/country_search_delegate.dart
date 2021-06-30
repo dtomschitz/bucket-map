@@ -1,12 +1,18 @@
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountrySearchDelegate extends SearchDelegate<Country> {
+  CountrySearchDelegate({bool filterOnlyUnlocked})
+      : filterOnlyUnlocked = filterOnlyUnlocked ?? false;
+
+  final bool filterOnlyUnlocked;
+
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
+    return [];
   }
 
   @override
@@ -21,6 +27,7 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
   Widget buildResults(BuildContext context) {
     return _CountrySearchList(
       query: query,
+      filterOnlyUnlocked: filterOnlyUnlocked,
       onTap: (country) => close(context, country),
     );
   }
@@ -29,44 +36,43 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
   Widget buildSuggestions(BuildContext context) {
     return _CountrySearchList(
       query: query,
+      filterOnlyUnlocked: filterOnlyUnlocked,
       onTap: (country) => close(context, country),
     );
   }
+
+  @override
+  String get searchFieldLabel => 'Nach Land suchen';
 }
 
 class _CountrySearchList extends StatelessWidget {
-  _CountrySearchList({this.query, this.onTap});
-  
+  _CountrySearchList({this.query, this.filterOnlyUnlocked, this.onTap});
+
   final String query;
+  final bool filterOnlyUnlocked;
+
   final Function(Country country) onTap;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CountriesBloc, CountriesState>(
+    return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
-        if (state is CountriesLoaded) {
+        if (state is ProfileLoaded) {
           List<Country> countries = state.countries.where(
             (country) {
-              return country.name.toLowerCase().contains(query.toLowerCase());
+              return filterOnlyUnlocked
+                  ? country.name.toLowerCase().contains(query.toLowerCase()) &&
+                      country.unlocked
+                  : country.name.toLowerCase().contains(query.toLowerCase());
             },
           ).toList();
 
-          return ListView.builder(
-            padding: EdgeInsets.only(top: 8, bottom: 8),
-            itemCount: countries.length,
-            itemBuilder: (BuildContext context, int index) {
-              final country = countries[index];
-              final code = country.code.toLowerCase();
-
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage:
-                      NetworkImage('https://flagcdn.com/w160/$code.png'),
-                  backgroundColor: Colors.grey.shade100,
-                ),
-                title: Text(country.name),
-                onTap: () => onTap?.call(country),
-              );
+          return CountryList(
+            countries: countries,
+            onTap: (country) {
+              if (country != null) {
+                onTap?.call(country);
+              }
             },
           );
         }
@@ -74,7 +80,7 @@ class _CountrySearchList extends StatelessWidget {
         return Align(
           alignment: Alignment.topCenter,
           child: Padding(
-            padding: EdgeInsets.only(top: 16),
+            padding: EdgeInsets.only(top: 32),
             child: CircularProgressIndicator(),
           ),
         );

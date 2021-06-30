@@ -67,7 +67,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         password: state.password.value,
         firstName: state.firstName,
         lastName: state.lastName,
-        country: state.country.code,
+        country: state.country,
       );
 
       emit(state.copyWith(

@@ -63,7 +63,7 @@ class AuthenticationRepository {
     @required String password,
     String firstName,
     String lastName,
-    String country,
+    Country country,
   }) async {
     try {
       final credentials = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -77,8 +77,8 @@ class AuthenticationRepository {
           email: email,
           firstName: firstName,
           lastName: lastName,
-          country: country,
-          unlockedCountries: [country],
+          country: country.code,
+          unlockedCountries: [country.code],
         ),
       );
     } on Exception catch (e) {

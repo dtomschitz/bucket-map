@@ -1,4 +1,4 @@
-import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -61,10 +61,11 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
       animationController: widget.animationController,
       maxHeight: maxHeight,
       backdropEnabled: true,
+      parallaxEnabled: true,
       backdropColor: Colors.black,
       onPanelClosed: () {
-         _scrollController.jumpTo(0);
-         widget.onPanelClose?.call();
+        _scrollController.jumpTo(0);
+        widget.onPanelClose?.call();
       },
       onPanelSlide: widget.onPanelSlide?.call,
       body: widget.body,
@@ -82,8 +83,8 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
             CurvedAnimation(
               parent: _animationController,
               curve: Interval(
-                0.5,
-                0.7,
+                0.3,
+                0.8,
                 curve: Curves.ease,
               ),
             ),
@@ -104,28 +105,64 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
   }
 
   Widget _buildPanel() {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      child: NotificationListener<ScrollNotification>(
-        // ignore: missing_return
-        onNotification: (notification) {
-          if (notification is ScrollStartNotification) {
-            widget.onPanelStartScroll?.call(notification.metrics);
-          } else if (notification is ScrollUpdateNotification) {
-            widget.onPanelUpdateScroll?.call(notification.metrics);
-          } else if (notification is ScrollEndNotification) {
-            widget.onPanelEndScroll?.call(notification.metrics);
-          }
-        },
-        child: CountryList(
-          controller: _scrollController,
-          onTap: widget.onCountryTap,
-          buildTrailing: (Country country) {
-            if (widget.mode == CountriesSlidingSheetMode.search) {
-              return Icon(Icons.remove_red_eye, color: Colors.grey);
+    return NotificationListener<ScrollNotification>(
+      // ignore: missing_return
+      onNotification: (notification) {
+        if (notification is ScrollStartNotification) {
+          widget.onPanelStartScroll?.call(notification.metrics);
+        } else if (notification is ScrollUpdateNotification) {
+          widget.onPanelUpdateScroll?.call(notification.metrics);
+        } else if (notification is ScrollEndNotification) {
+          widget.onPanelEndScroll?.call(notification.metrics);
+        }
+      },
+      child: FadeTransition(
+        opacity: Tween(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Interval(
+              0.3,
+              0.8,
+              curve: Curves.ease,
+            ),
+          ),
+        ),
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoaded) {
+              return SafeArea(
+                child: CountryList(
+                  countries: state.countries,
+                  controller: _scrollController,
+                  shrinkWrap: false,
+                  onTap: widget.onCountryTap,
+                  disabled: (country) {
+                    if (widget.mode == CountriesSlidingSheetMode.search) {
+                      return false;
+                    }
+
+                    return country.unlocked;
+                  },
+                  buildTrailing: (Country country) {
+                    if (widget.mode == CountriesSlidingSheetMode.search) {
+                      return Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        color: Colors.grey,
+                      );
+                    }
+
+                    return Icon(
+                      country.unlocked
+                          ? Icons.lock_open_outlined
+                          : Icons.lock_outline,
+                      color: country.unlocked ? Colors.green : Colors.grey,
+                    );
+                  },
+                ),
+              );
             }
 
-            return Icon(Icons.lock, color: Colors.grey);
+            return Container();
           },
         ),
       ),
@@ -136,14 +173,16 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
 class CountriesSlidingSheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CountriesBloc, CountriesState>(
+    return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         return Expanded(
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
@@ -152,13 +191,13 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
                   Text(
                     'Freigeschaltene Länder',
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: 22,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  state is CountriesLoaded
+                  state is ProfileLoaded
                       ? Text(
-                          '15 von ${state.countries.length} Ländern freigeschaltet',
+                          '${state.countries.where((country) => country.unlocked).toList().length} von ${state.countries.length} Ländern freigeschaltet',
                           style: TextStyle(
                             color: Colors.green.shade400,
                             fontWeight: FontWeight.w600,

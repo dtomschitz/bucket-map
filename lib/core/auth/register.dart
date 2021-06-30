@@ -1,8 +1,9 @@
-import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/auth/cubits/register/cubit.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/core/auth/widgets/widgets.dart';
 import 'package:bucket_map/models/country.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -82,17 +83,17 @@ class NameView extends StatelessWidget {
       builder: (context, state) {
         final isValid = state.firstName.isNotEmpty && state.lastName.isNotEmpty;
 
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Konto anlegen',
           subtitle: 'Bitte geben Sie ihren Namen ein.',
           children: [
-            FormInputField(
+            InputField(
               onChanged: context.read<RegisterCubit>().firstNameChanged,
               keyboardType: TextInputType.name,
               labelText: 'Vorname',
             ),
             SizedBox(height: 16),
-            FormInputField(
+            InputField(
               onChanged: context.read<RegisterCubit>().lastNameChanged,
               keyboardType: TextInputType.name,
               labelText: 'Nachname',
@@ -126,11 +127,11 @@ class EmailView extends StatelessWidget {
       builder: (context, state) {
         final isValid = state.emailStatus == FormzStatus.valid;
 
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Konto anlegen',
           subtitle: 'Bitte geben Sie ihre E-Mail ein.',
           children: [
-            FormInputField(
+            InputField(
               onChanged: context.read<RegisterCubit>().emailChanged,
               keyboardType: TextInputType.emailAddress,
               labelText: 'E-Mail',
@@ -178,12 +179,12 @@ class PasswortView extends StatelessWidget {
       builder: (context, state) {
         final isValid = state.passwordStatus == FormzStatus.valid;
 
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Passwort wählen',
           subtitle:
               'Erstellen Sie ein starkes Passwort aus Buchstaben, Zahlen und Sonderzeichen.',
           children: [
-            FormInputField(
+            InputField(
               onChanged: context.read<RegisterCubit>().passwordChanged,
               obscureText: true,
               labelText: 'Password',
@@ -220,11 +221,11 @@ class CountryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterCubit, RegisterState>(
       builder: (context, state) {
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Land wählen',
           subtitle: 'Wählen Sie das Land aus, in dem Sie aktuell leben.',
           children: [
-            FormInputField(
+            InputField(
               controller: controller,
               readOnly: true,
               onTap: () async {
@@ -266,7 +267,7 @@ class SummaryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterCubit, RegisterState>(
       builder: (context, state) {
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Zusammenfassung',
           children: [
             ListTile(
@@ -344,9 +345,9 @@ class CountrySearchList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CountriesBloc, CountriesState>(
+    return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
-        if (state is CountriesLoaded) {
+        if (state is ProfileLoaded) {
           List<Country> countries = state.countries.where(
             (country) {
               return country.name.toLowerCase().contains(query.toLowerCase());

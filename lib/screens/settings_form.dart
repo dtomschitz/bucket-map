@@ -1,3 +1,5 @@
+import 'package:bucket_map/models/profile.dart';
+import 'package:bucket_map/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 class SettingsForm extends StatefulWidget {
@@ -7,7 +9,7 @@ class SettingsForm extends StatefulWidget {
 
 class _SettingsFormState extends State<SettingsForm> {
   final _formKey = GlobalKey<FormState>();
-  String _currentName;
+  static String _currentName;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +28,11 @@ class _SettingsFormState extends State<SettingsForm> {
         SizedBox(height: 20.0),
         RaisedButton(
           child: Text(
-            'Namen ändern',
+            'Namen festlegen',
           ),
           onPressed: () async {
-            print(_currentName);
+            _currentName ?? "Namen eingeben";
+            Navigator.pop(context);
           },
         ),
       ]),

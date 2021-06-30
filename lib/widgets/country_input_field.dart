@@ -1,4 +1,3 @@
-import 'package:bucket_map/core/auth/widgets/widgets.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,7 @@ class CountryInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormInputField(
+    return InputField(
       controller: controller,
       readOnly: true,
       onTap: () async {

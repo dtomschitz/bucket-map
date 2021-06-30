@@ -1,7 +1,7 @@
 import 'package:bucket_map/core/auth/cubits/login/cubit.dart';
 import 'package:bucket_map/core/auth/register.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
-import 'package:bucket_map/core/auth/widgets/widgets.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -73,11 +73,11 @@ class EmailView extends StatelessWidget {
         final String labelText = 'E-Mail';
         final isEmailValid = state.emailStatus == FormzStatus.valid;
 
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Anmeldung',
           subtitle: 'Melde dich mit deinem Konto an.',
           children: [
-            FormInputField(
+            InputField(
               onChanged: context.read<LoginCubit>().emailChanged,
               keyboardType: TextInputType.emailAddress,
               labelText: labelText,
@@ -126,11 +126,11 @@ class PasswordView extends StatelessWidget {
       builder: (context, state) {
         final String labelText = 'Password';
 
-        return AuthViewContainer(
+        return ListViewContainer(
           title: 'Willkommen',
           subtitle: state.email.value,
           children: [
-            FormInputField(
+            InputField(
               obscureText: true,
               onChanged: context.read<LoginCubit>().passwordChanged,
               keyboardType: TextInputType.emailAddress,

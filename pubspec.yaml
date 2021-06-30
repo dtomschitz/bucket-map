@@ -25,6 +25,8 @@ dependencies:
   geolocator: ^7.0.3
   flutter_spinkit: "^4.1.2"
   shimmer: ^2.0.0
+  image_picker: ^0.8.0+3
+  grouped_list: ^3.0.1
   # Custom Packages
   cache:
     path: packages/cache
@@ -37,6 +39,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: ^0.9.0
+
 flutter:
   uses-material-design: true
   assets:
@@ -45,3 +49,10 @@ flutter:
     - style_dark.json
     - style_light.json
     - default_profile_picture.png
+    - location_pin.png
+    - cities.json
+
+flutter_icons:
+  image_path: "assets/icon.png"
+  android: true
+  ios: true

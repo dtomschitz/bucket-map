@@ -16,8 +16,10 @@ class ProfileLoading extends ProfileState {
 }
 
 class ProfileLoaded extends ProfileState {
-  const ProfileLoaded(this.profile);
+  const ProfileLoaded({this.profile, this.countries});
+  
   final Profile profile;
+  final List<Country> countries;
 
   @override
   String toString() {

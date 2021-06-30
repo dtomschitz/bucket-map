@@ -55,7 +55,7 @@ class Profile {
 
   @override
   String toString() {
-    return 'Profile { id: $id, email: $email, firstName: $firstName, lastName: $lastName, country: $country, unlockedCountries: $unlockedCountries}';
+    return 'Profile { id: $id, email: $email, firstName: $firstName, lastName: $lastName, country: $country }';
   }
 
   Map<String, dynamic> toJson() {
