@@ -64,16 +64,16 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
       appBar: CountriesSearchAppBar(
         controller: searchTextController,
         animationController: _animationController,
-        onSearchBarFocused: _onSearchBarFocused,
-        onSearchBarClose: _onSearchBarClose,
+        onSearchBarFocused: onSearchBarFocused,
+        onSearchBarClose: onSearchBarClose,
       ),
       body: CountriesSlidingSheet(
         mode: _mode,
         controller: panelController,
         animationController: _animationController,
-        onHeaderTap: _onHeaderTap,
-        onCountryTap: _onCountryTap,
-        onPanelClose: _onPanelClose,
+        onHeaderTap: onHeaderTap,
+        onCountryTap: onCountryTap,
+        onPanelClose: onPanelClose,
         body: Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 48,
@@ -88,8 +88,8 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
                   //print(country);
                 },
                 onStyleLoaded: () {
-                  _initProfileListener();
-                  _initPinsListener();
+                  initProfileListener();
+                  initPinsListener();
                 },
               ),
               CreatePinButton(),
@@ -100,7 +100,7 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     );
   }
 
-  _initProfileListener() {
+  initProfileListener() {
     _profileSubscription = BlocProvider.of<ProfileBloc>(context).stream.listen(
       (state) {
         if (state is ProfileLoaded) {
@@ -110,7 +110,7 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     );
   }
 
-  _initPinsListener() {
+  initPinsListener() {
     _pinsSubscription =
         BlocProvider.of<PinsBloc>(context).stream.listen((state) {
       if (state is PinsLoaded) {
@@ -119,7 +119,7 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     });
   }
 
-  _onSearchBarFocused() async {
+  onSearchBarFocused() async {
     setState(() {
       _clearSearchBarOnClose = true;
       if (panelController.isPanelClosed) {
@@ -129,7 +129,7 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     await panelController.open();
   }
 
-  _onSearchBarClose() async {
+  onSearchBarClose() async {
     if (FocusScope.of(context).hasFocus) {
       FocusScope.of(context).unfocus();
     }
@@ -138,7 +138,7 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     await panelController.close();
   }
 
-  _onCountryTap(Country country) async {
+  onCountryTap(Country country) async {
     setState(() => _clearSearchBarOnClose = false);
 
     if (_mode == CountriesSlidingSheetMode.unlock) {
@@ -157,12 +157,12 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     panelController.close();
   }
 
-  _onHeaderTap() async {
+  onHeaderTap() async {
     setState(() => _mode = CountriesSlidingSheetMode.unlock);
     await panelController.open();
   }
 
-  _onPanelClose() {
+  onPanelClose() {
     setState(() => _mode = CountriesSlidingSheetMode.unlock);
     BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
 

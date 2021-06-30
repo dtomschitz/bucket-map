@@ -59,18 +59,6 @@ class CountryScreen extends StatelessWidget {
           return TopCircularProgressIndicator();
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_outlined),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              fullscreenDialog: true,
-              builder: (context) => CreateLocationScreen(),
-            ),
-          );
-        },
-      ),
     );
   }
 

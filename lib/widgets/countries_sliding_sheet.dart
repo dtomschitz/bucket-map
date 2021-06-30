@@ -197,7 +197,7 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
                   ),
                   state is ProfileLoaded
                       ? Text(
-                          '15 von ${state.countries.length} Ländern freigeschaltet',
+                          '${state.countries.where((country) => country.unlocked).toList().length} von ${state.countries.length} Ländern freigeschaltet',
                           style: TextStyle(
                             color: Colors.green.shade400,
                             fontWeight: FontWeight.w600,
