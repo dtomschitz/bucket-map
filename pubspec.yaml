@@ -25,6 +25,7 @@ dependencies:
   geolocator: ^7.0.3
   flutter_spinkit: "^4.1.2"
   shimmer: ^2.0.0
+  image_picker: ^0.8.0+3
   # Custom Packages
   cache:
     path: packages/cache
