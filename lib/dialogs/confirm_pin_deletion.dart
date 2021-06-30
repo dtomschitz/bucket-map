@@ -8,15 +8,15 @@ class ConfirmPinDeletionDialog extends StatelessWidget {
       content: Text('Der Pin wird unwiderruflich gelöscht!'),
       actions: [
         TextButton(
-          child: Text('Löschen'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        TextButton(
           child: Text('Abbrechen'),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pop(context, false);
+          },
+        ),
+        ElevatedButton(
+          child: Text('Löschen'),
+          onPressed: () {
+            Navigator.pop(context, true);
           },
         ),
       ],

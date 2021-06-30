@@ -3,9 +3,9 @@ part of blocs.filtered_countries;
 class FilteredCountriesBloc
     extends Bloc<CountriesFilterEvent, FilteredCountriesState> {
   FilteredCountriesBloc({@required this.profileBloc})
-      : super(profileBloc.state is CountriesLoaded
+      : super(profileBloc.state is ProfileLoaded
             ? FilteredCountriesLoaded(
-                countries: (profileBloc.state as CountriesLoaded).countries,
+                countries: (profileBloc.state as ProfileLoaded).countries,
                 filter: "",
               )
             : FilteredCountriesLoading()) {

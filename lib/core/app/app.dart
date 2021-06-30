@@ -50,9 +50,6 @@ class App extends StatelessWidget {
               profileRepository: profileRepository,
             ),
           ),
-          BlocProvider<CountriesBloc>(
-            create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
-          ),
           BlocProvider<PinsBloc>(
             create: (context) => PinsBloc(
               authRepository: authenticationRepository,

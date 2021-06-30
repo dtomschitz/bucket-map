@@ -1,4 +1,5 @@
 import 'package:bucket_map/blocs/blocs.dart';
+import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/screens/country_screen.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -17,43 +18,55 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Gespeichert'),
-      ),
-      body: BlocBuilder<CountriesBloc, CountriesState>(
-        builder: (context, countriesState) {
-          return BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, profileState) {
-              if (countriesState is CountriesLoaded &&
-                  profileState is ProfileLoaded) {
-                final countries = profileState.profile.unlockedCountries
-                    .map(
-                      (code) => countriesState.countries.firstWhere(
-                        (country) => country.code == code,
-                      ),
-                    )
-                    .toList();
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search_outlined),
+            onPressed: () async {
+              final country = await showSearch(
+                context: context,
+                delegate: CountrySearchDelegate(filterOnlyUnlocked: true),
+              );
 
-                return CountryList(
-                  controller: ScrollController(),
-                  shrinkWrap: false,
-                  countries: countries,
-                  onTap: (country) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CountryScreen(country: country),
-                      ),
-                    );
-                  },
-                  buildTrailing: (country) {
-                    return Icon(Icons.arrow_forward_ios_outlined);
-                  },
-                );
+              if (country != null) {
+                openCountry(country);
               }
-
-              return Container();
             },
-          );
+          )
+        ],
+      ),
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoaded) {
+            final countries = state.profile.unlockedCountries
+                .map(
+                  (code) => state.countries.firstWhere(
+                    (country) => country.code == code,
+                  ),
+                )
+                .toList();
+
+            return CountryList(
+              controller: ScrollController(),
+              shrinkWrap: false,
+              countries: countries,
+              onTap: openCountry,
+              buildTrailing: (country) {
+                return Icon(Icons.arrow_forward_ios_outlined);
+              },
+            );
+          }
+
+          return Container();
         },
+      ),
+    );
+  }
+
+  openCountry(Country country) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CountryScreen(country: country),
       ),
     );
   }

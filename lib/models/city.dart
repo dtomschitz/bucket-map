@@ -1,4 +1,3 @@
-import 'package:bucket_map/models/country.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -17,13 +16,17 @@ class City extends Equatable {
 
   factory City.fromJson(Map<String, dynamic> json) {
     return City(
-        name: json['name'],
-        country: json['country'],
-        latLng: LatLng(double.parse(json['lat']), double.parse(json['lng'])));
+      name: json['name'],
+      country: json['country'],
+      latLng: LatLng(
+        double.parse(json['lat']),
+        double.parse(json['lng']),
+      ),
+    );
   }
 
   @override
-  List<Object> get props => [name, country];
+  List<Object> get props => [name, country, latLng];
 
   @override
   String toString() => 'City { name: $name country: $country }';

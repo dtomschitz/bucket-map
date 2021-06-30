@@ -5,6 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountrySearchDelegate extends SearchDelegate<Country> {
+  CountrySearchDelegate({bool filterOnlyUnlocked})
+      : filterOnlyUnlocked = filterOnlyUnlocked ?? false;
+
+  final bool filterOnlyUnlocked;
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [];
@@ -22,6 +27,7 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
   Widget buildResults(BuildContext context) {
     return _CountrySearchList(
       query: query,
+      filterOnlyUnlocked: filterOnlyUnlocked,
       onTap: (country) => close(context, country),
     );
   }
@@ -30,6 +36,7 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
   Widget buildSuggestions(BuildContext context) {
     return _CountrySearchList(
       query: query,
+      filterOnlyUnlocked: filterOnlyUnlocked,
       onTap: (country) => close(context, country),
     );
   }
@@ -39,26 +46,30 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
 }
 
 class _CountrySearchList extends StatelessWidget {
-  _CountrySearchList({this.query, this.onTap});
+  _CountrySearchList({this.query, this.filterOnlyUnlocked, this.onTap});
 
   final String query;
+  final bool filterOnlyUnlocked;
+
   final Function(Country country) onTap;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CountriesBloc, CountriesState>(
+    return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
-        if (state is CountriesLoaded) {
+        if (state is ProfileLoaded) {
           List<Country> countries = state.countries.where(
             (country) {
-              return country.name.toLowerCase().contains(query.toLowerCase());
+              return filterOnlyUnlocked
+                  ? country.name.toLowerCase().contains(query.toLowerCase()) &&
+                      country.unlocked
+                  : country.name.toLowerCase().contains(query.toLowerCase());
             },
           ).toList();
 
           return CountryList(
             countries: countries,
             onTap: (country) {
-              print(country);
               if (country != null) {
                 onTap?.call(country);
               }
@@ -69,7 +80,7 @@ class _CountrySearchList extends StatelessWidget {
         return Align(
           alignment: Alignment.topCenter,
           child: Padding(
-            padding: EdgeInsets.only(top: 16),
+            padding: EdgeInsets.only(top: 32),
             child: CircularProgressIndicator(),
           ),
         );

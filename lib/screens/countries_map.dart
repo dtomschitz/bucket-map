@@ -5,24 +5,23 @@ import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/models/models.dart';
-import 'package:bucket_map/screens/create_pin.dart';
-import 'package:bucket_map/utils/utils.dart';
+import 'package:bucket_map/screens/create_location.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class CountriesScreen extends StatefulWidget {
-  static Page page() => MaterialPage<void>(child: CountriesScreen());
+class CountriesScreenMap extends StatefulWidget {
+  static Page page() => MaterialPage<void>(child: CountriesScreenMap());
 
   @override
-  State createState() => _CountriesScreenState();
+  State createState() => _CountriesScreenMapState();
 }
 
-class _CountriesScreenState extends State<CountriesScreen>
+class _CountriesScreenMapState extends State<CountriesScreenMap>
     with
         SingleTickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<CountriesScreen> {
+        AutomaticKeepAliveClientMixin<CountriesScreenMap> {
   final PanelController panelController = new PanelController();
   final CountriesMapController mapController = new CountriesMapController();
   final TextEditingController searchTextController = TextEditingController();
@@ -184,13 +183,13 @@ class CreatePinButton extends StatelessWidget {
           right: 16,
         ),
         child: FloatingActionButton(
-          child: Icon(Icons.create),
+          child: Icon(Icons.add),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 fullscreenDialog: true,
-                builder: (context) => CreatePinScreen(),
+                builder: (context) => CreateLocationScreen(),
               ),
             );
           },

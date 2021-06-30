@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  PageController controller = PageController(initialPage: 0);
+  final PageController controller = PageController(initialPage: 0);
   int _currentPage = 0;
 
   @override
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
         controller: controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          CountriesScreen(),
+          CountriesScreenMap(),
           SavedLocationsScreen(),
           ProfileScreen(),
         ],

@@ -96,6 +96,7 @@ class _CountriesMapState extends State<CountriesMap>
       _controller.moveCameraToCountry = _moveCameraToCountry;
       _controller.animateCamera = _animateCamera;
       _controller.animateCameraToCountry = _animateCameraToCountry;
+      _controller.animateCameraToPin = _animateCameraToPin;
       _controller.addPin = _addPin;
       _controller.addPins = _addPins;
       _controller.removePin = _removePin;
@@ -114,7 +115,7 @@ class _CountriesMapState extends State<CountriesMap>
 
     final ByteData bytes = await rootBundle.load("assets/location_pin.png");
     final Uint8List list = bytes.buffer.asUint8List();
-    await controller.addImage("locationPin", list);
+    await controller.addImage("location_pin", list);
 
     _mapController.addListener(() {
       if (_currentCameraPosition != _mapController.cameraPosition &&
@@ -133,16 +134,15 @@ class _CountriesMapState extends State<CountriesMap>
   }
 
   Future<void> _addPins(List<Pin> pins) async {
-    final symbols = pins
-        .map(
-          (pin) => SymbolOptions(
-            geometry: LatLng(pin.lat, pin.lng),
-            iconImage: "locationPin",
-            iconSize: 0.3,
-            draggable: false,
-          ),
-        )
-        .toList();
+    final symbols = pins.map((pin) {
+      return SymbolOptions(
+        geometry: LatLng(pin.lat, pin.lng),
+        iconImage: "location_pin",
+        iconSize: 0.12,
+        iconColor: '#fffff',
+        draggable: false,
+      );
+    }).toList();
 
     await _mapController.addSymbols(symbols);
   }
@@ -190,9 +190,14 @@ class _CountriesMapState extends State<CountriesMap>
       country,
     ).cameraUpdate;
 
-    print(cameraUpdate);
-
     return _mapController.animateCamera(cameraUpdate);
+  }
+
+  Future<void> _animateCameraToPin(Pin pin) async {
+    return _mapController.animateCamera(CameraUpdate.newLatLngZoom(
+      pin.toLatLng(),
+      8,
+    ));
   }
 
   Future<Symbol> _addPin(LatLng geometry, {bool clearBefore}) {
@@ -323,6 +328,8 @@ class CountriesMapController {
   Future<bool> Function(CameraUpdate) animateCamera;
 
   Future<void> Function(Country country) animateCameraToCountry;
+
+  Future<void> Function(Pin pin) animateCameraToPin;
 
   Future<void> Function(List<String> countries) setUnlockedCountries;
 

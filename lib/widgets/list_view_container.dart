@@ -1,7 +1,7 @@
-part of widgets.auth;
+import 'package:flutter/material.dart';
 
-class AuthViewContainer extends StatelessWidget {
-  AuthViewContainer({this.title, this.subtitle, this.children});
+class ListViewContainer extends StatelessWidget {
+  ListViewContainer({this.title, this.subtitle, this.children});
 
   final String title;
   final String subtitle;

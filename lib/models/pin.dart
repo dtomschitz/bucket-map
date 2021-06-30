@@ -65,6 +65,8 @@ class Pin extends Equatable {
     return 'Profile { id: $id, name: $name, country: $country lat: $lat, lon: $lng, description: $description}';
   }
 
+  LatLng toLatLng() => LatLng(lat, lng);
+
   Map<String, dynamic> toJson() {
     return {
       "userId": userId,

@@ -1,4 +1,3 @@
-import 'package:bucket_map/blocs/countries/bloc.dart';
 import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/models/country.dart';
 import 'package:bucket_map/widgets/widgets.dart';
@@ -174,7 +173,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
 class CountriesSlidingSheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CountriesBloc, CountriesState>(
+    return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         return Expanded(
           child: Align(
@@ -196,7 +195,7 @@ class CountriesSlidingSheetHeader extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  state is CountriesLoaded
+                  state is ProfileLoaded
                       ? Text(
                           '15 von ${state.countries.length} Ländern freigeschaltet',
                           style: TextStyle(
