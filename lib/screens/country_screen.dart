@@ -36,12 +36,29 @@ class CountryScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.all(16),
-                  child: SizedBox(
-                    height: 255,
-                    child: CountryPreviewCard(
-                      country: country,
-                      onTap: () => openCountryMap(context, country, pins),
-                    ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 255,
+                        child: CountryPreviewCard(
+                          country: country,
+                          onTap: () => openCountryMap(context, country, pins),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Gespeicherte Orte',
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      Divider()
+                    ],
                   ),
                 ),
                 ListView.builder(
@@ -69,7 +86,6 @@ class CountryScreen extends StatelessWidget {
         pageBuilder: (context, __, ___) {
           return CountryMap(
             country: country,
-            pins: pins,
           );
         },
         transitionsBuilder: (context, opacity, a2, child) {

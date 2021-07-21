@@ -1,5 +1,6 @@
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/screens/country_map.dart';
 import 'package:bucket_map/screens/country_screen.dart';
 import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,9 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
             onPressed: () async {
               final country = await showSearch(
                 context: context,
-                delegate: CountrySearchDelegate(filterOnlyUnlocked: true),
+                delegate: CountrySearchDelegate(
+                  filterOnlyUnlocked: true,
+                ),
               );
 
               if (country != null) {
@@ -66,7 +69,7 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CountryScreen(country: country),
+        builder: (context) => CountryMap(country: country),
       ),
     );
   }

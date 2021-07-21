@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountrySearchDelegate extends SearchDelegate<Country> {
-  CountrySearchDelegate({bool filterOnlyUnlocked})
-      : filterOnlyUnlocked = filterOnlyUnlocked ?? false;
+  CountrySearchDelegate({String label, bool filterOnlyUnlocked})
+      : label = label ?? 'Nach Land suchen',
+        filterOnlyUnlocked = filterOnlyUnlocked ?? false;
 
+  final String label;
   final bool filterOnlyUnlocked;
 
   @override
@@ -42,7 +44,7 @@ class CountrySearchDelegate extends SearchDelegate<Country> {
   }
 
   @override
-  String get searchFieldLabel => 'Nach Land suchen';
+  String get searchFieldLabel => label;
 }
 
 class _CountrySearchList extends StatelessWidget {
