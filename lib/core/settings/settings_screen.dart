@@ -1,5 +1,5 @@
 import 'package:bucket_map/core/app/bloc/bloc.dart';
-import 'package:bucket_map/core/settings/bloc/bloc.dart';
+import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/core/settings/views/login_settings.dart';
 import 'package:bucket_map/core/settings/views/views.dart';
 import 'package:bucket_map/widgets/widgets.dart';

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
-import 'package:bucket_map/core/settings/bloc/bloc.dart';
+import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/utils/geo.dart';
 import 'package:bucket_map/widgets/widgets.dart';

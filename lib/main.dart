@@ -2,7 +2,7 @@ import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/app/app.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/core/bloc_observer.dart';
-import 'package:bucket_map/core/settings/models/models.dart';
+import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/utils/utils.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';

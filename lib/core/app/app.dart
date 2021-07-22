@@ -1,9 +1,8 @@
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/app/home.dart';
 import 'package:bucket_map/core/auth/login.dart';
-import 'package:bucket_map/core/app/bloc/bloc.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
-import 'package:bucket_map/core/settings/bloc/bloc.dart';
+import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/core/settings/models/models.dart';
 import 'package:bucket_map/core/themes.dart';
 import 'package:bucket_map/utils/utils.dart';
