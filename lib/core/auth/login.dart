@@ -1,7 +1,7 @@
 import 'package:bucket_map/core/auth/cubits/login/cubit.dart';
 import 'package:bucket_map/core/auth/register.dart';
 import 'package:bucket_map/core/auth/repositories/repositories.dart';
-import 'package:bucket_map/widgets/widgets.dart';
+import 'package:bucket_map/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
