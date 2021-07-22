@@ -1,27 +1,30 @@
+library core.app;
+
 import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/core/app/home.dart';
-import 'package:bucket_map/core/auth/login.dart';
-import 'package:bucket_map/core/auth/repositories/repositories.dart';
 import 'package:bucket_map/blocs/settings/bloc.dart';
 import 'package:bucket_map/core/themes.dart';
-import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/countries/countries.dart';
+import 'package:bucket_map/profile/profile.dart';
+import 'package:bucket_map/saved_locations/saved_locations.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+part 'home.dart';
+
 class App extends StatelessWidget {
   const App({
     @required this.authenticationRepository,
     @required this.profileRepository,
-    @required this.pinRepository,
+    @required this.locationsRepository,
     @required this.sharedPreferencesService,
     this.initialSettings,
   });
 
   final AuthenticationRepository authenticationRepository;
   final ProfileRepository profileRepository;
-  final PinRepository pinRepository;
+  final LocationsRepository locationsRepository;
 
   final SharedPreferencesService sharedPreferencesService;
   final Settings initialSettings;
@@ -49,10 +52,10 @@ class App extends StatelessWidget {
               profileRepository: profileRepository,
             ),
           ),
-          BlocProvider<PinsBloc>(
-            create: (context) => PinsBloc(
+          BlocProvider<LocationsBloc>(
+            create: (context) => LocationsBloc(
               authRepository: authenticationRepository,
-              pinRepository: pinRepository,
+              locationsRepository: locationsRepository,
             ),
           ),
           BlocProvider<FilteredCountriesBloc>(

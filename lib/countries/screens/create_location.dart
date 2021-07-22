@@ -71,15 +71,15 @@ class _SaveLocationState extends State<SaveLocation> {
           TextButton(
             child: Text('Speichern'),
             onPressed: () async {
-              BlocProvider.of<PinsBloc>(context).add(
-                AddPin(
-                  pin: Pin(
-                    name: nameController.text,
-                    country: _city.country,
-                    lat: widget.symbol.options.geometry.latitude,
-                    lng: widget.symbol.options.geometry.longitude,
-                  ),
-                ),
+              final location = Location(
+                name: nameController.text,
+                country: _city.country,
+                lat: widget.symbol.options.geometry.latitude,
+                lng: widget.symbol.options.geometry.longitude,
+              );
+              
+              BlocProvider.of<LocationsBloc>(context).add(
+                AddLocation(location: location),
               );
 
               Navigator.of(context).popUntil((route) => route.isFirst);

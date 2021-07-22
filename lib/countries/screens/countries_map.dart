@@ -101,9 +101,9 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
 
   initPinsListener() {
     _pinsSubscription =
-        BlocProvider.of<PinsBloc>(context).stream.listen((state) {
-      if (state is PinsLoaded) {
-        mapController.addPins(state.pins);
+        BlocProvider.of<LocationsBloc>(context).stream.listen((state) {
+      if (state is LocationsLoaded) {
+        mapController.addPins(state.locations);
       }
     });
   }

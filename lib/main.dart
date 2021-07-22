@@ -1,8 +1,5 @@
 import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/core/app/app.dart';
-import 'package:bucket_map/core/auth/repositories/repositories.dart';
-import 'package:bucket_map/core/bloc_observer.dart';
-import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/core/core.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +12,7 @@ void main() async {
   await Firebase.initializeApp();
 
   final profileRepository = ProfileRepository();
-  final pinRepository = PinRepository();
+  final locationsRepository = LocationsRepository();
 
   final authenticationRepository = AuthenticationRepository(
     profileRepository: profileRepository,
@@ -34,7 +31,7 @@ void main() async {
     App(
       authenticationRepository: authenticationRepository,
       profileRepository: profileRepository,
-      pinRepository: pinRepository,
+      locationsRepository: locationsRepository,
       sharedPreferencesService: sharedPreferencesService,
       initialSettings: initialSettings,
     ),

@@ -26,11 +26,12 @@ class CountryMap extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<PinsBloc, PinsState>(
+      body: BlocBuilder<LocationsBloc, LocationsState>(
         builder: (context, state) {
-          if (state is PinsLoaded) {
-            final pins =
-                state.pins.where((pin) => pin.country == country.code).toList();
+          if (state is LocationsLoaded) {
+            final pins = state.locations
+                .where((pin) => pin.country == country.code)
+                .toList();
 
             return Stack(
               children: [

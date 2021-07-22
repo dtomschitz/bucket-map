@@ -5,10 +5,8 @@ import 'dart:convert';
 
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
-import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/countries/widgets/widgets.dart';
-import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

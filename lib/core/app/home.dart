@@ -1,7 +1,4 @@
-import 'package:bucket_map/countries/screens/screens.dart';
-import 'package:bucket_map/profile/screens/screens.dart';
-import 'package:bucket_map/saved_locations/screens/screens.dart';
-import 'package:flutter/material.dart';
+part of core.app;
 
 class HomePage extends StatefulWidget {
   static Page page() => MaterialPage<void>(child: HomePage());

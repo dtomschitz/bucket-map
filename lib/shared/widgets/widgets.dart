@@ -7,7 +7,7 @@ import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/constants.dart';
 import 'package:bucket_map/core/global_keys.dart';
 import 'package:bucket_map/core/themes.dart';
-import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/shared/models/models.dart';
 import 'package:bucket_map/shared/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

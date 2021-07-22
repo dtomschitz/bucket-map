@@ -118,7 +118,7 @@ class _CountriesMapState extends State<CountriesMap>
     widget.onStyleLoaded?.call();
   }
 
-  Future<void> _addPins(List<Pin> pins) async {
+  Future<void> _addPins(List<Location> pins) async {
     final symbols = pins.map((pin) {
       return SymbolOptions(
         geometry: LatLng(pin.lat, pin.lng),
@@ -178,7 +178,7 @@ class _CountriesMapState extends State<CountriesMap>
     return _mapController.animateCamera(cameraUpdate);
   }
 
-  Future<void> _animateCameraToPin(Pin pin) async {
+  Future<void> _animateCameraToPin(Location pin) async {
     return _mapController.animateCamera(CameraUpdate.newLatLngZoom(
       pin.toLatLng(),
       8,
@@ -314,13 +314,13 @@ class CountriesMapController {
 
   Future<void> Function(Country country) animateCameraToCountry;
 
-  Future<void> Function(Pin pin) animateCameraToPin;
+  Future<void> Function(Location pin) animateCameraToPin;
 
   Future<void> Function(List<String> countries) setUnlockedCountries;
 
   Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
 
-  Future<void> Function(List<Pin> pin) addPins;
+  Future<void> Function(List<Location> pin) addPins;
 
   Future<void> Function(Symbol symbol) removePin;
 }

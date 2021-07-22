@@ -2,7 +2,6 @@ library countries.widgets;
 
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/blocs/filtered_countries/bloc.dart';
-import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

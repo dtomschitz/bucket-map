@@ -2,7 +2,6 @@ library blocs.settings;
 
 import 'dart:async';
 
-import 'package:bucket_map/models/models.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
