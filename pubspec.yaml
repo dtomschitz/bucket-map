@@ -31,8 +31,6 @@ dependencies:
   # Custom Packages
   cache:
     path: packages/cache
-  sliding_up_panel:
-    path: packages/sliding_up_panel
   mapbox_gl:
     path: packages/mapbox
 

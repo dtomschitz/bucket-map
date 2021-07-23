@@ -11,7 +11,7 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
     with
         SingleTickerProviderStateMixin,
         AutomaticKeepAliveClientMixin<CountriesMapScreen> {
-  final PanelController panelController = new PanelController();
+  final SlidingSheetController sheetController = new SlidingSheetController();
   final CountriesMapController mapController = new CountriesMapController();
   final TextEditingController searchTextController = TextEditingController();
 
@@ -58,7 +58,7 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
       ),
       body: CountriesSlidingSheet(
         mode: _mode,
-        controller: panelController,
+        controller: sheetController,
         animationController: _animationController,
         onHeaderTap: onHeaderTap,
         onCountryTap: onCountryTap,
@@ -111,11 +111,11 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
   onSearchBarFocused() async {
     setState(() {
       _clearSearchBarOnClose = true;
-      if (panelController.isPanelClosed) {
+      if (sheetController.isPanelClosed) {
         _mode = CountriesSlidingSheetMode.search;
       }
     });
-    await panelController.open();
+    await sheetController.open();
   }
 
   onSearchBarClose() async {
@@ -124,7 +124,7 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
     }
 
     searchTextController.clear();
-    await panelController.close();
+    await sheetController.close();
   }
 
   onCountryTap(Country country) async {
@@ -143,12 +143,12 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
 
     BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
     mapController.animateCameraToCountry(country);
-    panelController.close();
+    sheetController.close();
   }
 
   onHeaderTap() async {
     setState(() => _mode = CountriesSlidingSheetMode.unlock);
-    await panelController.open();
+    await sheetController.open();
   }
 
   onPanelClose() {

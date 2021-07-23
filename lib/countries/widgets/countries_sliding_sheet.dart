@@ -18,7 +18,7 @@ class CountriesSlidingSheet extends StatefulWidget {
   });
 
   final Widget body;
-  final PanelController controller;
+  final SlidingSheetController controller;
   final AnimationController animationController;
   final CountriesSlidingSheetMode mode;
 
@@ -50,7 +50,7 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
     final maxHeight =
         MediaQuery.of(context).size.height + kBottomNavigationBarHeight;
 
-    return SlidingUpPanel(
+    return SlidingSheet(
       controller: widget.controller,
       scrollController: _scrollController,
       animationController: widget.animationController,
