@@ -1,6 +1,8 @@
+part of auth.register.views;
+
 class NameView extends StatelessWidget {
   const NameView({this.onNextView});
-  
+
   final Function() onNextView;
 
   @override

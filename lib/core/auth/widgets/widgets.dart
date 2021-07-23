@@ -1,4 +1,4 @@
-library widgets.auth;
+library auth.widgets;
 
 import 'package:flutter/material.dart';
 

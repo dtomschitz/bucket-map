@@ -1,3 +1,5 @@
+part of auth.login.views;
+
 class PasswordView extends StatelessWidget {
   const PasswordView({this.onPreviouseView});
   final Function() onPreviouseView;

@@ -1,16 +1,16 @@
 part of countries.screens;
 
-class CountriesScreenMap extends StatefulWidget {
-  static Page page() => MaterialPage<void>(child: CountriesScreenMap());
+class CountriesMapScreen extends StatefulWidget {
+  static Page page() => MaterialPage<void>(child: CountriesMapScreen());
 
   @override
-  State createState() => _CountriesScreenMapState();
+  State createState() => _CountriesMapScreenState();
 }
 
-class _CountriesScreenMapState extends State<CountriesScreenMap>
+class _CountriesMapScreenState extends State<CountriesMapScreen>
     with
         SingleTickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<CountriesScreenMap> {
+        AutomaticKeepAliveClientMixin<CountriesMapScreen> {
   final PanelController panelController = new PanelController();
   final CountriesMapController mapController = new CountriesMapController();
   final TextEditingController searchTextController = TextEditingController();
@@ -78,7 +78,7 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
                 },
                 onStyleLoaded: () {
                   initProfileListener();
-                  initPinsListener();
+                  initLocationsListener();
                 },
               ),
               CreatePinButton(),
@@ -99,11 +99,11 @@ class _CountriesScreenMapState extends State<CountriesScreenMap>
     );
   }
 
-  initPinsListener() {
+  initLocationsListener() {
     _pinsSubscription =
         BlocProvider.of<LocationsBloc>(context).stream.listen((state) {
       if (state is LocationsLoaded) {
-        mapController.addPins(state.locations);
+        mapController.addLocations(state.locations);
       }
     });
   }

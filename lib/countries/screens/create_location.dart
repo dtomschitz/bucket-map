@@ -18,7 +18,7 @@ class CreateLocationScreen extends StatelessWidget {
       body: CountriesMap(
         controller: mapController,
         onMapClick: (point, position) async {
-          Symbol symbol = await mapController.addPin(
+          Symbol symbol = await mapController.addLocation(
             position,
             clearBefore: true,
           );
@@ -77,7 +77,7 @@ class _SaveLocationState extends State<SaveLocation> {
                 lat: widget.symbol.options.geometry.latitude,
                 lng: widget.symbol.options.geometry.longitude,
               );
-              
+
               BlocProvider.of<LocationsBloc>(context).add(
                 AddLocation(location: location),
               );

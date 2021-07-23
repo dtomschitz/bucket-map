@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
         controller: controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          CountriesScreenMap(),
+          CountriesMapScreen(),
           SavedLocationsScreen(),
           ProfileScreen(),
         ],

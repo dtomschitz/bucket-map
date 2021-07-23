@@ -1,6 +1,8 @@
-part of auth.register;
-
-
+import 'package:bucket_map/core/auth/register/cubit/cubit.dart';
+import 'package:bucket_map/core/auth/register/views/views.dart';
+import 'package:bucket_map/core/core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatelessWidget {
   final PageController controller = PageController(initialPage: 0);
@@ -44,20 +46,20 @@ class RegisterPage extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            _NameView(onNextView: () => jumpToPage(1)),
-            _EmailView(
+            NameView(onNextView: () => jumpToPage(1)),
+            EmailView(
               onNextView: () => jumpToPage(2),
               onPreviouseView: () => jumpToPage(0),
             ),
-            _PasswortView(
+            PasswortView(
               onNextView: () => jumpToPage(3),
               onPreviouseView: () => jumpToPage(1),
             ),
-            _CountryView(
+            CountryView(
               onNextView: () => jumpToPage(4),
               onPreviouseView: () => jumpToPage(2),
             ),
-            _SummaryView(onPreviouseView: () => jumpToPage(3)),
+            SummaryView(onPreviouseView: () => jumpToPage(3)),
           ],
         ),
       ),
@@ -65,7 +67,7 @@ class RegisterPage extends StatelessWidget {
   }
 }
 
-class CountrySearch extends SearchDelegate<Country> {
+/*class CountrySearch extends SearchDelegate<Country> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
@@ -140,4 +142,4 @@ class CountrySearchList extends StatelessWidget {
       },
     );
   }
-}
+}*/

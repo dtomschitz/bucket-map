@@ -1,4 +1,4 @@
-part of cubits.register;
+part of auth.register.cubit;
 
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit(this._authRepository) : super(const RegisterState());

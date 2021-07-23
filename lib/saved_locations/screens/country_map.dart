@@ -40,7 +40,7 @@ class CountryMap extends StatelessWidget {
                   disableUserLocation: true,
                   onMapCreated: () async {
                     await controller.setUnlockedCountries([country.code]);
-                    await controller.addPins(pins);
+                    await controller.addLocations(pins);
 
                     Future.delayed(const Duration(milliseconds: 250), () async {
                       await controller.animateCameraToCountry(country);

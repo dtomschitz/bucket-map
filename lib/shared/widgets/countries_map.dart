@@ -82,9 +82,9 @@ class _CountriesMapState extends State<CountriesMap>
       _controller.animateCamera = _animateCamera;
       _controller.animateCameraToCountry = _animateCameraToCountry;
       _controller.animateCameraToPin = _animateCameraToPin;
-      _controller.addPin = _addPin;
-      _controller.addPins = _addPins;
-      _controller.removePin = _removePin;
+      _controller.addLocation = _addLocation;
+      _controller.addLocations = _addLocations;
+      _controller.removeLocation = _removeLocation;
     }
   }
 
@@ -118,8 +118,8 @@ class _CountriesMapState extends State<CountriesMap>
     widget.onStyleLoaded?.call();
   }
 
-  Future<void> _addPins(List<Location> pins) async {
-    final symbols = pins.map((pin) {
+  Future<void> _addLocations(List<Location> locations) async {
+    final symbols = locations.map((pin) {
       return SymbolOptions(
         geometry: LatLng(pin.lat, pin.lng),
         iconImage: "location_pin",
@@ -130,6 +130,23 @@ class _CountriesMapState extends State<CountriesMap>
     }).toList();
 
     await _mapController.addSymbols(symbols);
+  }
+
+  Future<Symbol> _addLocation(LatLng geometry, {bool clearBefore}) {
+    if (clearBefore) {
+      _mapController.clearSymbols();
+    }
+
+    return _mapController.addSymbol(SymbolOptions(
+      geometry: geometry,
+      iconImage: "location_pin",
+      iconSize: 0.3,
+      draggable: true,
+    ));
+  }
+
+  Future<void> _removeLocation(Symbol symbol) {
+    return _mapController.removeSymbol(symbol);
   }
 
   Future<void> _setUnlockedCountries(List<String> countries) async {
@@ -183,23 +200,6 @@ class _CountriesMapState extends State<CountriesMap>
       pin.toLatLng(),
       8,
     ));
-  }
-
-  Future<Symbol> _addPin(LatLng geometry, {bool clearBefore}) {
-    if (clearBefore) {
-      _mapController.clearSymbols();
-    }
-
-    return _mapController.addSymbol(SymbolOptions(
-      geometry: geometry,
-      iconImage: "locationPin",
-      iconSize: 0.3,
-      draggable: true,
-    ));
-  }
-
-  Future<void> _removePin(Symbol symbol) {
-    return _mapController.removeSymbol(symbol);
   }
 
   _moveCameraToCurrentLocation() async {
@@ -318,9 +318,9 @@ class CountriesMapController {
 
   Future<void> Function(List<String> countries) setUnlockedCountries;
 
-  Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addPin;
+  Future<void> Function(List<Location> location) addLocations;
 
-  Future<void> Function(List<Location> pin) addPins;
+  Future<Symbol> Function(LatLng geometry, {bool clearBefore}) addLocation;
 
-  Future<void> Function(Symbol symbol) removePin;
+  Future<void> Function(Symbol symbol) removeLocation;
 }

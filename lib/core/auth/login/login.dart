@@ -1,4 +1,11 @@
-part of core.auth;
+
+import 'package:bucket_map/core/auth/login/cubit/cubit.dart';
+import 'package:bucket_map/core/auth/login/views/views.dart';
+import 'package:bucket_map/core/auth/register/register.dart';
+import 'package:bucket_map/core/core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class LoginPage extends StatelessWidget {
   final PageController controller = PageController(initialPage: 0);

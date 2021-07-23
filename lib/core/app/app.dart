@@ -1,8 +1,7 @@
 library core.app;
 
 import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/blocs/settings/bloc.dart';
-import 'package:bucket_map/core/themes.dart';
+import 'package:bucket_map/core/core.dart';
 import 'package:bucket_map/countries/countries.dart';
 import 'package:bucket_map/profile/profile.dart';
 import 'package:bucket_map/saved_locations/saved_locations.dart';

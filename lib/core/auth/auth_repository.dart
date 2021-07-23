@@ -1,19 +1,15 @@
 import 'dart:async';
-import 'package:bucket_map/profile/blocs/profile/bloc.dart';
-import 'package:bucket_map/models/models.dart';
+import 'package:bucket_map/blocs/blocs.dart';
+import 'package:bucket_map/shared/shared.dart';
 import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:meta/meta.dart';
-import 'package:bucket_map/models/user.dart';
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
 
 /// Thrown during the login process if a failure occurs.
 class LogInWithEmailAndPasswordFailure implements Exception {}
-
-/// Thrown during the sign in with google process if a failure occurs.
-class LogInWithGoogleFailure implements Exception {}
 
 /// Thrown during the logout process if a failure occurs.
 class LogOutFailure implements Exception {}

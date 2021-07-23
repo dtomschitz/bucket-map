@@ -8,4 +8,4 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'profile.dart';
-part 'settings_screen.dart';
+part 'settings.dart';

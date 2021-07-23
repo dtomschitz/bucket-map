@@ -1,4 +1,4 @@
-part of widgets.auth;
+part of auth.widgets;
 
 class BottomActions extends StatelessWidget {
   BottomActions({this.children});

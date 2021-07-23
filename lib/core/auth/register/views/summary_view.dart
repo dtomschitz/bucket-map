@@ -1,6 +1,8 @@
+part of auth.register.views;
+
 class SummaryView extends StatelessWidget {
   SummaryView({this.onPreviouseView});
-  
+
   final Function() onPreviouseView;
 
   @override

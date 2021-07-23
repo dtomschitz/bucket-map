@@ -1,3 +1,5 @@
+part of auth.register.views;
+
 class CountryView extends StatelessWidget {
   CountryView({this.onNextView, this.onPreviouseView});
 
@@ -20,7 +22,7 @@ class CountryView extends StatelessWidget {
               onTap: () async {
                 final country = await showSearch(
                   context: context,
-                  delegate: CountrySearch(),
+                  delegate: CountrySearchDelegate(),
                 );
 
                 context.read<RegisterCubit>().countryChanged(country);

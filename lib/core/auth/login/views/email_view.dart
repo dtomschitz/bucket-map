@@ -1,3 +1,5 @@
+part of auth.login.views;
+
 class EmailView extends StatelessWidget {
   const EmailView({this.onNextView, this.onRegister});
 

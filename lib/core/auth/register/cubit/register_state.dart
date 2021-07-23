@@ -1,4 +1,4 @@
-part of cubits.register;
+part of auth.register.cubit;
 
 enum ConfirmPasswordValidationError { invalid }
 

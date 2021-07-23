@@ -1,3 +1,5 @@
+part of auth.register.views;
+
 class PasswortView extends StatelessWidget {
   const PasswortView({this.onNextView, this.onPreviouseView});
 
