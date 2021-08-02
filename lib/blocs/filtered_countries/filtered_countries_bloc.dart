@@ -2,21 +2,22 @@ part of blocs.filtered_countries;
 
 class FilteredCountriesBloc
     extends Bloc<CountriesFilterEvent, FilteredCountriesState> {
-  FilteredCountriesBloc({@required this.profileBloc})
-      : super(profileBloc.state is ProfileLoaded
+  FilteredCountriesBloc({@required CountriesBloc countriesBloc})
+      : _countriesBloc = countriesBloc,
+        super(countriesBloc.state is CountriesLoaded
             ? FilteredCountriesLoaded(
-                countries: (profileBloc.state as ProfileLoaded).countries,
+                countries: (countriesBloc.state as CountriesLoaded).countries,
                 filter: "",
               )
             : FilteredCountriesLoading()) {
-    _subscription = profileBloc.stream.listen((state) {
-      if (state is ProfileLoaded) {
+    _subscription = _countriesBloc.stream.listen((state) {
+      if (state is CountriesLoaded) {
         add(FilteredCountriesUpdated(state.countries));
       }
     });
   }
 
-  final ProfileBloc profileBloc;
+  final CountriesBloc _countriesBloc;
   StreamSubscription _subscription;
 
   @override
@@ -40,34 +41,30 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapUpdateFilterToState(
     UpdateCountriesFilter event,
   ) async* {
-    if (profileBloc.state is ProfileLoaded) {
-      var countries = (profileBloc.state as ProfileLoaded).countries;
+    var countries = (_countriesBloc.state as CountriesLoaded).countries;
 
-      yield FilteredCountriesLoaded(
-        countries: _filterCountries(countries, event.filter),
-        filter: event.filter,
-      );
-    }
+    yield FilteredCountriesLoaded(
+      countries: _filterCountries(countries, event.filter),
+      filter: event.filter,
+    );
   }
 
   Stream<FilteredCountriesState> _mapClearFilterToState(
     ClearCountriesFilter event,
   ) async* {
-    if (profileBloc.state is ProfileLoaded) {
-      var countries = (profileBloc.state as ProfileLoaded).countries;
-      var filter = "";
+    var countries = (_countriesBloc.state as CountriesLoaded).countries;
+    var filter = "";
 
-      yield FilteredCountriesLoaded(
-        countries: _filterCountries(countries, filter),
-        filter: filter,
-      );
-    }
+    yield FilteredCountriesLoaded(
+      countries: _filterCountries(countries, filter),
+      filter: filter,
+    );
   }
 
   Stream<FilteredCountriesState> _mapCountriesToState(
     FilteredCountriesUpdated event,
   ) async* {
-    var countries = (profileBloc.state as ProfileLoaded).countries;
+    var countries = (_countriesBloc.state as CountriesLoaded).countries;
     var filter = state is FilteredCountriesLoaded
         ? (state as FilteredCountriesLoaded).filter
         : "";

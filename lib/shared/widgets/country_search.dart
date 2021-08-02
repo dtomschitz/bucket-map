@@ -60,9 +60,9 @@ class _CountrySearchList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileBloc, ProfileState>(
+    return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
-        if (state is ProfileLoaded) {
+        if (state is CountriesLoaded) {
           List<Country> countries = state.countries.where(
             (country) {
               return filterOnlyUnlocked

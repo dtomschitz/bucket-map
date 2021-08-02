@@ -139,10 +139,7 @@ class _CountriesMapState extends State<CountriesMap>
                 onMapCreated: _onMapCreated,
                 onStyleLoaded: _onStyleLoaded,
                 onCameraIdle: () {
-                  final cameraPosition = _mapController.cameraPosition;
-
-                  controller._cameraPosition.add(cameraPosition);
-                  widget.onCameraIdle?.call(cameraPosition);
+                  widget.onCameraIdle?.call(_mapController.cameraPosition);
                 },
                 onMapClick: widget.onMapClick?.call,
                 onMapLongClick: widget.onMapLongClick?.call,
@@ -156,8 +153,6 @@ class _CountriesMapState extends State<CountriesMap>
 }
 
 class CountriesMapController with ChangeNotifier {
-  StreamController<CameraPosition> _cameraPosition = StreamController();
-
   _CountriesMapState state;
 
   void setState(_CountriesMapState state) {
@@ -252,6 +247,4 @@ class CountriesMapController with ChangeNotifier {
 
     return null;
   }
-
-  Stream<CameraPosition> get cameraPosition => this._cameraPosition.stream;
 }

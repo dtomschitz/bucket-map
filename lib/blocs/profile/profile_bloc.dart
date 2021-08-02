@@ -36,52 +36,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     yield ProfileLoading();
 
     var profile = await _profileRepository.getProfile(event.id);
-    var countries = await _loadCountries(profile.unlockedCountries);
 
-    yield ProfileLoaded(profile: profile, countries: countries);
+    yield ProfileLoaded(profile: profile);
   }
 
   Stream<ProfileState> _mapUnlockCountryToProfile(UnlockCountry event) async* {
     if (state is ProfileLoaded) {
       var profile = (state as ProfileLoaded).profile;
-      var countries = (state as ProfileLoaded).countries;
-
       var unlockedCountries = [
         ...profile.unlockedCountries,
         event.code,
       ].toList();
 
       profile = profile.copyWith(unlockedCountries: unlockedCountries);
-      countries = [
-        ...countries.map(
-          (country) => country.copyWith(
-            unlocked: unlockedCountries.contains(country.code),
-          ),
-        )
-      ];
-
       await _profileRepository.updateProfile(profile);
 
-      yield ProfileLoaded(
-        profile: profile,
-        countries: countries,
-      );
+      yield ProfileLoaded(profile: profile);
     }
-  }
-
-  Future<List<Country>> _loadCountries(List<String> unlockedCountries) async {
-    List<dynamic> json = jsonDecode(await _loadCountriesAssets());
-    var countries = json.map((country) => Country.fromJson(country)).toList();
-
-    countries = countries.map((country) {
-      bool unlocked = unlockedCountries.contains(country.code);
-      return country.copyWith(unlocked: unlocked);
-    }).toList();
-
-    return countries;
-  }
-
-  Future<String> _loadCountriesAssets() {
-    return rootBundle.loadString('assets/countries.json');
   }
 }

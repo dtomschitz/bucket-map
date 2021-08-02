@@ -39,56 +39,55 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: mapController),
-      ],
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.lock_outline),
-                onPressed: () {
-                  UnlockedCountriesScreen.show(context);
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.search_outlined),
-                onPressed: () async {
-                  final country = await CountrySearch.show(context);
-                  if (country != null) {
-                    mapController.animateCameraToCountry(country);
-                  }
-                },
-              ),
-              CurrentCountry(),
-              IconButton(
-                icon: Icon(Icons.settings_outlined),
-                onPressed: () async {
-                  //final country = await CountrySearch.show(context);
-                  //UnlockedCountriesScreen.show(context);
-                },
-              ),
-            ],
-          ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.lock_outline),
+              onPressed: () {
+                UnlockedCountriesScreen.show(context);
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.search_outlined),
+              onPressed: () async {
+                final country = await CountrySearch.show(context);
+                if (country != null) {
+                  mapController.animateCameraToCountry(country);
+                }
+              },
+            ),
+            CurrentCountry(),
+            IconButton(
+              icon: Icon(Icons.settings_outlined),
+              onPressed: () async {
+                //final country = await CountrySearch.show(context);
+                //UnlockedCountriesScreen.show(context);
+              },
+            ),
+          ],
         ),
-        body: CountriesMap(
-          key: GlobalKeys.countriesMap,
-          controller: mapController,
-          onMapClick: (point, coordinates) async {
-            // await mapController.addPin(coordinates, clearBefore: true);
-          },
-          onStyleLoaded: () {
-            _initProfileListener();
-            _initLocationsListener();
-          },
-        ),
-        floatingActionButton: UnlockCountryFab(),
       ),
+      body: CountriesMap(
+        key: GlobalKeys.countriesMap,
+        controller: mapController,
+        onStyleLoaded: () {
+          _initProfileListener();
+          _initLocationsListener();
+        },
+        onMapClick: (point, coordinates) async {
+          // await mapController.addPin(coordinates, clearBefore: true);
+        },
+        onCameraIdle: (position) {
+          BlocProvider.of<CountriesBloc>(context)
+              .add(UpdateViewPortCountry(position));
+        },
+      ),
+      floatingActionButton: UnlockCountryFab(),
     );
   }
 

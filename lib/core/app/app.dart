@@ -58,9 +58,14 @@ class App extends StatelessWidget {
               pinsRepository: pinsRepository,
             ),
           ),
+          BlocProvider<CountriesBloc>(
+            create: (context) => CountriesBloc(
+              profileBloc: BlocProvider.of<ProfileBloc>(context),
+            ),
+          ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(
-              profileBloc: BlocProvider.of<ProfileBloc>(context),
+              countriesBloc: BlocProvider.of<CountriesBloc>(context),
             ),
           ),
         ],

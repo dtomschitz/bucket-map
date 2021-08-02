@@ -5,8 +5,6 @@ class ProfileRepository {
 
   Future<Profile> getProfile(String id) async {
     final snapshot = await profileCollection.doc(id).get();
-    print(snapshot.data());
-
     return Profile.fromJson(snapshot.data());
   }
 

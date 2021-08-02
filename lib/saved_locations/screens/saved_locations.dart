@@ -25,16 +25,11 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
           )
         ],
       ),
-      body: BlocBuilder<ProfileBloc, ProfileState>(
+      body: BlocBuilder<CountriesBloc, CountriesState>(
         builder: (context, state) {
-          if (state is ProfileLoaded) {
-            final countries = state.profile.unlockedCountries
-                .map(
-                  (code) => state.countries.firstWhere(
-                    (country) => country.code == code,
-                  ),
-                )
-                .toList();
+          if (state is CountriesLoaded) {
+            final countries =
+                state.countries.where((country) => country.unlocked).toList();
 
             return CountryList(
               controller: ScrollController(),
@@ -47,7 +42,7 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
             );
           }
 
-          return Container();
+          return TopCircularProgressIndicator();
         },
       ),
     );

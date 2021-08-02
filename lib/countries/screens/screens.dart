@@ -14,7 +14,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:provider/provider.dart';
 
 part 'countries_map.dart';
 part 'create_location.dart';

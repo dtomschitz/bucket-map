@@ -16,21 +16,21 @@ class ProfileLoading extends ProfileState {
 }
 
 class ProfileLoaded extends ProfileState {
-  const ProfileLoaded({this.profile, this.countries});
-  
+  const ProfileLoaded({this.profile});
+
   final Profile profile;
-  final List<Country> countries;
+  //final List<Country> countries;
 
   @override
   String toString() {
-    return 'ProfileLoaded[profile: $profile]';
+    return 'ProfileLoaded { profile: $profile }';
   }
 }
 
 class ProfileError extends ProfileState {
-  final String error;
   const ProfileError(this.error);
+  final String error;
 
   @override
-  String toString() => 'ProfileError[error: $error]';
+  String toString() => 'ProfileError { error: $error }';
 }

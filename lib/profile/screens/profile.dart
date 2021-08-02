@@ -30,11 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoaded) {
-            final countriesCount = state.countries
-                .where((country) => country.unlocked)
-                .toList()
-                .length;
-
             return ListView(
               children: <Widget>[
                 Column(
@@ -76,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Column(
                             children: [
                               Text(
-                                countriesCount.toString(),
+                                '100',
                                 style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
