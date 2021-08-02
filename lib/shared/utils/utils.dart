@@ -1,6 +1,7 @@
 library shared.utils;
 
 import 'dart:convert';
+import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:bucket_map/shared/models/models.dart';

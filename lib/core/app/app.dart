@@ -9,21 +9,22 @@ import 'package:bucket_map/shared/shared.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
-part 'home.dart';
+part 'app_base.dart';
 
 class App extends StatelessWidget {
   const App({
     @required this.authenticationRepository,
     @required this.profileRepository,
-    @required this.locationsRepository,
+    @required this.pinsRepository,
     @required this.sharedPreferencesService,
     this.initialSettings,
   });
 
   final AuthenticationRepository authenticationRepository;
   final ProfileRepository profileRepository;
-  final LocationsRepository locationsRepository;
+  final PinsRepository pinsRepository;
 
   final SharedPreferencesService sharedPreferencesService;
   final Settings initialSettings;
@@ -51,10 +52,10 @@ class App extends StatelessWidget {
               profileRepository: profileRepository,
             ),
           ),
-          BlocProvider<LocationsBloc>(
-            create: (context) => LocationsBloc(
+          BlocProvider<PinsBloc>(
+            create: (context) => PinsBloc(
               authRepository: authenticationRepository,
-              locationsRepository: locationsRepository,
+              pinsRepository: pinsRepository,
             ),
           ),
           BlocProvider<FilteredCountriesBloc>(
@@ -63,39 +64,32 @@ class App extends StatelessWidget {
             ),
           ),
         ],
-        child: AppView(),
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, state) {
+            return MaterialApp(
+              title: 'Bucket Map',
+              themeMode: state.settings.themeMode,
+              theme: Themes.buildLightTheme(),
+              darkTheme: Themes.buildDarkTheme(),
+              home: FlowBuilder<AppStatus>(
+                state: context.select((AppBloc bloc) => bloc.state.status),
+                onGeneratePages: (
+                  AppStatus status,
+                  List<Page<dynamic>> pages,
+                ) {
+                  switch (status) {
+                    case AppStatus.authenticated:
+                      return [AppBase.page()];
+                    case AppStatus.unauthenticated:
+                    default:
+                      return [LoginPage.page()];
+                  }
+                },
+              ),
+            );
+          },
+        ),
       ),
-    );
-  }
-}
-
-class AppView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsBloc, SettingsState>(
-      builder: (context, state) {
-        return MaterialApp(
-          title: 'Bucket Map',
-          themeMode: state.settings.themeMode,
-          theme: Themes.buildLightTheme(),
-          darkTheme: Themes.buildDarkTheme(),
-          home: FlowBuilder<AppStatus>(
-            state: context.select((AppBloc bloc) => bloc.state.status),
-            onGeneratePages: (
-              AppStatus status,
-              List<Page<dynamic>> pages,
-            ) {
-              switch (status) {
-                case AppStatus.authenticated:
-                  return [HomePage.page()];
-                case AppStatus.unauthenticated:
-                default:
-                  return [LoginPage.page()];
-              }
-            },
-          ),
-        );
-      },
     );
   }
 }

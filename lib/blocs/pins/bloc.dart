@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'locations_bloc.dart';
-part 'locations_events.dart';
-part 'locations_repository.dart';
-part 'locations_state.dart';
+part 'pins_bloc.dart';
+part 'pins_events.dart';
+part 'pins_repository.dart';
+part 'pins_state.dart';

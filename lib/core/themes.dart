@@ -6,7 +6,10 @@ class Themes {
 
   static final defaultBottomSheetThemeData = BottomSheetThemeData(
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16.0),
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      ),
     ),
   );
 
@@ -41,8 +44,13 @@ class Themes {
 
   static ThemeData buildDarkTheme() {
     return ThemeData(
+      splashFactory: InkRipple.splashFactory,
       brightness: Brightness.dark,
-      appBarTheme: AppBarTheme(centerTitle: false),
+      appBarTheme: AppBarTheme(
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Colors.grey[850],
+      ),
       buttonTheme: defaultButtonThemeData,
       bottomNavigationBarTheme: defaultBottomNavigationBarThemeData,
       dialogTheme: defaultDialogThemeData,
@@ -52,6 +60,7 @@ class Themes {
 
   static ThemeData buildLightTheme() {
     return ThemeData(
+      splashFactory: InkRipple.splashFactory,
       brightness: Brightness.light,
       appBarTheme: AppBarTheme(
         centerTitle: false,

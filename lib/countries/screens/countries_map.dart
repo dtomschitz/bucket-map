@@ -1,26 +1,21 @@
 part of countries.screens;
 
+enum CountriesMapScreenMode { Overview, Create }
+
 class CountriesMapScreen extends StatefulWidget {
-  static Page page() => MaterialPage<void>(child: CountriesMapScreen());
+  CountriesMapScreen({Key key}) : super(key: key);
 
   @override
   State createState() => _CountriesMapScreenState();
 }
 
 class _CountriesMapScreenState extends State<CountriesMapScreen>
-    with
-        SingleTickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<CountriesMapScreen> {
-  final SlidingSheetController sheetController = new SlidingSheetController();
+    with SingleTickerProviderStateMixin {
   final CountriesMapController mapController = new CountriesMapController();
-  final TextEditingController searchTextController = TextEditingController();
 
   AnimationController _animationController;
-  CountriesSlidingSheetMode _mode;
-  bool _clearSearchBarOnClose = true;
-
   StreamSubscription _profileSubscription;
-  StreamSubscription _pinsSubscription;
+  StreamSubscription _locationsSubscription;
 
   @override
   void initState() {
@@ -35,61 +30,69 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
 
   @override
   void dispose() {
-    _animationController.dispose();
-    _profileSubscription.cancel();
-    _pinsSubscription.cancel();
+    _profileSubscription?.cancel();
+    _locationsSubscription?.cancel();
+    _animationController?.dispose();
+
     super.dispose();
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: CountriesSearchAppBar(
-        controller: searchTextController,
-        animationController: _animationController,
-        onSearchBarFocused: onSearchBarFocused,
-        onSearchBarClose: onSearchBarClose,
-      ),
-      body: CountriesSlidingSheet(
-        mode: _mode,
-        controller: sheetController,
-        animationController: _animationController,
-        onHeaderTap: onHeaderTap,
-        onCountryTap: onCountryTap,
-        onPanelClose: onPanelClose,
-        body: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 48,
-          ),
-          child: Stack(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: mapController),
+      ],
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Row(
             children: [
-              CountriesMap(
-                key: GlobalKeys.countriesMap,
-                controller: mapController,
-                onMapLongClick: (point, latLng) async {
-                  //final country = await GeoUtils.fetchCountry(latLng);
-                  //print(country);
-                },
-                onStyleLoaded: () {
-                  initProfileListener();
-                  initLocationsListener();
+              IconButton(
+                icon: Icon(Icons.lock_outline),
+                onPressed: () {
+                  UnlockedCountriesScreen.show(context);
                 },
               ),
-              CreatePinButton(),
+              IconButton(
+                icon: Icon(Icons.search_outlined),
+                onPressed: () async {
+                  final country = await CountrySearch.show(context);
+                  if (country != null) {
+                    mapController.animateCameraToCountry(country);
+                  }
+                },
+              ),
+              CurrentCountry(),
+              IconButton(
+                icon: Icon(Icons.settings_outlined),
+                onPressed: () async {
+                  //final country = await CountrySearch.show(context);
+                  //UnlockedCountriesScreen.show(context);
+                },
+              ),
             ],
           ),
         ),
+        body: CountriesMap(
+          key: GlobalKeys.countriesMap,
+          controller: mapController,
+          onMapClick: (point, coordinates) async {
+            // await mapController.addPin(coordinates, clearBefore: true);
+          },
+          onStyleLoaded: () {
+            _initProfileListener();
+            _initLocationsListener();
+          },
+        ),
+        floatingActionButton: UnlockCountryFab(),
       ),
     );
   }
 
-  initProfileListener() {
+  _initProfileListener() {
     _profileSubscription = BlocProvider.of<ProfileBloc>(context).stream.listen(
       (state) {
         if (state is ProfileLoaded) {
@@ -99,91 +102,12 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
     );
   }
 
-  initLocationsListener() {
-    _pinsSubscription =
-        BlocProvider.of<LocationsBloc>(context).stream.listen((state) {
-      if (state is LocationsLoaded) {
-        mapController.addLocations(state.locations);
+  _initLocationsListener() {
+    _locationsSubscription =
+        BlocProvider.of<PinsBloc>(context).stream.listen((state) {
+      if (state is PinsLoaded) {
+        mapController.addPins(state.pins);
       }
     });
-  }
-
-  onSearchBarFocused() async {
-    setState(() {
-      _clearSearchBarOnClose = true;
-      if (sheetController.isPanelClosed) {
-        _mode = CountriesSlidingSheetMode.search;
-      }
-    });
-    await sheetController.open();
-  }
-
-  onSearchBarClose() async {
-    if (FocusScope.of(context).hasFocus) {
-      FocusScope.of(context).unfocus();
-    }
-
-    searchTextController.clear();
-    await sheetController.close();
-  }
-
-  onCountryTap(Country country) async {
-    setState(() => _clearSearchBarOnClose = false);
-
-    if (_mode == CountriesSlidingSheetMode.unlock) {
-      BlocProvider.of<ProfileBloc>(context).add(UnlockCountry(country.code));
-      return;
-    }
-
-    searchTextController.text = country.name;
-
-    if (FocusScope.of(context).hasFocus) {
-      FocusScope.of(context).unfocus();
-    }
-
-    BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
-    mapController.animateCameraToCountry(country);
-    sheetController.close();
-  }
-
-  onHeaderTap() async {
-    setState(() => _mode = CountriesSlidingSheetMode.unlock);
-    await sheetController.open();
-  }
-
-  onPanelClose() {
-    setState(() => _mode = CountriesSlidingSheetMode.unlock);
-    BlocProvider.of<FilteredCountriesBloc>(context).add(ClearCountriesFilter());
-
-    if (_clearSearchBarOnClose) {
-      searchTextController.clear();
-    }
-  }
-}
-
-class CreatePinButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom + kToolbarHeight + 32,
-          right: 16,
-        ),
-        child: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (context) => CreateLocationScreen(),
-              ),
-            );
-          },
-        ),
-      ),
-    );
   }
 }

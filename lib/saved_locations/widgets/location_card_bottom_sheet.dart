@@ -2,7 +2,7 @@ part of saved_locations.widgets;
 
 class LocationCardBottomSheet extends StatelessWidget {
   LocationCardBottomSheet(this.pin);
-  final Location pin;
+  final Pin pin;
 
   @override
   Widget build(BuildContext context) {

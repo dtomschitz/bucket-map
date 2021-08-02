@@ -30,9 +30,19 @@ class GeoUtils {
       southwest: country.southwest,
       northeast: country.northeast,
     );
+    
     final cameraUpdate = CameraUpdate.newLatLngBounds(bounds);
 
     return CalculatedLatLngBounds(bounds: bounds, cameraUpdate: cameraUpdate);
+  }
+
+  static Future<String> getCountryCode(LatLng coordinates) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      coordinates.latitude,
+      coordinates.longitude,
+    );
+
+    return placemarks.isNotEmpty ? placemarks.first.isoCountryCode : null;
   }
 
   static Future<GeoCountry> fetchCountry(LatLng latLng) async {

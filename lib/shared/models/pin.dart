@@ -1,7 +1,7 @@
 part of shared.models;
 
-class Location extends Equatable {
-  const Location({
+class Pin extends Equatable {
+  const Pin({
     this.id,
     this.userId,
     this.country,
@@ -22,7 +22,7 @@ class Location extends Equatable {
   @override
   List<Object> get props => [id, userId, name, country, lat, lng, description];
 
-  Location copyWith({
+  Pin copyWith({
     String id,
     String userId,
     String name,
@@ -31,7 +31,7 @@ class Location extends Equatable {
     double lng,
     String description,
   }) {
-    return Location(
+    return Pin(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
@@ -45,7 +45,7 @@ class Location extends Equatable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Location && runtimeType == other.runtimeType && id == other.id;
+      other is Pin && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode =>
@@ -59,7 +59,7 @@ class Location extends Equatable {
 
   @override
   String toString() {
-    return 'Location { id: $id, userId: $userId, name: $name, country: $country lat: $lat, lng: $lng, description: $description}';
+    return 'Pin { id: $id, userId: $userId, name: $name, country: $country lat: $lat, lng: $lng, description: $description}';
   }
 
   LatLng toLatLng() => LatLng(lat, lng);
@@ -75,8 +75,8 @@ class Location extends Equatable {
     };
   }
 
-  static Location fromJson(String id, Map<String, Object> json) {
-    return Location(
+  static Pin fromJson(String id, Map<String, Object> json) {
+    return Pin(
       id: id,
       userId: json["userId"] as String,
       name: json["name"] as String,

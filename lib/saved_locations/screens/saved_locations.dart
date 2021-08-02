@@ -1,7 +1,7 @@
 part of saved_locations.screens;
 
 class SavedLocationsScreen extends StatefulWidget {
-  static Page page() => MaterialPage<void>(child: SavedLocationsScreen());
+  SavedLocationsScreen({Key key}) : super(key: key);
 
   @override
   State createState() => _SavedLocationsScreenState();
@@ -17,13 +17,7 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
           IconButton(
             icon: Icon(Icons.search_outlined),
             onPressed: () async {
-              final country = await showSearch(
-                context: context,
-                delegate: CountrySearchDelegate(
-                  filterOnlyUnlocked: true,
-                ),
-              );
-
+              final country = await CountrySearch.show(context);
               if (country != null) {
                 openCountry(country);
               }

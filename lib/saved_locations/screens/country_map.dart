@@ -17,21 +17,12 @@ class CountryMap extends StatelessWidget {
       appBar: AppBar(
         centerTitle: false,
         title: Text(country.name),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(
-              country.unlocked ? Icons.lock_open_outlined : Icons.lock_outlined,
-            ),
-          ),
-        ],
       ),
-      body: BlocBuilder<LocationsBloc, LocationsState>(
+      body: BlocBuilder<PinsBloc, PinsState>(
         builder: (context, state) {
-          if (state is LocationsLoaded) {
-            final pins = state.locations
-                .where((pin) => pin.country == country.code)
-                .toList();
+          if (state is PinsLoaded) {
+            final pins =
+                state.pins.where((pin) => pin.country == country.code).toList();
 
             return Stack(
               children: [
@@ -40,7 +31,7 @@ class CountryMap extends StatelessWidget {
                   disableUserLocation: true,
                   onMapCreated: () async {
                     await controller.setUnlockedCountries([country.code]);
-                    await controller.addLocations(pins);
+                    await controller.addPins(pins);
 
                     Future.delayed(const Duration(milliseconds: 250), () async {
                       await controller.animateCameraToCountry(country);

@@ -1,13 +1,9 @@
 part of countries.widgets;
 
-enum CountriesSlidingSheetMode { unlock, search }
-
-class CountriesSlidingSheet extends StatefulWidget {
-  CountriesSlidingSheet({
+class UnlockedCountriesSheet extends StatefulWidget {
+  UnlockedCountriesSheet({
     this.body,
     this.controller,
-    this.animationController,
-    this.mode,
     this.onHeaderTap,
     this.onCountryTap,
     this.onPanelSlide,
@@ -19,8 +15,6 @@ class CountriesSlidingSheet extends StatefulWidget {
 
   final Widget body;
   final SlidingSheetController controller;
-  final AnimationController animationController;
-  final CountriesSlidingSheetMode mode;
 
   final void Function() onHeaderTap;
   final void Function(double progress) onPanelSlide;
@@ -32,17 +26,26 @@ class CountriesSlidingSheet extends StatefulWidget {
   final void Function(Country) onCountryTap;
 
   @override
-  State createState() => _CountriesSlidingSheetState();
+  State createState() => _UnlockedCountriesSheetState();
 }
 
-class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
+class _UnlockedCountriesSheetState extends State<UnlockedCountriesSheet> {
   final ScrollController _scrollController = new ScrollController();
-  AnimationController _animationController;
+
+  double _elevation = 0;
 
   @override
   void initState() {
     super.initState();
-    _animationController = widget.animationController;
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController?.removeListener(_scrollListener);
+    _scrollController?.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -53,10 +56,10 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
     return SlidingSheet(
       controller: widget.controller,
       scrollController: _scrollController,
-      animationController: widget.animationController,
       maxHeight: maxHeight,
+      minHeight: 0,
       backdropEnabled: true,
-      parallaxEnabled: true,
+      //parallaxEnabled: true,
       backdropColor: Colors.black,
       onPanelClosed: () {
         _scrollController.jumpTo(0);
@@ -70,9 +73,10 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
   }
 
   Widget _buildHeader() {
-    return GestureDetector(
+    /*return GestureDetector(
       onTap: widget.onHeaderTap,
       child: Material(
+        elevation: _elevation,
         child: FadeTransition(
           opacity: Tween(begin: 1.0, end: 0.0).animate(
             CurvedAnimation(
@@ -96,12 +100,28 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
           ),
         ),
       ),
+    );*/
+
+    return GestureDetector(
+      onTap: widget.onHeaderTap,
+      child: Material(
+        elevation: _elevation,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SlidingSheetDragger(
+              padding: EdgeInsets.only(left: 8, right: 8, top: 4),
+            ),
+            UnlockedCountriesSheetHeader(),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildPanel() {
     return NotificationListener<ScrollNotification>(
-      // ignore: missing_return
       onNotification: (notification) {
         if (notification is ScrollStartNotification) {
           widget.onPanelStartScroll?.call(notification.metrics);
@@ -110,62 +130,44 @@ class _CountriesSlidingSheetState extends State<CountriesSlidingSheet> {
         } else if (notification is ScrollEndNotification) {
           widget.onPanelEndScroll?.call(notification.metrics);
         }
+
+        return true;
       },
-      child: FadeTransition(
-        opacity: Tween(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: Interval(
-              0.3,
-              0.8,
-              curve: Curves.ease,
-            ),
-          ),
-        ),
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileLoaded) {
-              return SafeArea(
-                child: CountryList(
-                  countries: state.countries,
-                  controller: _scrollController,
-                  shrinkWrap: false,
-                  onTap: widget.onCountryTap,
-                  disabled: (country) {
-                    if (widget.mode == CountriesSlidingSheetMode.search) {
-                      return false;
-                    }
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoaded) {
+            return CountryList(
+              countries: state.countries,
+              controller: _scrollController,
+              shrinkWrap: false,
+              onTap: widget.onCountryTap,
+              disabled: (country) => country.unlocked,
+              buildTrailing: (Country country) {
+                return Icon(
+                  country.unlocked
+                      ? Icons.lock_open_outlined
+                      : Icons.lock_outline,
+                  color: country.unlocked ? Colors.green : Colors.grey,
+                );
+              },
+            );
+          }
 
-                    return country.unlocked;
-                  },
-                  buildTrailing: (Country country) {
-                    if (widget.mode == CountriesSlidingSheetMode.search) {
-                      return Icon(
-                        Icons.arrow_forward_ios_outlined,
-                        color: Colors.grey,
-                      );
-                    }
-
-                    return Icon(
-                      country.unlocked
-                          ? Icons.lock_open_outlined
-                          : Icons.lock_outline,
-                      color: country.unlocked ? Colors.green : Colors.grey,
-                    );
-                  },
-                ),
-              );
-            }
-
-            return Container();
-          },
-        ),
+          return Container();
+        },
       ),
     );
   }
+
+  void _scrollListener() {
+    double newElevation = _scrollController.offset > 1 ? 8 : 0;
+    if (_elevation != newElevation) {
+      setState(() => _elevation = newElevation);
+    }
+  }
 }
 
-class CountriesSlidingSheetHeader extends StatelessWidget {
+class UnlockedCountriesSheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(

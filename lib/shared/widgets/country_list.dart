@@ -70,14 +70,16 @@ class CountryListItem extends StatelessWidget {
 }
 
 class CountryAvatar extends StatelessWidget {
-  CountryAvatar(String code) : this.code = code.toLowerCase();
+  CountryAvatar(String code) : this.code = code?.toLowerCase();
   final String code;
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundImage: NetworkImage('https://flagcdn.com/w160/$code.png'),
-      backgroundColor: Colors.grey.shade100,
+      backgroundImage: code == null
+          ? null
+          : NetworkImage('https://flagcdn.com/w160/$code.png'),
+      backgroundColor: Colors.grey.shade300,
     );
   }
 }

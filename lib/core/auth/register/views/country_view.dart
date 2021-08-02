@@ -20,11 +20,7 @@ class CountryView extends StatelessWidget {
               controller: controller,
               readOnly: true,
               onTap: () async {
-                final country = await showSearch(
-                  context: context,
-                  delegate: CountrySearchDelegate(),
-                );
-
+                final country = await CountrySearch.show(context);
                 context.read<RegisterCubit>().countryChanged(country);
                 controller.text = country.name;
               },

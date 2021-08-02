@@ -1,17 +1,20 @@
 part of shared.widgets;
 
 class BottomSheetContainer extends StatelessWidget {
-  BottomSheetContainer({this.title, List<Widget> children})
-      : children = children ?? [];
+  BottomSheetContainer(
+      {this.title, List<Widget> children, MainAxisSize mainAxisSize})
+      : children = children ?? [],
+        mainAxisSize = mainAxisSize ?? MainAxisSize.min;
 
   final String title;
   final List<Widget> children;
+  final MainAxisSize mainAxisSize;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: mainAxisSize,
         children: [
           Padding(
             padding: EdgeInsets.all(16),
@@ -28,6 +31,8 @@ class BottomSheetContainer extends StatelessWidget {
                 Spacer(),
                 IconButton(
                   icon: Icon(Icons.close_outlined),
+                  //padding: EdgeInsets.all(16),
+                  splashRadius: 22,
                   onPressed: () {
                     Navigator.pop(context);
                   },

@@ -11,7 +11,7 @@ part 'calculated_lat_lng_bounds.dart';
 part 'city.dart';
 part 'country.dart';
 part 'geo_country.dart';
-part 'location.dart';
+part 'pin.dart';
 part 'profile.dart';
 part 'settings.dart';
 part 'user_data.dart';

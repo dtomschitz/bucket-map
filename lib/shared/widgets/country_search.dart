@@ -1,12 +1,19 @@
 part of shared.widgets;
 
-class CountrySearchDelegate extends SearchDelegate<Country> {
-  CountrySearchDelegate({String label, bool filterOnlyUnlocked})
+class CountrySearch extends SearchDelegate<Country> {
+  CountrySearch({String label, bool filterOnlyUnlocked})
       : label = label ?? 'Nach Land suchen',
         filterOnlyUnlocked = filterOnlyUnlocked ?? false;
 
   final String label;
   final bool filterOnlyUnlocked;
+
+  static Future<Country> show(BuildContext context) {
+    return showSearch<Country>(
+      context: context,
+      delegate: CountrySearch(),
+    );
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
