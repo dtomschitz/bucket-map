@@ -1,4 +1,4 @@
-part of profile.screens;
+part of screens;
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);

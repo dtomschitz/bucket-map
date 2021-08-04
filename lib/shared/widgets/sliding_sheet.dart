@@ -5,9 +5,9 @@ enum SlideDirection {
   DOWN,
 }
 
-enum SheetState { OPEN, CLOSED }
+enum SheetStateEEE { OPEN, CLOSED }
 
-class SlidingSheet extends StatefulWidget {
+class SlidingSheetTEst extends StatefulWidget {
   final Widget panel;
   final Widget Function() panelBuilder;
   final Widget Function() collapseBuilder;
@@ -50,9 +50,9 @@ class SlidingSheet extends StatefulWidget {
   final bool isDraggable;
 
   final SlideDirection slideDirection;
-  final SheetState defaultPanelState;
+  final SheetStateEEE defaultPanelState;
 
-  SlidingSheet({
+  SlidingSheetTEst({
     Key key,
     this.panel,
     this.panelBuilder,
@@ -88,7 +88,7 @@ class SlidingSheet extends StatefulWidget {
     this.parallaxOffset = 0.1,
     this.isDraggable = true,
     this.slideDirection = SlideDirection.UP,
-    this.defaultPanelState = SheetState.CLOSED,
+    this.defaultPanelState = SheetStateEEE.CLOSED,
     this.header,
     this.footer,
   })  : assert(panel != null || panelBuilder != null),
@@ -97,10 +97,10 @@ class SlidingSheet extends StatefulWidget {
         super(key: key);
 
   @override
-  _SlidingSheetState createState() => _SlidingSheetState();
+  _SlidingSheetTEstState createState() => _SlidingSheetTEstState();
 }
 
-class _SlidingSheetState extends State<SlidingSheet>
+class _SlidingSheetTEstState extends State<SlidingSheetTEst>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   ScrollController _scrollController;
@@ -118,7 +118,7 @@ class _SlidingSheetState extends State<SlidingSheet>
         : new AnimationController(
             vsync: this,
             duration: const Duration(milliseconds: 300),
-            value: widget.defaultPanelState == SheetState.CLOSED ? 0.0 : 1.0);
+            value: widget.defaultPanelState == SheetStateEEE.CLOSED ? 0.0 : 1.0);
 
     _animationController = _animationController
       ..addListener(() {
@@ -482,9 +482,9 @@ class _SlidingSheetState extends State<SlidingSheet>
 }
 
 class SlidingSheetController {
-  _SlidingSheetState _sheetState;
+  _SlidingSheetTEstState _sheetState;
 
-  void _addState(_SlidingSheetState sheetState) {
+  void _addState(_SlidingSheetTEstState sheetState) {
     this._sheetState = sheetState;
   }
 

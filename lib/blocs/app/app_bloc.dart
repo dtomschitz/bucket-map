@@ -10,7 +10,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               : const AppState.unauthenticated(),
         ) {
     _userSubscription = _authenticationRepository.user.listen((user) {
-      add(AppUserChanged(user));
+      add(UserChanged(user));
     });
   }
 
@@ -18,10 +18,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   StreamSubscription<User> _userSubscription;
 
   @override
+  Future<void> close() {
+    _userSubscription.cancel();
+    return super.close();
+  }
+
+  @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
-    if (event is AppUserChanged) {
+    if (event is UserChanged) {
       yield _mapUserChangedToState(event, state);
-    } else if (event is AppLogoutRequested) {
+    } else if (event is LogoutRequested) {
       await _authenticationRepository.logOut();
     } else if (event is UserPasswordChanged) {
       await _authenticationRepository.updatePassword(event.password);
@@ -29,15 +35,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
   }
 
-  AppState _mapUserChangedToState(AppUserChanged event, AppState state) {
+  AppState _mapUserChangedToState(UserChanged event, AppState state) {
     return event.user.isNotAnonymous
         ? AppState.authenticated(event.user)
         : const AppState.unauthenticated();
-  }
-
-  @override
-  Future<void> close() {
-    _userSubscription.cancel();
-    return super.close();
   }
 }

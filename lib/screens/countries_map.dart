@@ -1,4 +1,4 @@
-part of countries.screens;
+part of screens;
 
 enum CountriesMapScreenMode { Overview, Create }
 
@@ -11,7 +11,8 @@ class CountriesMapScreen extends StatefulWidget {
 
 class _CountriesMapScreenState extends State<CountriesMapScreen>
     with SingleTickerProviderStateMixin {
-  final CountriesMapController mapController = new CountriesMapController();
+  final CountriesMapController mapController = CountriesMapController();
+  final SheetController createSheetController = SheetController();
 
   AnimationController _animationController;
   StreamSubscription _profileSubscription;
@@ -44,6 +45,8 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
+        titleSpacing: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             IconButton(
@@ -64,41 +67,57 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
             CurrentCountry(),
             IconButton(
               icon: Icon(Icons.settings_outlined),
-              onPressed: () async {
-                //final country = await CountrySearch.show(context);
-                //UnlockedCountriesScreen.show(context);
+              onPressed: () {
+                SettingsScreen.show(context);
               },
             ),
           ],
         ),
       ),
-      body: CountriesMap(
-        key: GlobalKeys.countriesMap,
-        controller: mapController,
-        onStyleLoaded: () {
-          _initProfileListener();
-          _initLocationsListener();
-        },
-        onMapClick: (point, coordinates) async {
-          // await mapController.addPin(coordinates, clearBefore: true);
-        },
-        onCameraIdle: (position) {
-          BlocProvider.of<CountriesBloc>(context)
-              .add(UpdateViewPortCountry(position));
-        },
+      body: Stack(
+        children: [
+          CountriesMap(
+            key: GlobalKeys.countriesMap,
+            controller: mapController,
+            onStyleLoaded: () {
+              _initProfileListener();
+              _initLocationsListener();
+            },
+            onMapClick: (point, coordinates) async {
+              mapController.addPin(coordinates);
+              mapController.animateCameraToCoordinates(
+                coordinates,
+                minZoom: true,
+              );
+
+              dispatchEvent(context, ShowCreatePinSheet());
+            },
+            onCameraIdle: (position) {
+              BlocProvider.of<CountriesBloc>(context)
+                  .add(UpdateViewPortCountry(position));
+            },
+            onCameraPositionChanged: (position) {},
+          ),
+          CreatePinSheet(),
+        ],
       ),
-      floatingActionButton: UnlockCountryFab(),
     );
   }
 
   _initProfileListener() {
-    _profileSubscription = BlocProvider.of<ProfileBloc>(context).stream.listen(
-      (state) {
-        if (state is ProfileLoaded) {
-          mapController.setUnlockedCountries(state.profile.unlockedCountries);
-        }
-      },
-    );
+    var bloc = BlocProvider.of<ProfileBloc>(context);
+    var state = bloc.state;
+
+    if (state is ProfileLoaded) {
+      var countries = state.profile.unlockedCountries;
+      mapController.setUnlockedCountries(countries);
+    }
+
+    _profileSubscription = bloc.stream.listen((state) {
+      if (state is ProfileLoaded) {
+        mapController.setUnlockedCountries(state.profile.unlockedCountries);
+      }
+    });
   }
 
   _initLocationsListener() {

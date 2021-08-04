@@ -5,6 +5,7 @@ class CountryPreviewCard extends StatelessWidget {
 
   final Country country;
   final Function() onTap;
+  
   final CountriesMapController controller = CountriesMapController();
 
   @override
@@ -25,18 +26,18 @@ class CountryPreviewCard extends StatelessWidget {
               opacity: .87,
               child: CountriesMap(
                 controller: controller,
-                initialCameraPosition: CameraPosition(
-                  target: country.latLng,
-                  zoom: 1,
-                ),
+                //initialCameraPosition: CameraPosition(
+                //target: country.latLng,
+                // zoom: 1,
+                // ),
                 zoomGesturesEnabled: false,
                 scrollGesturesEnabled: false,
                 disableUserLocation: true,
                 onMapCreated: () async {
-                  await controller.setUnlockedCountries([country.code]);
-                  Future.delayed(const Duration(milliseconds: 200), () async {
-                    await controller.moveCameraToCountry(country);
-                  });
+                  //await controller.setUnlockedCountries([country.code]);
+                  //Future.delayed(const Duration(milliseconds: 200), () async {
+                  //  await controller.moveCameraToCountry(country);
+                  // });
                 },
               ),
             ),

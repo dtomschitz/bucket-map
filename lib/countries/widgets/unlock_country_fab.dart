@@ -17,7 +17,8 @@ class _UnlockCountryFabState extends State<UnlockCountryFab> {
       closedColor: theme.colorScheme.secondary,
       //transitionDuration: Duration(seconds: 5),
       openBuilder: (context, closedContainer) {
-        return CreatePinScreen();
+        //return CreatePinScreen();
+        return Container();
       },
       closedBuilder: (context, openContainer) {
         return FloatingActionButton(

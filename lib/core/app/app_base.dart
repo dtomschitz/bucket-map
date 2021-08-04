@@ -1,6 +1,17 @@
 part of core.app;
 
-class AppBase extends StatefulWidget {
+class AppBase extends StatelessWidget {
+  static Page page() => MaterialPage<void>(child: AppBase());
+
+  @override
+  Widget build(BuildContext context) {
+    return EventProvider(
+      child: CountriesMapScreen(),
+    );
+  }
+}
+
+/*class AppBase extends StatefulWidget {
   static Page page() => MaterialPage<void>(child: AppBase());
 
   @override
@@ -18,7 +29,7 @@ class _AppBaseState extends State<AppBase> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    /*return Scaffold(
       body: IndexedStack(
         index: _currentPage,
         children: pages,
@@ -44,7 +55,8 @@ class _AppBaseState extends State<AppBase> {
           )
         ],
       ),
-    );
+    );*/
+    return CountriesMapScreen();
   }
 
   navigateToPage(int page) async {
@@ -52,4 +64,4 @@ class _AppBaseState extends State<AppBase> {
       setState(() => _currentPage = page);
     }
   }
-}
+}*/

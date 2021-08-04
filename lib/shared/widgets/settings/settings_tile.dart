@@ -1,4 +1,4 @@
-part of profile.widgets;
+part of shared.widgets;
 
 class SettingsTile extends StatelessWidget {
   SettingsTile({

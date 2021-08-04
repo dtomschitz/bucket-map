@@ -42,7 +42,7 @@ class Themes {
     alignment: Alignment.centerLeft,
   );
 
-  static ThemeData buildDarkTheme() {
+  static ThemeData buildDarkTheme(BuildContext context) {
     return ThemeData(
       splashFactory: InkRipple.splashFactory,
       brightness: Brightness.dark,
@@ -51,6 +51,7 @@ class Themes {
         elevation: 0,
         backgroundColor: Colors.grey[850],
       ),
+      backgroundColor: Colors.grey[850],
       buttonTheme: defaultButtonThemeData,
       bottomNavigationBarTheme: defaultBottomNavigationBarThemeData,
       dialogTheme: defaultDialogThemeData,
@@ -58,7 +59,7 @@ class Themes {
     );
   }
 
-  static ThemeData buildLightTheme() {
+  static ThemeData buildLightTheme(BuildContext context) {
     return ThemeData(
       splashFactory: InkRipple.splashFactory,
       brightness: Brightness.light,
@@ -67,6 +68,7 @@ class Themes {
         iconTheme: lightIconTheme,
         backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white,
       buttonTheme: defaultButtonThemeData,
       bottomNavigationBarTheme: defaultBottomNavigationBarThemeData,
       dialogTheme: defaultDialogThemeData,

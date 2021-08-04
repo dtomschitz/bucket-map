@@ -1,4 +1,4 @@
-part of countries.widgets;
+part of shared.widgets;
 
 class CurrentCountry extends StatefulWidget {
   @override

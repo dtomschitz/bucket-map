@@ -1,4 +1,4 @@
-part of countries.screens;
+part of screens;
 
 class UnlockedCountriesScreen extends StatefulWidget {
   static show(BuildContext context) {
@@ -22,6 +22,14 @@ class _UnlockedCountriesScreenState extends State<UnlockedCountriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close_outlined),
+          onPressed: () {
+            BlocProvider.of<FilteredCountriesBloc>(context)
+                .add(ClearCountriesFilter());
+            Navigator.pop(context);
+          },
+        ),
         title: SearchBarContainer(
           child: TextField(
             controller: searchController,

@@ -1,4 +1,4 @@
-part of profile.widgets;
+part of shared.widgets;
 
 class SettingsHeader extends StatelessWidget {
   SettingsHeader(this.heading);

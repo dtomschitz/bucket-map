@@ -49,37 +49,3 @@ class CountryList extends StatelessWidget {
     );
   }
 }
-
-class CountryListItem extends StatelessWidget {
-  CountryListItem({this.country, this.onTap, this.trailing});
-
-  final Country country;
-  final Widget trailing;
-
-  final void Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: CountryAvatar(country.code),
-      title: Text(country.name),
-      onTap: () => onTap?.call(),
-      trailing: trailing != null ? trailing : null,
-    );
-  }
-}
-
-class CountryAvatar extends StatelessWidget {
-  CountryAvatar(String code) : this.code = code?.toLowerCase();
-  final String code;
-
-  @override
-  Widget build(BuildContext context) {
-    return CircleAvatar(
-      backgroundImage: code == null
-          ? null
-          : NetworkImage('https://flagcdn.com/w160/$code.png'),
-      backgroundColor: Colors.grey.shade300,
-    );
-  }
-}
