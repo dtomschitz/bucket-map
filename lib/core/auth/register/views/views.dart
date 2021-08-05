@@ -2,7 +2,7 @@ library auth.register.views;
 
 import 'package:bucket_map/core/auth/register/cubit/cubit.dart';
 import 'package:bucket_map/core/auth/widgets/widgets.dart';
-import 'package:bucket_map/shared/shared.dart';
+import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
