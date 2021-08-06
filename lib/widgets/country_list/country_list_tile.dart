@@ -13,7 +13,7 @@ class CountryListTile extends StatelessWidget {
     return ListTile(
       leading: CountryAvatar(country.code),
       title: Text(country.name),
-      onTap: () => onTap?.call(),
+      onTap: onTap?.call,
       trailing: trailing != null ? trailing : null,
     );
   }

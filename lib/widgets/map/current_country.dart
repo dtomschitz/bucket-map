@@ -72,9 +72,10 @@ class _CurrentCountryState extends State<CurrentCountry>
       child: FadeScaleTransition(
         animation: _animation,
         child: Container(
+          //height: 46,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(100.0),
-            color: Colors.grey.withOpacity(.32),
+            color: Colors.black.withOpacity(.15),
           ),
           padding: EdgeInsets.all(8),
           child: Row(

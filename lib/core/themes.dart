@@ -73,7 +73,7 @@ class Themes {
         brightness: Brightness.light,
         backgroundColor: Colors.white,
       ),
-      primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.black)),
+      //primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.black)),
       scaffoldBackgroundColor: Colors.white,
       //backgroundColor: Colors.white,
       inputDecorationTheme: InputDecorationTheme(

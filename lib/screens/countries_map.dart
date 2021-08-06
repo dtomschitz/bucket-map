@@ -1,7 +1,5 @@
 part of screens;
 
-enum CountriesMapScreenMode { Default, CreatePin }
-
 class CountriesMapScreen extends StatefulWidget {
   CountriesMapScreen({Key key}) : super(key: key);
 
@@ -9,50 +7,16 @@ class CountriesMapScreen extends StatefulWidget {
   State createState() => _CountriesMapScreenState();
 }
 
-class _CountriesMapScreenState extends State<CountriesMapScreen>
-    with TickerProviderStateMixin {
+class _CountriesMapScreenState extends State<CountriesMapScreen> {
   final CountriesMapController mapController = CountriesMapController();
-
-  AnimationController _animationController;
-  Animation _animation;
 
   StreamSubscription _profileSubscription;
   StreamSubscription _pinsSubscription;
   StreamSubscription _eventsSubscription;
 
-  CountriesMapScreenMode _mode = CountriesMapScreenMode.Default;
-  Symbol _currentSymbol;
-
   @override
   void initState() {
     super.initState();
-
-    _animationController = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-
-    _eventsSubscription = EventProvider.of(context).events.listen((event) {
-      if (event is AppBarVisibility) {
-        if (event.show) {
-          _animationController.reverse();
-        } else {
-          _animationController.forward();
-        }
-      }
-
-      if (event is ShowCreatePinSheet) {
-        setState(() => _mode = CountriesMapScreenMode.CreatePin);
-      }
-
-      if (event is HideCreatePinSheet) {
-        setState(() => _mode = CountriesMapScreenMode.Default);
-
-        if (_currentSymbol != null) {
-          mapController.removePin(_currentSymbol);
-        }
-      }
-    });
   }
 
   @override
@@ -60,9 +24,6 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
     _profileSubscription?.cancel();
     _pinsSubscription?.cancel();
     _eventsSubscription?.cancel();
-
-    _animationController?.dispose();
-
     super.dispose();
   }
 
@@ -70,45 +31,15 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        titleSpacing: 0,
-        automaticallyImplyLeading: false,
-        title: AnimatedSwitcher(
-          duration: Duration(milliseconds: 250),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(child: child, opacity: animation);
-          },
-          child: _mode == CountriesMapScreenMode.Default
-              ? Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.account_box_outlined),
-                      onPressed: () {
-                        ProfileScreen.show(context);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.search_outlined),
-                      onPressed: () async {
-                        final country = await CountrySearch.show(context);
-                        if (country != null) {
-                          mapController.animateCameraToCountry(country);
-                        }
-                      },
-                    ),
-                    CurrentCountry(),
-                    IconButton(
-                      icon: Icon(Icons.settings_outlined),
-                      onPressed: () {
-                        SettingsScreen.show(context);
-                      },
-                    ),
-                  ],
-                )
-              : Container(),
-        ),
+      appBar: _CountriesMapAppBar(
+        onSearch: () async {
+          final country = await CountrySearch.show(context);
+          if (country != null) {
+            mapController.animateCameraToCountry(country);
+          }
+        },
+        onProfile: () => ProfileScreen.show(context),
+        onUnlockedCountries: () => UnlockedCountriesScreen.show(context),
       ),
       body: CountriesMap(
         key: GlobalKeys.countriesMap,
@@ -117,78 +48,10 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
           _initProfileListener();
           _initPinsListener();
         },
-        onMapClick: (point, coordinates) async {
-          CreatePinScreen.show(context, coordinates);
-          /*if (_currentSymbol != null) {
-              mapController.removePin(_currentSymbol);
-            }
-
-            Symbol symbol = await mapController.addPin(coordinates);
-            setState(() => _currentSymbol = symbol);
-
-            mapController.animateCameraToCoordinates(
-              coordinates,
-              minZoom: true,
-            );
-
-            dispatchEvent(
-              context,
-              ShowCreatePinSheet(
-                coordinates: coordinates,
-              ),
-            );*/
-        },
-        onCameraIdle: (position) {
-          BlocProvider.of<CountriesBloc>(context)
-              .add(UpdateViewPortCountry(position));
-        },
-        onCameraPositionChanged: (position) {
-          // dispatchEvent(context, MinimizeCreatePinSheet());
-        },
+        onMapClick: _createPin,
+        onMapLongClick: _unlockCountry,
+        onCameraIdle: _updateViewPortCountry,
       ),
-      /*body: CreatePinSheet(
-        child: CountriesMap(
-          key: GlobalKeys.countriesMap,
-          controller: mapController,
-          onStyleLoaded: () {
-            _initProfileListener();
-            _initPinsListener();
-          },
-          onMapClick: (point, coordinates) async {
-            /*if (_currentSymbol != null) {
-              mapController.removePin(_currentSymbol);
-            }
-
-            Symbol symbol = await mapController.addPin(coordinates);
-            setState(() => _currentSymbol = symbol);
-
-            mapController.animateCameraToCoordinates(
-              coordinates,
-              minZoom: true,
-            );
-
-            dispatchEvent(
-              context,
-              ShowCreatePinSheet(
-                coordinates: coordinates,
-              ),
-            );*/
-          },
-          onCameraIdle: (position) {
-            BlocProvider.of<CountriesBloc>(context)
-                .add(UpdateViewPortCountry(position));
-          },
-          onCameraPositionChanged: (position) {
-            // dispatchEvent(context, MinimizeCreatePinSheet());
-          },
-        ),
-      ),*/
-      floatingActionButton: _mode == CountriesMapScreenMode.CreatePin
-          ? FloatingActionButton.extended(
-              label: Text('Speichern'),
-              onPressed: () {},
-            )
-          : null,
     );
   }
 
@@ -221,5 +84,93 @@ class _CountriesMapScreenState extends State<CountriesMapScreen>
         mapController.addPins(state.pins);
       }
     });
+  }
+
+  _updateViewPortCountry(CameraPosition position) {
+    BlocProvider.of<CountriesBloc>(context)
+        .add(UpdateViewPortCountry(position));
+  }
+
+  _createPin(Point<double> point, LatLng coordinates) {
+    CreatePinScreen.show(context, coordinates);
+  }
+
+  _unlockCountry(Point<double> point, LatLng coordinates) async {
+    var state = BlocProvider.of<ProfileBloc>(context).state;
+    if (state is ProfileLoaded) {
+      final code = await GeoUtils.getCountryCode(coordinates);
+      if (code != null && !state.profile.unlockedCountries.contains(code)) {
+        print(code);
+      }
+    }
+  }
+}
+
+class _CountriesMapAppBar extends StatelessWidget with PreferredSizeWidget {
+  _CountriesMapAppBar({
+    this.onProfile,
+    this.onSearch,
+    this.onUnlockedCountries,
+  });
+  final Function onProfile;
+  final Function onSearch;
+  final Function onUnlockedCountries;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      automaticallyImplyLeading: false,
+      titleSpacing: 0,
+      title: Row(
+        children: [
+          const SizedBox(width: 8),
+          AppBarIconButton(
+            icon: Icon(Icons.account_circle_outlined),
+            onPressed: onProfile?.call,
+          ),
+          const SizedBox(width: 8),
+          AppBarIconButton(
+            icon: Icon(Icons.search_outlined),
+            onPressed: onSearch?.call,
+          ),
+          const SizedBox(width: 8),
+          CurrentCountry(),
+          const SizedBox(width: 8),
+          AppBarIconButton(
+            icon: Icon(Icons.public_outlined),
+            onPressed: onUnlockedCountries?.call,
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+
+class AppBarIconButton extends StatelessWidget {
+  AppBarIconButton({this.icon, this.onPressed});
+
+  final Icon icon;
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: Container(
+        color: Colors.black.withOpacity(.15),
+        child: IconButton(
+          constraints: BoxConstraints(maxHeight: 46),
+          icon: icon,
+          iconSize: 24.0,
+          color: Colors.white,
+          onPressed: onPressed?.call,
+        ),
+      ),
+    );
   }
 }

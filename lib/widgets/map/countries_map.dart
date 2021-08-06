@@ -134,28 +134,31 @@ class _CountriesMapState extends State<CountriesMap>
               ? AppConstants.MAPBOX_DARK_STYLE_URL
               : AppConstants.MAPBOX_LIGHT_STYLE_URL;
 
-          return MapboxMap(
-            key: GlobalKeys.mapbox,
-            accessToken: accessToken,
-            styleString: style,
-            initialCameraPosition: widget.initialCameraPosition,
-            cameraTargetBounds: widget.cameraTargetBounds,
-            compassEnabled: false,
-            tiltGesturesEnabled: widget.tiltGesturesEnabled,
-            rotateGesturesEnabled: widget.rotateGesturesEnabled,
-            zoomGesturesEnabled: widget.zoomGesturesEnabled,
-            scrollGesturesEnabled: widget.scrollGesturesEnabled,
-            trackCameraPosition: true,
-            /*myLocationEnabled: widget.disableUserLocation
+          return GestureDetector(
+
+            child: MapboxMap(
+              key: GlobalKeys.mapbox,
+              accessToken: accessToken,
+              styleString: style,
+              initialCameraPosition: widget.initialCameraPosition,
+              cameraTargetBounds: widget.cameraTargetBounds,
+              compassEnabled: false,
+              tiltGesturesEnabled: widget.tiltGesturesEnabled,
+              rotateGesturesEnabled: widget.rotateGesturesEnabled,
+              zoomGesturesEnabled: widget.zoomGesturesEnabled,
+              scrollGesturesEnabled: widget.scrollGesturesEnabled,
+              trackCameraPosition: true,
+              /*myLocationEnabled: widget.disableUserLocation
                     ? false
                     : snapshot.data == PermissionStatus.granted,*/
-            onMapCreated: _onMapCreated,
-            onStyleLoaded: _onStyleLoaded,
-            onCameraIdle: () {
-              widget.onCameraIdle?.call(_mapController.cameraPosition);
-            },
-            onMapClick: widget.onMapClick?.call,
-            onMapLongClick: widget.onMapLongClick?.call,
+              onMapCreated: _onMapCreated,
+              onStyleLoaded: _onStyleLoaded,
+              onCameraIdle: () {
+                widget.onCameraIdle?.call(_mapController.cameraPosition);
+              },
+              onMapClick: widget.onMapClick?.call,
+              onMapLongClick: widget.onMapLongClick?.call,
+            ),
           );
         },
       ),

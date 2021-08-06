@@ -21,6 +21,16 @@ class ProfileLoaded extends ProfileState {
   final Profile profile;
   final User user;
 
+  ProfileLoaded copyWith({
+    Profile profile,
+    User user,
+  }) {
+    return ProfileLoaded(
+      profile: profile ?? this.profile,
+      user: user ?? this.user,
+    );
+  }
+
   @override
   String toString() {
     return 'ProfileLoaded { profile: $profile }';

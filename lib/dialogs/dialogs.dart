@@ -1,7 +1,6 @@
-library screens;
+library dialogs;
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:animations/animations.dart';
 import 'package:bucket_map/blocs/blocs.dart';
@@ -16,10 +15,3 @@ import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
-part 'countries_map.dart';
-part 'country_map.dart';
-part 'create_pin_screen.dart';
-part 'profile.dart';
-part 'saved_locations.dart';
-part 'settings.dart';
-part 'unlocked_countries.dart';

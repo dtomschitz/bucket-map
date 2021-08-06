@@ -116,6 +116,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             slivers: [
               SliverAppBar(
                 title: Text('Profil'),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.settings_outlined),
+                    onPressed: () {
+                      SettingsScreen.show(context);
+                    },
+                  ),
+                ],
                 pinned: true,
               ),
               SliverList(delegate: SliverChildListDelegate.fixed([content])),
