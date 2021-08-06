@@ -6,8 +6,8 @@ class Pin extends Equatable {
     this.userId,
     this.country,
     @required this.name,
-    @required this.lat,
-    @required this.lng,
+    @required this.latitude,
+    @required this.longitude,
     this.description,
   });
 
@@ -15,20 +15,28 @@ class Pin extends Equatable {
   final String userId;
   final String name;
   final String country;
-  final double lat;
-  final double lng;
+  final double latitude;
+  final double longitude;
   final String description;
 
   @override
-  List<Object> get props => [id, userId, name, country, lat, lng, description];
+  List<Object> get props => [
+        id,
+        userId,
+        name,
+        country,
+        latitude,
+        longitude,
+        description,
+      ];
 
   Pin copyWith({
     String id,
     String userId,
     String name,
     String country,
-    double lat,
-    double lng,
+    double latitude,
+    double longitude,
     String description,
   }) {
     return Pin(
@@ -36,8 +44,8 @@ class Pin extends Equatable {
       userId: userId ?? this.userId,
       name: name ?? this.name,
       country: country ?? this.country,
-      lat: lat ?? this.lat,
-      lng: lng ?? this.lng,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       description: description ?? this.description,
     );
   }
@@ -53,24 +61,24 @@ class Pin extends Equatable {
       userId.hashCode ^
       name.hashCode ^
       country.hashCode ^
-      lat.hashCode ^
-      lng.hashCode ^
+      latitude.hashCode ^
+      longitude.hashCode ^
       description.hashCode;
 
   @override
   String toString() {
-    return 'Pin { id: $id, userId: $userId, name: $name, country: $country lat: $lat, lng: $lng, description: $description}';
+    return 'Pin { id: $id, userId: $userId, name: $name, country: $country latitude: $latitude, longitude: $longitude, description: $description}';
   }
 
-  LatLng toLatLng() => LatLng(lat, lng);
+  LatLng toLatLng() => LatLng(latitude, longitude);
 
   Map<String, dynamic> toJson() {
     return {
       "userId": userId,
       "name": name,
       "country": country,
-      "lat": lat,
-      "lng": lng,
+      "latitude": latitude,
+      "longitude": longitude,
       "description": description
     };
   }
@@ -81,8 +89,8 @@ class Pin extends Equatable {
       userId: json["userId"] as String,
       name: json["name"] as String,
       country: json["country"] as String,
-      lat: json["lat"] as double,
-      lng: json["lng"] as double,
+      latitude: json["latitude"] as double,
+      longitude: json["longitude"] as double,
       description: json["description"] as String,
     );
   }

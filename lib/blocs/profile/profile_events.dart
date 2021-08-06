@@ -5,14 +5,14 @@ abstract class ProfileEvent extends Equatable {
 }
 
 class LoadProfile extends ProfileEvent {
-  const LoadProfile(this.id);
-  final String id;
+  const LoadProfile(this.user);
+  final User user;
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [user];
 
   @override
-  String toString() => 'LoadProfile { id: $id }';
+  String toString() => 'LoadProfile { id: $user }';
 }
 
 class UnlockCountry extends ProfileEvent {

@@ -8,7 +8,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _profileRepository = profileRepository,
         super(ProfileUninitialized()) {
     _subscription = _authenticationRepository.user.listen((user) {
-      add(LoadProfile(user.id));
+      add(LoadProfile(user));
     });
   }
 
@@ -34,10 +34,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapLoadProfileToState(LoadProfile event) async* {
     yield ProfileLoading();
-
-    var profile = await _profileRepository.getProfile(event.id);
-
-    yield ProfileLoaded(profile: profile);
+    var profile = await _profileRepository.getProfile(event.user.id);
+    yield ProfileLoaded(profile: profile, user: event.user);
   }
 
   Stream<ProfileState> _mapUnlockCountryToProfile(UnlockCountry event) async* {
@@ -51,7 +49,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       profile = profile.copyWith(unlockedCountries: unlockedCountries);
       await _profileRepository.updateProfile(profile);
 
-      yield ProfileLoaded(profile: profile);
+      yield ProfileLoaded(
+        profile: profile,
+        user: (state as ProfileLoaded).user,
+      );
     }
   }
 }

@@ -3,6 +3,16 @@ part of screens;
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
 
+  static show(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => ProfileScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
   @override
   State createState() => _ProfileScreenState();
 }
@@ -11,34 +21,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profil'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings_outlined),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => SettingsScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-          if (state is ProfileLoaded) {
-            return ListView(
-              children: <Widget>[
-                Column(
+          final isProfileLoaded = state is ProfileLoaded;
+          final content = isProfileLoaded
+              ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     //ProfileImage(),
+                    /*CircleAvatar(
+                              backgroundColor: Colors.brown.shade800,
+                              backgroundImage: NetworkImage(state.user?.photo),
+                            ),*/
                     SizedBox(height: 25.0),
                     Text(
-                      state.profile.firstName,
+                      '',
+                      //'${state.profile.firstName} ${state.profile.lastName}',
                       style: Theme.of(context).textTheme.headline5,
                     ),
                     SizedBox(height: 10.0),
@@ -110,12 +108,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ],
-                ),
-              ],
-            );
-          }
+                )
+              : TopCircularProgressIndicator();
 
-          return Container();
+          return CustomScrollView(
+            physics: !isProfileLoaded ? NeverScrollableScrollPhysics() : null,
+            slivers: [
+              SliverAppBar(
+                title: Text('Profil'),
+                pinned: true,
+              ),
+              SliverList(delegate: SliverChildListDelegate.fixed([content])),
+            ],
+          );
         },
       ),
     );

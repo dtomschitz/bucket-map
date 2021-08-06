@@ -28,13 +28,15 @@ dependencies:
   shimmer: ^2.0.0
   image_picker: ^0.8.0+3
   grouped_list: ^3.0.1
+  animations: ^2.0.1
+
   # Custom Packages
   cache:
     path: packages/cache
   mapbox_gl:
     path: packages/mapbox
-  animations: ^2.0.1
-  sliding_sheet: ^0.5.0
+  sliding_sheet:
+    path: packages/sliding_sheet
 
 dev_dependencies:
   flutter_test:
