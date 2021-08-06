@@ -25,10 +25,9 @@ class CountriesMapController with ChangeNotifier {
   Future<List<Symbol>> addPins(List<Pin> pins) {
     final symbols = pins.map((pin) {
       return SymbolOptions(
-        geometry: LatLng(pin.lat, pin.lng),
+        geometry: LatLng(pin.latitude, pin.longitude),
         iconImage: state.iconImage,
         iconSize: state.iconSize,
-        iconColor: '#fffff',
         draggable: false,
       );
     }).toList();

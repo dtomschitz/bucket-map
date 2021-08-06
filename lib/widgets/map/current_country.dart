@@ -42,8 +42,8 @@ class _CurrentCountryState extends State<CurrentCountry>
       curve: Curves.easeIn,
     );
 
-    _subscription =
-        BlocProvider.of<CountriesBloc>(context).stream.listen((state) {
+    var bloc = BlocProvider.of<CountriesBloc>(context);
+    _subscription = bloc.stream.listen((state) {
       if (state is CountriesLoaded) {
         if (state.viewPort != null) {
           _controller.forward();
@@ -99,7 +99,10 @@ class _CurrentCountryState extends State<CurrentCountry>
                   child: Text(
                     _name,
                     key: ValueKey<String>(_name),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),

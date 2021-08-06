@@ -1,7 +1,19 @@
 part of widgets;
 
 class PinPreviewCard extends StatelessWidget {
-  PinPreviewCard({this.onTap});
+  PinPreviewCard({
+    @required this.coordinates,
+    this.height = 215,
+    this.elevation = 6.0,
+    this.padding = const EdgeInsets.all(0),
+    this.onTap,
+  });
+
+  final LatLng coordinates;
+
+  final double height;
+  final double elevation;
+  final EdgeInsets padding;
 
   final Function() onTap;
   final CountriesMapController controller = CountriesMapController();
@@ -10,37 +22,32 @@ class PinPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.all(Radius.circular(16));
 
-    return SizedBox(
-      height: 215,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        elevation: 6,
-        child: ClipRRect(
-          borderRadius: borderRadius,
-          child: InkWell(
-            splashColor: Colors.black,
+    return Padding(
+      padding: padding,
+      child: SizedBox(
+        height: height,
+        child: Card(
+          margin: EdgeInsets.all(0),
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          elevation: elevation,
+          child: ClipRRect(
             borderRadius: borderRadius,
-            onTap: onTap?.call,
-            child: AbsorbPointer(
-              child: Opacity(
-                opacity: .87,
-                child: CountriesMap(
-                  controller: controller,
-                  /*initialCameraPosition: CameraPosition(
-                  target: country.latLng,
-                  zoom: 1,
-                ),*/
-                  zoomGesturesEnabled: false,
-                  scrollGesturesEnabled: false,
-                  disableUserLocation: true,
-                  onMapCreated: () async {
-                    //await controller.setUnlockedCountries([country.code]);
-                    //Future.delayed(const Duration(milliseconds: 200), () async {
-                    //  await controller.moveCameraToCountry(country);
-                    //});
-                  },
-                ),
+            child: CountriesMap(
+              controller: controller,
+              initialCameraPosition: CameraPosition(
+                target: coordinates,
+                zoom: 12,
               ),
+              zoomGesturesEnabled: false,
+              scrollGesturesEnabled: false,
+              disableUserLocation: true,
+              onMapCreated: () async {
+                //await controller.setUnlockedCountries([country.code]);
+                await controller.addPin(coordinates);
+                Future.delayed(const Duration(milliseconds: 200), () async {
+                  await controller.moveCameraToPosition(coordinates, zoom: 10);
+                });
+              },
             ),
           ),
         ),

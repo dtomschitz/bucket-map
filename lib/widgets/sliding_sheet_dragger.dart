@@ -1,7 +1,9 @@
 part of widgets;
 
 class SlidingSheetDragger extends StatelessWidget {
-  const SlidingSheetDragger({this.padding});
+  const SlidingSheetDragger({
+    this.padding = const EdgeInsets.only(top: 8, bottom: 8),
+  });
 
   final EdgeInsets padding;
 
@@ -12,7 +14,7 @@ class SlidingSheetDragger extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.0),
+          borderRadius: BorderRadius.circular(50.0),
           child: Container(
             width: 36,
             height: 4,
