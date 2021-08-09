@@ -51,6 +51,8 @@ flutter:
     - default_profile_picture.png
     - location_pin.png
     - cities.json
+    - cities_3.json
+    - custom.geojson
 
 flutter_icons:
   image_path: "assets/icon.png"

@@ -111,34 +111,27 @@ class _SaveLocationState extends State<SaveLocation> {
   }
 
   calculateNearestCity(Symbol symbol) async {
-    final geo = GeoJson();
-
-    final data = await rootBundle.loadString('assets/countries.geojson');
-    await geo.parse(data, verbose: true, nameProperty: 'ADMIN');
-
     final pinLocation = GeoJsonPoint(
         geoPoint: gp.GeoPoint(
             latitude: symbol.options.geometry.latitude,
             longitude: symbol.options.geometry.longitude),
         name: symbol.id);
 
- 
     // for (var polygon in geo.polygons.where((element) => element.name.allMatches('Germany')) {
     //   final data =
     //       await geo.geofencePolygon(polygon: polygon, points: [pinLocation]);
     //   if (data.isNotEmpty) print(polygon);
     //   print(polygon.name);
     // }
-  
 
     List<dynamic> json = jsonDecode(
       await rootBundle.loadString('assets/cities_3.json'),
     );
 
     List<City> cities = json.map((c) => City.fromJson(c)).toList();
-    City city;
+    List<City> nearestCities = [City(name: "test"), City(name: "test")];
 
-    double lowestDistance = 5000000;
+    List<double> lowestDistance = [500000, 500000];
     double distance;
     var cityListIter = cities.iterator;
 
@@ -150,20 +143,58 @@ class _SaveLocationState extends State<SaveLocation> {
         symbol.options.geometry.longitude,
       );
 
-      if (distance < lowestDistance) {
-        lowestDistance = distance;
-        city = cityListIter.current;
+      if (distance < lowestDistance[0]) {
+        if (cityListIter.current.country != nearestCities[0].country) {
+          lowestDistance[1] = lowestDistance[0];
+          nearestCities[1] = nearestCities[0];
+        }
+        nearestCities[0] = cityListIter.current;
+        lowestDistance[0] = distance;
+      } else if (distance < lowestDistance[1]) {
+        if (cityListIter.current.country != nearestCities[0].country) {
+          lowestDistance[1] = distance;
+          nearestCities[1] = cityListIter.current;
+        }
       }
     }
 
-
-
     print("XXXXXXXXXXXXXXXXXXXXXXXXXXX");
-    var geofencedCity = await geo.geofencePolygon(polygon: geo.polygons.where((element) => element.name==city.isoA3).elementAt(0), points: [pinLocation]);
-    if (geofencedCity.isNotEmpty){
-      print("Correct Country");
-    }
+    print(cities[0].isoA3);
 
-    setState(() => _city = city);
+    await unnamedfunction(nearestCities, pinLocation);
+  }
+
+  unnamedfunction(List<City> cities, GeoJsonPoint pinLocation) async {
+    final geo = GeoJson();
+
+    final data = await rootBundle.loadString('assets/custom.geojson');
+    await geo.parse(data, verbose: true, nameProperty: 'iso_a3');
+    for (City city in cities) {
+      print(city.name);
+      List<GeoJsonPolygon> polygons;
+      if (geo.polygons.where((element) => element.name == city.isoA3).isEmpty) {
+        polygons = geo.multiPolygons
+            .where((element) => element.name == city.isoA3)
+            .first
+            .polygons
+            .toList();
+      } else {
+        polygons = geo.polygons
+            .where((element) => element.name == city.isoA3)
+            .toList();
+      }
+
+      print(polygons.length);
+
+      for (GeoJsonPolygon polygon in polygons) {
+        var geofencedCity =
+            await geo.geofencePolygon(polygon: polygon, points: [pinLocation]);
+        if (geofencedCity.isNotEmpty) {
+          print("Correct Country");
+          setState(() => _city = city);
+          return;
+        }
+      }
+    }
   }
 }
