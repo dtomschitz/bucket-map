@@ -111,6 +111,24 @@ class _SaveLocationState extends State<SaveLocation> {
   }
 
   calculateNearestCity(Symbol symbol) async {
+    final geo = GeoJson();
+
+    final data = await rootBundle.loadString('assets/countries.geojson');
+    await geo.parse(data, verbose: true);
+
+    final pinLocation = GeoJsonPoint(
+        geoPoint: gp.GeoPoint(
+            latitude: symbol.options.geometry.latitude,
+            longitude: symbol.options.geometry.longitude),
+        name: symbol.id);
+
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+    for (var polygon in geo.polygons) {
+      final data =
+          await geo.geofencePolygon(polygon: polygon, points: [pinLocation]);
+      if (data.isNotEmpty) print(polygon.name);
+    }
+
     List<dynamic> json = jsonDecode(
       await rootBundle.loadString('assets/cities.json'),
     );

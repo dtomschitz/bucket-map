@@ -33,6 +33,7 @@ dependencies:
     path: packages/cache
   mapbox_gl:
     path: packages/mapbox
+  geojson: ^1.0.0
 
 dev_dependencies:
   flutter_test:
