@@ -114,7 +114,7 @@ class _SaveLocationState extends State<SaveLocation> {
     final geo = GeoJson();
 
     final data = await rootBundle.loadString('assets/countries.geojson');
-    await geo.parse(data, verbose: true);
+    await geo.parse(data, verbose: true, nameProperty: 'ADMIN');
 
     final pinLocation = GeoJsonPoint(
         geoPoint: gp.GeoPoint(
@@ -122,15 +122,17 @@ class _SaveLocationState extends State<SaveLocation> {
             longitude: symbol.options.geometry.longitude),
         name: symbol.id);
 
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-    for (var polygon in geo.polygons) {
-      final data =
-          await geo.geofencePolygon(polygon: polygon, points: [pinLocation]);
-      if (data.isNotEmpty) print(polygon.name);
-    }
+ 
+    // for (var polygon in geo.polygons.where((element) => element.name.allMatches('Germany')) {
+    //   final data =
+    //       await geo.geofencePolygon(polygon: polygon, points: [pinLocation]);
+    //   if (data.isNotEmpty) print(polygon);
+    //   print(polygon.name);
+    // }
+  
 
     List<dynamic> json = jsonDecode(
-      await rootBundle.loadString('assets/cities.json'),
+      await rootBundle.loadString('assets/cities_3.json'),
     );
 
     List<City> cities = json.map((c) => City.fromJson(c)).toList();
@@ -152,6 +154,14 @@ class _SaveLocationState extends State<SaveLocation> {
         lowestDistance = distance;
         city = cityListIter.current;
       }
+    }
+
+
+
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXX");
+    var geofencedCity = await geo.geofencePolygon(polygon: geo.polygons.where((element) => element.name==city.isoA3).elementAt(0), points: [pinLocation]);
+    if (geofencedCity.isNotEmpty){
+      print("Correct Country");
     }
 
     setState(() => _city = city);

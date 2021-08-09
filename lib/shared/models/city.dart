@@ -4,11 +4,13 @@ class City extends Equatable {
   final String name;
   final LatLng latLng;
   final String country;
+  final String isoA3;
 
   const City({
     @required this.name,
     this.latLng,
     this.country,
+    this.isoA3
   });
 
   factory City.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,7 @@ class City extends Equatable {
         double.parse(json['lat']),
         double.parse(json['lng']),
       ),
+      isoA3: json['ISO_A3']
     );
   }
 
