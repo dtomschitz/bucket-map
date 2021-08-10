@@ -4,5 +4,5 @@ class AppConstants {
   static const MAPBOX_LIGHT_STYLE_URL =
       "mapbox://styles/daviddo3399/cks5y61010nzl17pe7eklocpz";
   static const MAPBOX_DARK_STYLE_URL =
-      "mapbox://styles/daviddo3399/cks5y61010nzl17pe7eklocpz";
+      "mapbox://styles/daviddo3399/cks5y5bsa63t617q6r9lpcsiz";
 }

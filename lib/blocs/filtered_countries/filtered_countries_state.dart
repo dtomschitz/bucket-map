@@ -8,7 +8,10 @@ abstract class FilteredCountriesState extends Equatable {
   List<Object> get props => [];
 }
 
-class FilteredCountriesLoading extends FilteredCountriesState {}
+class FilteredCountriesLoading extends FilteredCountriesState {
+  @override
+  String toString() => 'FilteredCountriesLoading';
+}
 
 class FilteredCountriesLoaded extends FilteredCountriesState {
   const FilteredCountriesLoaded({
@@ -24,6 +27,7 @@ class FilteredCountriesLoaded extends FilteredCountriesState {
 
   @override
   String toString() {
-    return 'FilteredCountriesLoadSuccess { filteredCountries: $countries, filter: $filter }';
+    final length = countries.length;
+    return 'FilteredCountriesLoaded { filteredCountries: $length, filter: $filter }';
   }
 }

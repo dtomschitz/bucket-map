@@ -22,7 +22,9 @@ class CountryView extends StatelessWidget {
               onTap: () async {
                 final country = await CountrySearch.show(context);
                 context.read<RegisterCubit>().countryChanged(country);
-                controller.text = country.name;
+                if (country != null) {
+                  controller.text = country.name;
+                }
               },
               labelText: 'Land wählen',
             ),

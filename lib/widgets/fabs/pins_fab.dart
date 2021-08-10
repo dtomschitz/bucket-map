@@ -20,7 +20,7 @@ class _PinsFabState extends State<PinsFab> {
       },
       closedBuilder: (context, openContainer) {
         return FloatingActionButton(
-          child: Icon(Icons.explore_outlined),
+          child: Icon(Icons.bookmark_outline),
           onPressed: () {
             openContainer();
           },

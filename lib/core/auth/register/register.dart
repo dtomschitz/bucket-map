@@ -45,6 +45,7 @@ class RegisterPage extends StatelessWidget {
           controller: controller,
           scrollDirection: Axis.horizontal,
           physics: NeverScrollableScrollPhysics(),
+          
           children: <Widget>[
             NameView(onNextView: () => jumpToPage(1)),
             EmailView(

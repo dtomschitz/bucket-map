@@ -7,7 +7,8 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
         super(CountriesUninitialized()) {
     _subscription = _profileBloc.stream.listen((state) {
       if (state is ProfileLoaded) {
-        add(LoadCountries());
+        var countries = state.profile.unlockedCountryCodes;
+        add(LoadUnlockedCountries(countries: countries));
       }
     });
   }
@@ -25,6 +26,8 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   Stream<CountriesState> mapEventToState(CountriesEvent event) async* {
     if (event is LoadCountries) {
       yield* _mapLoadCountriesToState(event);
+    } else if (event is LoadUnlockedCountries) {
+      yield* _mapLoadUnlockedCountriesToState(event);
     } else if (event is UpdateViewPortCountry) {
       yield* _mapUpdateViewPortCountryToState(event);
     }
@@ -32,11 +35,24 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
 
   Stream<CountriesState> _mapLoadCountriesToState(LoadCountries event) async* {
     yield CountriesLoading();
-
-    var profile = (_profileBloc.state as ProfileLoaded).profile;
-    var countries = await _loadCountries(profile.unlockedCountryCodes);
-
+    var countries = await _loadCountries();
     yield CountriesLoaded(countries: countries);
+  }
+
+  Stream<CountriesState> _mapLoadUnlockedCountriesToState(
+    LoadUnlockedCountries event,
+  ) async* {
+    if (state is CountriesLoaded) {
+      var countries = (state as CountriesLoaded).countries;
+      var unlockedCountries = event.countries;
+
+      countries = countries.map((country) {
+        bool unlocked = unlockedCountries.contains(country.code);
+        return country.copyWith(unlocked: unlocked);
+      }).toList();
+
+      yield CountriesLoaded(countries: countries);
+    }
   }
 
   Stream<CountriesState> _mapUpdateViewPortCountryToState(
@@ -65,14 +81,9 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     }
   }
 
-  Future<List<Country>> _loadCountries(List<String> unlockedCountries) async {
+  Future<List<Country>> _loadCountries() async {
     List<dynamic> json = jsonDecode(await _loadCountriesAssets());
     var countries = json.map((country) => Country.fromJson(country)).toList();
-
-    countries = countries.map((country) {
-      bool unlocked = unlockedCountries.contains(country.code);
-      return country.copyWith(unlocked: unlocked);
-    }).toList();
 
     return countries;
   }

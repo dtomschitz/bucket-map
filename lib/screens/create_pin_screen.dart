@@ -33,9 +33,6 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final latitude = widget.coordinates.latitude;
-    final longitude = widget.coordinates.longitude;
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -105,7 +102,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
             );
 
             BlocProvider.of<PinsBloc>(context).add(AddPin(pin: pin));
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.pop(context);
           }
         },
       ),

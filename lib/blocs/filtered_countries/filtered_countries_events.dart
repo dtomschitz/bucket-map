@@ -35,5 +35,5 @@ class FilteredCountriesUpdated extends CountriesFilterEvent {
   List<Object> get props => [countries];
 
   @override
-  String toString() => 'FilteredCountriesUpdated { countries: $countries }';
+  String toString() => 'FilteredCountriesUpdated';
 }

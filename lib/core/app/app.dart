@@ -63,7 +63,7 @@ class App extends StatelessWidget {
           BlocProvider<CountriesBloc>(
             create: (context) => CountriesBloc(
               profileBloc: BlocProvider.of<ProfileBloc>(context),
-            ),
+            )..add(LoadCountries()),
           ),
           BlocProvider<FilteredCountriesBloc>(
             create: (context) => FilteredCountriesBloc(

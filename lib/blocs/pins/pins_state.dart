@@ -28,6 +28,10 @@ class PinsLoaded extends PinsState {
     return PinsLoaded(pins ?? this.pins);
   }
 
+  List<Pin> getPinsByCountry(Country country) {
+    return pins.where((pin) => pin.country == country.code).toList();
+  }
+
   @override
   List<Object> get props => [pins];
 

@@ -46,15 +46,12 @@ class _CountriesMapScreenState extends State<CountriesMapScreen> {
         controller: mapController,
         onStyleLoaded: () {
           _initProfileListener();
-          _initPinsListener();
+          //_initPinsListener();
         },
         onMapClick: _createPin,
         onMapLongClick: _unlockCountry,
         onCameraIdle: (position, bounds) {
-          //_updateViewPortCountry(position);
-        },
-        onCameraPositionChanged: (position) {
-          //print('test');
+          _updateViewPortCountry(position);
         },
       ),
       floatingActionButton: PinsFab(),

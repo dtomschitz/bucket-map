@@ -86,7 +86,7 @@ class Profile {
       lastName: json["lastName"] as String,
       country: json["country"] as String,
       unlockedCountries: List.from(json["unlockedCountries"])
-          .map((json) => UnlockedCountry.fromJson(json))
+          .map((country) => UnlockedCountry.fromJson(country))
           .toList(),
     );
   }

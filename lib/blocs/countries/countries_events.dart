@@ -11,7 +11,18 @@ class LoadCountries extends CountriesEvent {
   List<Object> get props => [];
 
   @override
-  String toString() => 'LoadCountries { }';
+  String toString() => 'LoadCountries';
+}
+
+class LoadUnlockedCountries extends CountriesEvent {
+  const LoadUnlockedCountries({this.countries});
+  final List<String> countries;
+
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() => 'UpdateUnlockedCountries';
 }
 
 class UpdateViewPortCountry extends CountriesEvent {
