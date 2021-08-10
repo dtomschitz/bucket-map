@@ -52,13 +52,15 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapClearFilterToState(
     ClearCountriesFilter event,
   ) async* {
-    var countries = (_countriesBloc.state as CountriesLoaded).countries;
-    var filter = "";
+    if (_countriesBloc.state is CountriesLoaded) {
+      var countries = (_countriesBloc.state as CountriesLoaded).countries;
+      var filter = "";
 
-    yield FilteredCountriesLoaded(
-      countries: _filterCountries(countries, filter),
-      filter: filter,
-    );
+      yield FilteredCountriesLoaded(
+        countries: _filterCountries(countries, filter),
+        filter: filter,
+      );
+    }
   }
 
   Stream<FilteredCountriesState> _mapCountriesToState(

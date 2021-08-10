@@ -74,7 +74,7 @@ class AuthenticationRepository {
           firstName: firstName,
           lastName: lastName,
           country: country.code,
-          unlockedCountries: [country.code],
+          unlockedCountries: [UnlockedCountry.now(country.code)],
         ),
       );
     } on Exception {

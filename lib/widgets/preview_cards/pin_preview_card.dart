@@ -16,7 +16,7 @@ class PinPreviewCard extends StatelessWidget {
   final EdgeInsets padding;
 
   final Function() onTap;
-  final CountriesMapController controller = CountriesMapController();
+  final MapController controller = MapController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class PinPreviewCard extends StatelessWidget {
           elevation: elevation,
           child: ClipRRect(
             borderRadius: borderRadius,
-            child: CountriesMap(
+            child: Map(
               controller: controller,
               initialCameraPosition: CameraPosition(
                 target: coordinates,

@@ -12,6 +12,12 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text('Gespeichert'),
         actions: [
           IconButton(

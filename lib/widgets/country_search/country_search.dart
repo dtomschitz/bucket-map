@@ -48,4 +48,26 @@ class CountrySearch extends SearchDelegate<Country> {
 
   @override
   String get searchFieldLabel => label;
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+
+    return theme.copyWith(
+      appBarTheme: AppBarTheme(
+        brightness: colorScheme.brightness,
+        backgroundColor: colorScheme.brightness == Brightness.dark
+            ? Colors.grey[850]
+            : Colors.white,
+        //iconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
+        textTheme: theme.textTheme,
+      ),
+      inputDecorationTheme: searchFieldDecorationTheme ??
+          InputDecorationTheme(
+            hintStyle: searchFieldStyle ?? theme.inputDecorationTheme.hintStyle,
+            border: InputBorder.none,
+          ),
+    );
+  }
 }

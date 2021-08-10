@@ -34,7 +34,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     yield CountriesLoading();
 
     var profile = (_profileBloc.state as ProfileLoaded).profile;
-    var countries = await _loadCountries(profile.unlockedCountries);
+    var countries = await _loadCountries(profile.unlockedCountryCodes);
 
     yield CountriesLoaded(countries: countries);
   }

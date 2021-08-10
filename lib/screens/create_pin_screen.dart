@@ -78,11 +78,9 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                         elevation: 0,
                         padding: EdgeInsets.all(16),
                       ),
-                      ListTile(
-                        leading: Icon(Icons.place_outlined),
-                        title: Text('Aktuelle Position'),
-                        subtitle: Text('$latitude $longitude'),
-                        onTap: _copyCoordinates,
+                      LocationListTile(
+                        title: Text('Aktuelle Koordinaten'),
+                        coordinates: widget.coordinates,
                       ),
                     ],
                   ),
@@ -131,15 +129,5 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         setState(() => _country = country);
       }
     }
-  }
-
-  _copyCoordinates() {
-    final latitude = widget.coordinates.latitude;
-    final longitude = widget.coordinates.longitude;
-
-    var data = ClipboardData(text: '$latitude, $longitude');
-    Clipboard.setData(data);
-
-    showSnackbar(context, CopyToClipboardSnackBar());
   }
 }

@@ -1,9 +1,9 @@
 part of widgets;
 
-class CountriesMapController with ChangeNotifier {
-  _CountriesMapState state;
+class MapController with ChangeNotifier {
+  _MapState state;
 
-  void setState(_CountriesMapState state) {
+  void setState(_MapState state) {
     this.state = state;
   }
 
@@ -29,6 +29,8 @@ class CountriesMapController with ChangeNotifier {
         iconImage: state.iconImage,
         iconSize: state.iconSize,
         draggable: false,
+        //textField: pin.name,
+        //textOffset: Offset(0, state.iconSize * 10),
       );
     }).toList();
 
@@ -96,12 +98,14 @@ class CountriesMapController with ChangeNotifier {
 
   Future<void> setUnlockedCountries(List<String> countries) {
     if (countries.isNotEmpty) {
+      final safeList = countries.toSet().toList();
+
       return state._mapController.setFilter(
         'country-boundaries',
         [
           "match",
           ["get", "iso_3166_1"],
-          countries,
+          safeList,
           true,
           false
         ],

@@ -41,13 +41,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Stream<ProfileState> _mapUnlockCountryToProfile(UnlockCountry event) async* {
     if (state is ProfileLoaded) {
       var profile = (state as ProfileLoaded).profile;
-      if (profile.unlockedCountries.contains(event.code)) {
+      if (profile.unlockedCountryCodes.contains(event.code)) {
         return;
       }
 
       var unlockedCountries = [
         ...profile.unlockedCountries,
-        event.code,
+        UnlockedCountry.now(event.code),
       ].toList();
 
       profile = profile.copyWith(unlockedCountries: unlockedCountries);

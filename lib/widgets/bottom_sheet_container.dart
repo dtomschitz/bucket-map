@@ -2,10 +2,14 @@ part of widgets;
 
 class BottomSheetContainer extends StatelessWidget {
   BottomSheetContainer(
-      {this.title, List<Widget> children, MainAxisSize mainAxisSize})
+      {this.title,
+      this.leading,
+      List<Widget> children,
+      MainAxisSize mainAxisSize})
       : children = children ?? [],
         mainAxisSize = mainAxisSize ?? MainAxisSize.min;
 
+  final Widget leading;
   final String title;
   final List<Widget> children;
   final MainAxisSize mainAxisSize;
@@ -22,7 +26,7 @@ class BottomSheetContainer extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.only(right: 16),
-                  child: Icon(Icons.place_outlined),
+                  child: leading,
                 ),
                 Text(
                   title,

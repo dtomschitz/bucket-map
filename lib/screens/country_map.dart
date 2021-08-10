@@ -5,7 +5,7 @@ class CountryMap extends StatelessWidget {
 
   final Country country;
 
-  final CountriesMapController controller = CountriesMapController();
+  final MapController controller = MapController();
   final PageController pageController = PageController(
     viewportFraction: 0.8,
     initialPage: 0,
@@ -26,7 +26,7 @@ class CountryMap extends StatelessWidget {
 
             return Stack(
               children: [
-                CountriesMap(
+                Map(
                   controller: controller,
                   disableUserLocation: true,
                   onMapCreated: () async {

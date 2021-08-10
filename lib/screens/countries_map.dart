@@ -8,7 +8,7 @@ class CountriesMapScreen extends StatefulWidget {
 }
 
 class _CountriesMapScreenState extends State<CountriesMapScreen> {
-  final CountriesMapController mapController = CountriesMapController();
+  final MapController mapController = MapController();
 
   StreamSubscription _profileSubscription;
   StreamSubscription _pinsSubscription;
@@ -41,7 +41,7 @@ class _CountriesMapScreenState extends State<CountriesMapScreen> {
         onProfile: () => ProfileScreen.show(context),
         onUnlockedCountries: () => UnlockedCountriesScreen.show(context),
       ),
-      body: CountriesMap(
+      body: Map(
         key: GlobalKeys.countriesMap,
         controller: mapController,
         onStyleLoaded: () {
@@ -50,8 +50,14 @@ class _CountriesMapScreenState extends State<CountriesMapScreen> {
         },
         onMapClick: _createPin,
         onMapLongClick: _unlockCountry,
-        onCameraIdle: _updateViewPortCountry,
+        onCameraIdle: (position, bounds) {
+          //_updateViewPortCountry(position);
+        },
+        onCameraPositionChanged: (position) {
+          //print('test');
+        },
       ),
+      floatingActionButton: PinsFab(),
     );
   }
 
@@ -60,13 +66,13 @@ class _CountriesMapScreenState extends State<CountriesMapScreen> {
     var state = bloc.state;
 
     if (state is ProfileLoaded) {
-      var countries = state.profile.unlockedCountries;
+      var countries = state.profile.unlockedCountryCodes;
       mapController.setUnlockedCountries(countries);
     }
 
     _profileSubscription = bloc.stream.listen((state) {
       if (state is ProfileLoaded) {
-        mapController.setUnlockedCountries(state.profile.unlockedCountries);
+        mapController.setUnlockedCountries(state.profile.unlockedCountryCodes);
       }
     });
   }

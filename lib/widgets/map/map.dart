@@ -1,7 +1,7 @@
 part of widgets;
 
-class CountriesMap extends StatefulWidget {
-  const CountriesMap({
+class Map extends StatefulWidget {
+  const Map({
     Key key,
     this.controller,
     this.onMapCreated,
@@ -30,12 +30,15 @@ class CountriesMap extends StatefulWidget {
         this.disableUserLocation = disableUserLocation ?? false,
         super(key: key);
 
-  final CountriesMapController controller;
+  final MapController controller;
 
   final Function() onMapCreated;
   final Function() onStyleLoaded;
 
-  final Function(CameraPosition cameraPosition) onCameraIdle;
+  final Function(
+    CameraPosition cameraPosition,
+    LatLngBounds bounds,
+  ) onCameraIdle;
   final Function(CameraPosition cameraPosition) onCameraPositionChanged;
 
   final Function(Point<double> point, LatLng coordinates) onMapClick;
@@ -54,18 +57,17 @@ class CountriesMap extends StatefulWidget {
   final bool disableUserLocation;
 
   @override
-  State createState() => _CountriesMapState(
-        controller ?? CountriesMapController(),
+  State createState() => _MapState(
+        controller ?? MapController(),
       );
 }
 
-class _CountriesMapState extends State<CountriesMap>
-    with TickerProviderStateMixin {
-  _CountriesMapState(this.controller) {
+class _MapState extends State<Map> with TickerProviderStateMixin {
+  _MapState(this.controller) {
     this.controller.setState(this);
   }
 
-  final CountriesMapController controller;
+  final MapController controller;
   final iconImage = "location_pin";
   final iconSize = 0.12;
   final defaultZoom = 8.0;
@@ -99,10 +101,10 @@ class _CountriesMapState extends State<CountriesMap>
 
   _onMapCreated(MapboxMapController controller) async {
     _mapController = controller;
-
+    
     final ByteData bytes = await rootBundle.load("assets/location_pin.png");
     final Uint8List list = bytes.buffer.asUint8List();
-    await controller.addImage("location_pin", list);
+    await _mapController.addImage("location_pin", list);
 
     _mapController.addListener(() {
       if (widget.onCameraPositionChanged != null) {
@@ -134,31 +136,26 @@ class _CountriesMapState extends State<CountriesMap>
               ? AppConstants.MAPBOX_DARK_STYLE_URL
               : AppConstants.MAPBOX_LIGHT_STYLE_URL;
 
-          return GestureDetector(
-
-            child: MapboxMap(
-              key: GlobalKeys.mapbox,
-              accessToken: accessToken,
-              styleString: style,
-              initialCameraPosition: widget.initialCameraPosition,
-              cameraTargetBounds: widget.cameraTargetBounds,
-              compassEnabled: false,
-              tiltGesturesEnabled: widget.tiltGesturesEnabled,
-              rotateGesturesEnabled: widget.rotateGesturesEnabled,
-              zoomGesturesEnabled: widget.zoomGesturesEnabled,
-              scrollGesturesEnabled: widget.scrollGesturesEnabled,
-              trackCameraPosition: true,
-              /*myLocationEnabled: widget.disableUserLocation
-                    ? false
-                    : snapshot.data == PermissionStatus.granted,*/
-              onMapCreated: _onMapCreated,
-              onStyleLoaded: _onStyleLoaded,
-              onCameraIdle: () {
-                widget.onCameraIdle?.call(_mapController.cameraPosition);
-              },
-              onMapClick: widget.onMapClick?.call,
-              onMapLongClick: widget.onMapLongClick?.call,
-            ),
+          return MapboxMap(
+            key: GlobalKeys.mapbox,
+            accessToken: accessToken,
+            styleString: style,
+            initialCameraPosition: widget.initialCameraPosition,
+            cameraTargetBounds: widget.cameraTargetBounds,
+            compassEnabled: false,
+            tiltGesturesEnabled: widget.tiltGesturesEnabled,
+            rotateGesturesEnabled: widget.rotateGesturesEnabled,
+            zoomGesturesEnabled: widget.zoomGesturesEnabled,
+            scrollGesturesEnabled: widget.scrollGesturesEnabled,
+            trackCameraPosition: true,
+            onMapCreated: _onMapCreated,
+            onStyleLoaded: _onStyleLoaded,
+            onCameraIdle: () async {
+              final bounds = await _mapController.getVisibleRegion();
+              widget.onCameraIdle?.call(_mapController.cameraPosition, bounds);
+            },
+            onMapClick: widget.onMapClick?.call,
+            onMapLongClick: widget.onMapLongClick?.call,
           );
         },
       ),

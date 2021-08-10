@@ -64,3 +64,47 @@ class Country extends Equatable {
   String toString() =>
       'Country { name: $name code: $code, unlocked: $unlocked }';
 }
+
+class UnlockedCountry extends Equatable {
+  const UnlockedCountry({
+    @required this.code,
+    @required this.dateTime,
+  });
+
+  final String code;
+  final DateTime dateTime;
+
+  static UnlockedCountry now(String code) {
+    return UnlockedCountry(code: code, dateTime: DateTime.now());
+  }
+
+  UnlockedCountry copyWith({
+    String code,
+    DateTime dateTime,
+  }) {
+    return UnlockedCountry(
+      code: code ?? this.code,
+      dateTime: dateTime ?? this.dateTime,
+    );
+  }
+
+  factory UnlockedCountry.fromJson(Map<String, dynamic> json) {
+    return UnlockedCountry(
+      code: json['code'],
+      dateTime: DateTime.parse(json['dateTime']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "code": code,
+      "dateTime": dateTime.toIso8601String(),
+    };
+  }
+
+  @override
+  List<Object> get props => [code, dateTime];
+
+  @override
+  String toString() => 'Country { code: $code, dateTime: $dateTime  }';
+}

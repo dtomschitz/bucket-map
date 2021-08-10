@@ -6,7 +6,7 @@ class CountryPreviewCard extends StatelessWidget {
   final Country country;
   final Function() onTap;
 
-  final CountriesMapController controller = CountriesMapController();
+  final MapController controller = MapController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class CountryPreviewCard extends StatelessWidget {
           child: AbsorbPointer(
             child: Opacity(
               opacity: .87,
-              child: CountriesMap(
+              child: Map(
                 controller: controller,
                 //initialCameraPosition: CameraPosition(
                 //target: country.latLng,

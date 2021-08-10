@@ -120,12 +120,14 @@ class UnlockedCountriesList extends StatelessWidget {
 
           return CountryListTile(
             country: country,
-            onTap: isUnlocked
-                ? null
-                : () {
-                    BlocProvider.of<ProfileBloc>(context)
-                        .add(UnlockCountry(country.code));
-                  },
+            onTap: () {
+              if (isUnlocked) {
+                UnlockedCountryBottomSheet.show(context, country);
+              } else {
+                BlocProvider.of<ProfileBloc>(context)
+                    .add(UnlockCountry(country.code));
+              }
+            },
             trailing: icon,
           );
         },

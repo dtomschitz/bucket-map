@@ -16,7 +16,7 @@ class Profile {
   final String firstName;
   final String lastName;
   final String country;
-  final List<String> unlockedCountries;
+  final List<UnlockedCountry> unlockedCountries;
 
   Profile copyWith({
     String id,
@@ -24,7 +24,7 @@ class Profile {
     String firstName,
     String lastName,
     String country,
-    List<String> unlockedCountries,
+    List<UnlockedCountry> unlockedCountries,
   }) {
     return Profile(
       id: id ?? this.id,
@@ -34,6 +34,14 @@ class Profile {
       country: country ?? this.country,
       unlockedCountries: unlockedCountries ?? this.unlockedCountries,
     );
+  }
+
+  bool isCountryUnlocked(String code) {
+    return unlockedCountries.contains((unlocked) => unlocked.code == code);
+  }
+
+  List<String> get unlockedCountryCodes {
+    return unlockedCountries.map((country) => country.code).toList();
   }
 
   @override
@@ -65,7 +73,8 @@ class Profile {
       "firstName": firstName,
       "lastName": lastName,
       "country": country,
-      "unlockedCountries": unlockedCountries
+      "unlockedCountries":
+          unlockedCountries.map((country) => country.toJson()).toList()
     };
   }
 
@@ -76,7 +85,9 @@ class Profile {
       firstName: json["firstName"] as String,
       lastName: json["lastName"] as String,
       country: json["country"] as String,
-      unlockedCountries: new List<String>.from(json["unlockedCountries"]),
+      unlockedCountries: List.from(json["unlockedCountries"])
+          .map((json) => UnlockedCountry.fromJson(json))
+          .toList(),
     );
   }
 }
