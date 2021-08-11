@@ -52,7 +52,6 @@ class Themes {
         backgroundColor: Colors.grey[850],
       ),
       scaffoldBackgroundColor: Colors.grey[850],
-      //backgroundColor: Colors.grey[850],
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(),
       ),
@@ -72,6 +71,7 @@ class Themes {
         iconTheme: lightIconTheme,
         brightness: Brightness.light,
         backgroundColor: Colors.white,
+        elevation: 0,
       ),
       //primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.black)),
       scaffoldBackgroundColor: Colors.white,

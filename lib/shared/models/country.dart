@@ -8,14 +8,19 @@ class Country extends Equatable {
     this.southwest,
     this.northeast,
     bool unlocked,
-  }) : this.unlocked = unlocked ?? false;
+    DateTime dateTime,
+  })  : this.unlocked = unlocked ?? false,
+        this.dateTime = dateTime ?? null;
 
   final String name;
   final String code;
+
   final LatLng latLng;
   final LatLng southwest;
   final LatLng northeast;
+
   final bool unlocked;
+  final DateTime dateTime;
 
   Country copyWith({
     String name,
@@ -24,6 +29,7 @@ class Country extends Equatable {
     LatLng southwest,
     LatLng northeast,
     bool unlocked,
+    DateTime dateTime,
   }) {
     return Country(
       name: name ?? this.name,
@@ -32,6 +38,7 @@ class Country extends Equatable {
       southwest: southwest ?? this.southwest,
       northeast: northeast ?? this.northeast,
       unlocked: unlocked ?? this.unlocked,
+      dateTime: dateTime ?? this.dateTime,
     );
   }
 
@@ -51,14 +58,14 @@ class Country extends Equatable {
         double.parse(json['ne_lat']),
         double.parse(json['ne_lng']),
       ),
-      //unlocked: false,
-      unlocked: new Random().nextDouble() <= .5,
+      unlocked: false,
+      dateTime: null,
     );
   }
 
   @override
   List<Object> get props =>
-      [name, code, latLng, southwest, northeast, unlocked];
+      [name, code, latLng, southwest, northeast, unlocked, dateTime];
 
   @override
   String toString() =>

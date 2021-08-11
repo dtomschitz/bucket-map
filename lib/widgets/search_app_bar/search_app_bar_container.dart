@@ -17,6 +17,7 @@ class SearchBarContainer extends StatelessWidget {
                 side: BorderSide(color: Colors.grey, width: 1.0),
                 borderRadius: BorderRadius.circular(50),
               ),
+              elevation: 0,
               child: Container(
                 height: 46,
                 child: child,

@@ -60,4 +60,5 @@ part 'list_view_container.dart';
 part 'permission_builder.dart';
 part 'sliding_sheet.dart';
 part 'sliding_sheet_dragger.dart';
+part 'sliver_container.dart';
 part 'top_circular_progress_indicator.dart';

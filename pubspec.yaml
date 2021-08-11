@@ -47,7 +47,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - icons/
+    - assets/icons/
     - countries.geojson
     - countries.json
     - default_profile_picture.png

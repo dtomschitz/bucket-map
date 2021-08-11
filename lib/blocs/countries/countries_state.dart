@@ -28,6 +28,23 @@ class CountriesLoaded extends CountriesState {
     );
   }
 
+  List<Country> get unlockedCountries {
+    return this.countries.where((country) {
+      return country.unlocked;
+    }).toList();
+  }
+
+  List<Country> get recentUnlockedCountries {
+    var unlockedCountries = this.countries.where((country) {
+      return country.unlocked;
+    }).toList();
+
+    var countries = List.of(unlockedCountries);
+    countries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    return countries.take(5).toList();
+  }
+
   @override
   String toString() {
     var count = countries.length;

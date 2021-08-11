@@ -8,49 +8,80 @@ class SavedLocationsScreen extends StatefulWidget {
 }
 
 class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
+  bool _countriesLoaded = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text('Gespeichert'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search_outlined),
-            onPressed: () async {
-              final country = await CountrySearch.show(context);
-              if (country != null) {
-                openCountry(country);
-              }
-            },
-          )
-        ],
-      ),
-      body: BlocBuilder<CountriesBloc, CountriesState>(
-        builder: (context, state) {
-          if (state is CountriesLoaded) {
-            final countries =
-                state.countries.where((country) => country.unlocked).toList();
+    return BlocConsumer<CountriesBloc, CountriesState>(
+      listener: (context, state) {
+        if (state is CountriesLoaded) {
+          setState(() => _countriesLoaded = true);
+        }
+      },
+      builder: (context, state) {
+        final unlockedCountries =
+            state is CountriesLoaded ? state.unlockedCountries : [];
+        final recentUnlockedCountries =
+            state is CountriesLoaded ? state.recentUnlockedCountries : [];
 
-            return CountryList(
-              controller: ScrollController(),
-              shrinkWrap: false,
-              countries: countries,
-              onTap: openCountry,
-              buildTrailing: (country) {
-                return Icon(Icons.arrow_forward_ios_outlined);
-              },
-            );
-          }
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                leading: IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: Text('Deine Länder'),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.search_outlined),
+                    onPressed: () async {
+                      final country = await CountrySearch.show(context);
+                      if (country != null) {
+                        openCountry(country);
+                      }
+                    },
+                  )
+                ],
+              ),
+              SliverListHeader('Zuletzt freigeschalten'),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    final country = recentUnlockedCountries[index];
 
-          return TopCircularProgressIndicator();
-        },
-      ),
+                    return CountryListTile(
+                      country: country,
+                      onTap: () => openCountry(country),
+                      showUnlockedDate: true,
+                    );
+                  },
+                  childCount: recentUnlockedCountries.length,
+                ),
+              ),
+              SliverListHeader('Freigeschalten'),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    final country = unlockedCountries[index];
+
+                    return CountryListTile(
+                      country: unlockedCountries[index],
+                      onTap: () => openCountry(country),
+                      showUnlockedDate: true,
+                    );
+                  },
+                  childCount: unlockedCountries.length,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -59,6 +90,26 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => CountryMap(country: country),
+      ),
+    );
+  }
+}
+
+class SliverListHeader extends StatelessWidget {
+  SliverListHeader(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.headline6;
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Text(
+          text,
+          style: style,
+        ),
       ),
     );
   }

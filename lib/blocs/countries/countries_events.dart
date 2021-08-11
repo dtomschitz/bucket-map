@@ -16,7 +16,7 @@ class LoadCountries extends CountriesEvent {
 
 class LoadUnlockedCountries extends CountriesEvent {
   const LoadUnlockedCountries({this.countries});
-  final List<String> countries;
+  final List<UnlockedCountry> countries;
 
   @override
   List<Object> get props => [];

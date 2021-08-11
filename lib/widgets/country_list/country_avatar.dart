@@ -7,9 +7,8 @@ class CountryAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundImage: code == null
-          ? null
-          : NetworkImage('https://flagcdn.com/w160/$code.png'),
+      backgroundImage:
+          code == null ? null : AssetImage('assets/icons/$code.png'),
       backgroundColor: Colors.grey.shade300,
     );
   }

@@ -46,7 +46,7 @@ class _CountriesMapScreenState extends State<CountriesMapScreen> {
         controller: mapController,
         onStyleLoaded: () {
           _initProfileListener();
-          //_initPinsListener();
+          _initPinsListener();
         },
         onMapClick: _createPin,
         onMapLongClick: _unlockCountry,
@@ -142,7 +142,7 @@ class _CountriesMapAppBar extends StatelessWidget with PreferredSizeWidget {
           CurrentCountry(),
           const SizedBox(width: 8),
           AppBarIconButton(
-            icon: Icon(Icons.public_outlined),
+            icon: Icon(Icons.lock_open_outlined),
             onPressed: onUnlockedCountries?.call,
           ),
           const SizedBox(width: 8),

@@ -7,7 +7,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
         super(CountriesUninitialized()) {
     _subscription = _profileBloc.stream.listen((state) {
       if (state is ProfileLoaded) {
-        var countries = state.profile.unlockedCountryCodes;
+        var countries = state.profile.unlockedCountries;
         add(LoadUnlockedCountries(countries: countries));
       }
     });
@@ -44,11 +44,21 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   ) async* {
     if (state is CountriesLoaded) {
       var countries = (state as CountriesLoaded).countries;
-      var unlockedCountries = event.countries;
 
       countries = countries.map((country) {
-        bool unlocked = unlockedCountries.contains(country.code);
-        return country.copyWith(unlocked: unlocked);
+        var unlocked = event.countries.firstWhere(
+          (c) => country.code == c.code,
+          orElse: () => null,
+        );
+
+        if (unlocked != null) {
+          return country.copyWith(
+            unlocked: true,
+            dateTime: unlocked.dateTime,
+          );
+        }
+
+        return country;
       }).toList();
 
       yield CountriesLoaded(countries: countries);

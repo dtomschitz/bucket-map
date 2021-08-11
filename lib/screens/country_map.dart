@@ -69,7 +69,7 @@ class _CountryMapState extends State<CountryMap> {
                       child: StreamBuilder<List<Pin>>(
                         stream: _pins,
                         builder: (context, snapshot) {
-                          final pins = snapshot.data;
+                          final pins = snapshot.data ?? [];
 
                           return PageView.builder(
                             controller: _pageController,
