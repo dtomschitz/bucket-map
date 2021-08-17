@@ -19,7 +19,9 @@ class LocationCardBottomSheet extends StatelessWidget {
         ListTile(
           leading: Icon(Icons.edit_outlined),
           title: Text('Bearbeiten'),
-          onTap: () {},
+          onTap: () {
+            ModifyPinScreen.show(context, pin);
+          },
         ),
         ListTile(
           leading: Icon(Icons.map_outlined),
@@ -30,7 +32,10 @@ class LocationCardBottomSheet extends StatelessWidget {
         ListTile(
           leading: Icon(Icons.delete_outline),
           title: Text('Löschen'),
-          onTap: () async {},
+          onTap: () async {
+            BlocProvider.of<PinsBloc>(context).add(RemovePin(pin: pin));
+            Navigator.pop(context, true);
+          },
         ),
       ],
     );
