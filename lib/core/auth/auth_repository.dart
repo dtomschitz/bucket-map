@@ -1,9 +1,4 @@
-import 'dart:async';
-import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/shared/shared.dart';
-import 'package:cache/cache.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:meta/meta.dart';
+part of core.auth;
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {}
@@ -15,8 +10,8 @@ class LogInWithEmailAndPasswordFailure implements Exception {}
 class LogOutFailure implements Exception {}
 
 /// Repository which manages user authentication.
-class AuthenticationRepository {
-  AuthenticationRepository({
+class AuthRepository {
+  AuthRepository({
     @required ProfileRepository profileRepository,
     CacheClient cache,
     firebase_auth.FirebaseAuth firebaseAuth,
@@ -90,7 +85,7 @@ class AuthenticationRepository {
   /// Signs in with the provided [email] and [password].
   ///
   /// Throws a [LogInWithEmailAndPasswordFailure] if an exception occurs.
-  Future<void> logInWithEmailAndPassword({
+  Future<bool> logInWithEmailAndPassword({
     @required String email,
     @required String password,
   }) async {
@@ -99,6 +94,8 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
+
+      return true;
     } on Exception {
       throw LogInWithEmailAndPasswordFailure();
     }
@@ -116,11 +113,15 @@ class AuthenticationRepository {
     }
   }
 
-  Future<String> verifyEmail(String email) async {
-    final profile = await _profileRepository.getProfileByEmail(email);
-    if (profile == null) return null;
+  Future<bool> isEmailInUse(String email) async {
+    try {
+      final methods = await _firebaseAuth.fetchSignInMethodsForEmail(email);
+      print(methods);
 
-    return profile.email;
+      return methods.isNotEmpty;
+    } catch (e) {
+      return true;
+    }
   }
 }
 
