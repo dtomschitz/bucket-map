@@ -30,7 +30,7 @@ class EditPinBottomSheet extends StatelessWidget {
           title: Text('Koordinaten'),
           coordinates: pin.toLatLng(),
         ),
-        SizedBox(height: 16),
+        Divider(),
         ListTile(
           leading: CenteredIcon(icon: Icon(Icons.edit_outlined)),
           title: Text('Bearbeiten'),

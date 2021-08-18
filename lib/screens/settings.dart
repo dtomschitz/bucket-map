@@ -38,18 +38,17 @@ class SettingsScreen extends StatelessWidget {
 
   _buildThemeSettingsSection(BuildContext context, SettingsState state) {
     ThemeMode themeMode = state.settings.themeMode;
-    String subtitle = themeMode == ThemeMode.system
-        ? 'System'
-        : themeMode == ThemeMode.dark
-            ? 'Dunkel'
-            : 'Hell';
 
     return SettingsSection(
       header: SettingsHeader('App Einstellungen'),
       tiles: [
         SettingsTile(
           title: 'Erscheinungsbild',
-          subtitle: subtitle,
+          subtitle: themeMode == ThemeMode.system
+              ? 'System'
+              : themeMode == ThemeMode.dark
+                  ? 'Dunkel'
+                  : 'Hell',
           onTap: () => _openSettingsSection(context, ThemeSettingsView()),
         ),
       ],

@@ -29,8 +29,13 @@ class CountrySearch extends SearchDelegate<Country> {
 
   @override
   Widget buildLeading(BuildContext context) {
+    final color = Theme.of(context).iconTheme.color;
+
     return IconButton(
-      icon: Icon(Icons.close),
+      icon: Icon(
+        Icons.close,
+        color: color,
+      ),
       onPressed: () => close(context, null),
     );
   }

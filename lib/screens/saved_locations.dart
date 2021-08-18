@@ -8,16 +8,9 @@ class SavedLocationsScreen extends StatefulWidget {
 }
 
 class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
-  bool _countriesLoaded = false;
-
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CountriesBloc, CountriesState>(
-      listener: (context, state) {
-        if (state is CountriesLoaded) {
-          setState(() => _countriesLoaded = true);
-        }
-      },
+    return BlocBuilder<CountriesBloc, CountriesState>(
       builder: (context, state) {
         final unlockedCountries =
             state is CountriesLoaded ? state.unlockedCountries : [];
