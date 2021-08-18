@@ -14,7 +14,7 @@ void main() async {
   final profileRepository = ProfileRepository();
   final pinsRepository = PinsRepository();
 
-  final authenticationRepository = AuthenticationRepository(
+  final authenticationRepository = AuthRepository(
     profileRepository: profileRepository,
   );
 

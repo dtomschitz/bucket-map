@@ -22,6 +22,10 @@ class Themes {
   static final defaultButtonThemeData = ButtonThemeData(
     buttonColor: Colors.deepPurple,
     padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(100.0),
+      side: BorderSide(color: Colors.red),
+    ),
   );
 
   static final lightIconTheme = IconThemeData(color: Colors.black);
@@ -73,9 +77,7 @@ class Themes {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      //primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.black)),
       scaffoldBackgroundColor: Colors.white,
-      //backgroundColor: Colors.white,
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(),
       ),
@@ -83,6 +85,9 @@ class Themes {
       bottomNavigationBarTheme: defaultBottomNavigationBarThemeData,
       dialogTheme: defaultDialogThemeData,
       bottomSheetTheme: defaultBottomSheetThemeData,
+      primaryTextTheme: TextTheme(
+        headline6: TextStyle(color: Colors.black),
+      ),
     );
   }
 }

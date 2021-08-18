@@ -16,13 +16,7 @@ class LocationCard extends StatelessWidget {
         child: InkWell(
           borderRadius: borderRadius,
           onTap: () {
-            showModalBottomSheet<void>(
-              context: context,
-              isDismissible: true,
-              builder: (BuildContext context) {
-                return LocationCardBottomSheet(pin);
-              },
-            );
+            EditPinBottomSheet.show(context, pin);
           },
           child: ListTile(
             leading: Icon(Icons.place),

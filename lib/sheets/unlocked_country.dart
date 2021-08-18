@@ -20,11 +20,12 @@ class UnlockedCountryBottomSheet extends StatelessWidget {
       title: country.name,
       children: [
         ListTile(
-          leading: Container(
-            height: double.infinity,
-            child: Icon(Icons.star),
+          leading: CenteredIcon(
+            icon: Icon(Icons.lock_open_outlined),
           ),
-          title: Text('Du hast dieses Land am .. freigeschalten'),
+          title: Text(
+            'Du hast dieses Land am ${Utils.formatDate(country.dateTime)} freigeschalten',
+          ),
         ),
         LocationListTile(
           title: Text('Geographische Koordinaten'),

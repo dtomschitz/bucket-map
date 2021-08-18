@@ -1,16 +1,12 @@
 library core.app;
 
-import 'dart:async';
-
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/core.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/shared/shared.dart';
-import 'package:bucket_map/widgets/widgets.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
 
 part 'app_base.dart';
@@ -24,7 +20,7 @@ class App extends StatelessWidget {
     this.initialSettings,
   });
 
-  final AuthenticationRepository authenticationRepository;
+  final AuthRepository authenticationRepository;
   final ProfileRepository profileRepository;
   final PinsRepository pinsRepository;
 
@@ -33,12 +29,16 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(create: (context) => authenticationRepository),
+        RepositoryProvider(create: (context) => profileRepository),
+        RepositoryProvider(create: (context) => pinsRepository),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => AppBloc(
+            create: (context) => AppBloc(
               authenticationRepository: authenticationRepository,
             ),
           ),

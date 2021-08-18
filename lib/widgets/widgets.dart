@@ -9,6 +9,7 @@ import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/core/core.dart';
 import 'package:bucket_map/screens/screens.dart';
 import 'package:bucket_map/shared/shared.dart';
+import 'package:bucket_map/sheets/sheets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
@@ -19,6 +20,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 part 'animation/animated_container_switcher.dart';
 part 'animation/fade_through_transition_switcher.dart';
+part 'animation/shared_axis_page_view.dart';
 
 part 'country_list/country_list.dart';
 part 'country_list/country_list_tile.dart';
@@ -33,12 +35,15 @@ part 'country_select/country_select.dart';
 part 'fabs/pins_fab.dart';
 part 'fabs/unlock_country_fab.dart';
 
+part 'layout/app_bar_icon_button.dart';
+part 'layout/bottom_actions.dart';
+part 'layout/centered_icon.dart';
+
 part 'map/map.dart';
 part 'map/map_controller.dart';
 part 'map/current_country.dart';
 
 part 'pin/location_list_tile.dart';
-part 'pin/pin_bottom_sheet.dart';
 part 'pin/pin_card.dart';
 
 part 'preview_cards/country_preview_card.dart';

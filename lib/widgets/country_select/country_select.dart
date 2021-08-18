@@ -27,7 +27,7 @@ class _CountrySelectState extends State<CountrySelect> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CountryAvatar(_country == null ? null : _country.code),
-      title: Text(_country == null ? 'Wähle das Land' : _country.name),
+      title: Text(_country == null ? 'Land wählen' : _country.name),
       trailing: Icon(Icons.chevron_right_rounded),
       onTap: () async {
         final country = await CountrySearch.show(context);

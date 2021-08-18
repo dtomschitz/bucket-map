@@ -76,7 +76,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                         padding: EdgeInsets.all(16),
                       ),
                       LocationListTile(
-                        title: Text('Aktuelle Koordinaten'),
+                        title: Text('Koordinaten'),
                         coordinates: widget.coordinates,
                       ),
                     ],
@@ -94,7 +94,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
           final isCountrySelected = _country != null;
 
           if (isFormValid && isCountrySelected) {
-            final pin = Pin(
+            final pin = Pin.create(
               name: _nameController.text,
               country: _country.code,
               latitude: widget.coordinates.latitude,

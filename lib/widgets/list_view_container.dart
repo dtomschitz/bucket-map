@@ -12,7 +12,7 @@ class ListViewContainer extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       padding: EdgeInsets.all(16),
-      physics: ClampingScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       children: [
         Text(
           title,

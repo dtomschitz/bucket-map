@@ -12,13 +12,11 @@ class LocationListTile extends StatelessWidget {
     final longitude = coordinates.longitude;
 
     return ListTile(
-      /*leading: CircleAvatar(
-        //height: double.infinity,
+      leading: CircleAvatar(
         backgroundColor: Colors.transparent,
-        //foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).iconTheme.color,
         child: Icon(Icons.place_outlined),
-      ),*/
-      leading: Icon(Icons.place_outlined),
+      ),
       title: title,
       subtitle: Text('$latitude, $longitude'),
       onTap: () {

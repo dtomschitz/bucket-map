@@ -30,7 +30,7 @@ class GeoUtils {
       southwest: country.southwest,
       northeast: country.northeast,
     );
-    
+
     final cameraUpdate = CameraUpdate.newLatLngBounds(bounds);
 
     return CalculatedLatLngBounds(bounds: bounds, cameraUpdate: cameraUpdate);
@@ -43,17 +43,5 @@ class GeoUtils {
     );
 
     return placemarks.isNotEmpty ? placemarks.first.isoCountryCode : null;
-  }
-
-  static Future<GeoCountry> fetchCountry(LatLng latLng) async {
-    final latitude = latLng.latitude;
-    final longitude = latLng.longitude;
-
-    final url = "https://geocode.xyz/$latitude,$longitude?json=1";
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode != 200) return null;
-
-    return GeoCountry.fromJson(jsonDecode(response.body));
   }
 }

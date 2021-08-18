@@ -40,7 +40,10 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                   IconButton(
                     icon: Icon(Icons.search_outlined),
                     onPressed: () async {
-                      final country = await CountrySearch.show(context);
+                      final country = await CountrySearch.show(
+                        context,
+                        filterOnlyUnlocked: true,
+                      );
                       if (country != null) {
                         openCountry(country);
                       }
@@ -53,12 +56,7 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     final country = recentUnlockedCountries[index];
-
-                    return CountryListTile(
-                      country: country,
-                      onTap: () => openCountry(country),
-                      showUnlockedDate: true,
-                    );
+                    return SavedLocationListTile(country: country);
                   },
                   childCount: recentUnlockedCountries.length,
                 ),
@@ -68,12 +66,7 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     final country = unlockedCountries[index];
-
-                    return CountryListTile(
-                      country: unlockedCountries[index],
-                      onTap: () => openCountry(country),
-                      showUnlockedDate: true,
-                    );
+                    return SavedLocationListTile(country: country);
                   },
                   childCount: unlockedCountries.length,
                 ),
@@ -110,6 +103,38 @@ class SliverListHeader extends StatelessWidget {
           text,
           style: style,
         ),
+      ),
+    );
+  }
+}
+
+class SavedLocationListTile extends StatelessWidget {
+  SavedLocationListTile({this.country});
+
+  final Country country;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).scaffoldBackgroundColor;
+
+    return Material(
+      child: OpenContainer(
+        openElevation: 0,
+        closedElevation: 0,
+        closedColor: color,
+        openColor: color,
+        transitionType: ContainerTransitionType.fadeThrough,
+        openBuilder: (context, closeContainer) {
+          return CountryMap(country: country);
+        },
+        tappable: false,
+        closedBuilder: (context, openContainer) {
+          return CountryListTile(
+            country: country,
+            onTap: openContainer,
+            showUnlockedDate: true,
+          );
+        },
       ),
     );
   }

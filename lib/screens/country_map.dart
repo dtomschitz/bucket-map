@@ -38,11 +38,13 @@ class _CountryMapState extends State<CountryMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(widget.country.name),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: _CountryMapAppBar(
+        country: widget.country,
+        onOpenInfo: () => UnlockedCountryBottomSheet.show(
+          context,
+          widget.country,
+        ),
+        onClose: () => Navigator.pop(context),
       ),
       body: BlocBuilder<PinsBloc, PinsState>(
         builder: (context, state) {
@@ -124,4 +126,52 @@ class _CountryMapState extends State<CountryMap> {
       }
     });
   }
+}
+
+class _CountryMapAppBar extends StatelessWidget with PreferredSizeWidget {
+  _CountryMapAppBar({
+    this.country,
+    this.onClose,
+    this.onOpenInfo,
+  });
+
+  final Country country;
+  final VoidCallback onClose;
+  final VoidCallback onOpenInfo;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      automaticallyImplyLeading: false,
+      titleSpacing: 0,
+      title: Row(
+        children: [
+          const SizedBox(width: 8),
+          AppBarIconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined),
+            onPressed: onClose?.call,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: CurrentCountryContainer(
+              name: country.name,
+              code: country.code,
+              textAlign: TextAlign.start,
+            ),
+          ),
+          const SizedBox(width: 8),
+          AppBarIconButton(
+            icon: Icon(Icons.info_outline),
+            onPressed: onOpenInfo?.call,
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

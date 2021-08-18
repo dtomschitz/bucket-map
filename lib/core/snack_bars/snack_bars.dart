@@ -2,7 +2,9 @@ library core.snack_bars;
 
 import 'package:flutter/material.dart';
 
-part 'copy_to_clipboard.dart';
+part 'copy_coordinates_to_clipboard.dart';
+part 'email_not_in_use.dart';
+part 'login_failed.dart';
 
 abstract class DefaultSnackBar {
   SnackBar build(BuildContext context);

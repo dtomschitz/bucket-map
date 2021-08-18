@@ -8,10 +8,17 @@ class CountrySearch extends SearchDelegate<Country> {
   final String label;
   final bool filterOnlyUnlocked;
 
-  static Future<Country> show(BuildContext context) {
+  static Future<Country> show(
+    BuildContext context, {
+    String label,
+    bool filterOnlyUnlocked,
+  }) {
     return showSearch<Country>(
       context: context,
-      delegate: CountrySearch(),
+      delegate: CountrySearch(
+        label: label,
+        filterOnlyUnlocked: filterOnlyUnlocked,
+      ),
     );
   }
 
@@ -60,7 +67,6 @@ class CountrySearch extends SearchDelegate<Country> {
         backgroundColor: colorScheme.brightness == Brightness.dark
             ? Colors.grey[850]
             : Colors.white,
-        //iconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
         textTheme: theme.textTheme,
       ),
       inputDecorationTheme: searchFieldDecorationTheme ??

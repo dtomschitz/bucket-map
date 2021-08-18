@@ -51,24 +51,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Column(
                             children: [
                               Text(
-                                '3',
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10.0),
-                              Text(
-                                'Buckets',
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
                                 '100',
                                 style: TextStyle(
                                   fontSize: 20.0,
