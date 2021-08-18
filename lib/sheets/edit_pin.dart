@@ -34,7 +34,9 @@ class EditPinBottomSheet extends StatelessWidget {
         ListTile(
           leading: CenteredIcon(icon: Icon(Icons.edit_outlined)),
           title: Text('Bearbeiten'),
-          onTap: () {},
+          onTap: () {
+            ModifyPinScreen.show(context, pin);
+          },
         ),
         ListTile(
           leading: CenteredIcon(icon: Icon(Icons.map_outlined)),

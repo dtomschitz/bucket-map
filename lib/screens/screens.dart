@@ -24,3 +24,4 @@ part 'profile.dart';
 part 'saved_locations.dart';
 part 'settings.dart';
 part 'unlocked_countries.dart';
+part 'modify_pin_screen.dart';
