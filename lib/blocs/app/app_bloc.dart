@@ -2,7 +2,7 @@ part of blocs.app;
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({
-    @required AuthenticationRepository authenticationRepository,
+    @required AuthRepository authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
         super(
           authenticationRepository.currentUser.isNotAnonymous
@@ -14,7 +14,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     });
   }
 
-  final AuthenticationRepository _authenticationRepository;
+  final AuthRepository _authenticationRepository;
   StreamSubscription<User> _userSubscription;
 
   @override

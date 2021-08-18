@@ -2,7 +2,7 @@ part of blocs.profile;
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({
-    @required AuthenticationRepository authenticationRepository,
+    @required AuthRepository authenticationRepository,
     @required ProfileRepository profileRepository,
   })  : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
@@ -12,7 +12,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     });
   }
 
-  final AuthenticationRepository _authenticationRepository;
+  final AuthRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
 
   StreamSubscription _subscription;

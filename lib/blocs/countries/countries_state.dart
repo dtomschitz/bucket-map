@@ -40,7 +40,7 @@ class CountriesLoaded extends CountriesState {
     }).toList();
 
     var countries = List.of(unlockedCountries);
-    countries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    countries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
     return countries.take(5).toList();
   }

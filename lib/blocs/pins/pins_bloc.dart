@@ -2,7 +2,7 @@ part of blocs.locations;
 
 class PinsBloc extends Bloc<PinEvent, PinsState> {
   PinsBloc({
-    @required AuthenticationRepository authRepository,
+    @required AuthRepository authRepository,
     @required PinsRepository pinsRepository,
   })  : _authRepository = authRepository,
         _pinsRepository = pinsRepository,
@@ -12,7 +12,7 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
     });
   }
 
-  final AuthenticationRepository _authRepository;
+  final AuthRepository _authRepository;
   final PinsRepository _pinsRepository;
 
   StreamSubscription _authSubscription;
@@ -33,7 +33,7 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
       yield* _mapAddPinToState(event);
     } else if (event is UpdatePin) {
       yield* _mapUpdatePinToState(event);
-    } else if (event is RemovePin) {
+    } else if (event is DeletePin) {
       yield* _mapRemovePinToState(event);
     } else if (event is PinsUpdated) {
       yield* _mapPinsUpdatedToState(event);
@@ -56,7 +56,7 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
     _pinsRepository.updateLocation(event.pin);
   }
 
-  Stream<PinsState> _mapRemovePinToState(RemovePin event) async* {
+  Stream<PinsState> _mapRemovePinToState(DeletePin event) async* {
     _pinsRepository.deleteLocation(event.pin);
   }
 

@@ -51,13 +51,13 @@ class UpdatePin extends PinEvent {
   String toString() => 'UpdatePin { pin: $pin }';
 }
 
-class RemovePin extends PinEvent {
-  RemovePin({this.pin});
+class DeletePin extends PinEvent {
+  DeletePin({this.pin});
   final Pin pin;
 
   @override
   List<Object> get props => [pin];
 
   @override
-  String toString() => 'RemovePin { pin: $pin }';
+  String toString() => 'DeletePin { pin: $pin }';
 }
