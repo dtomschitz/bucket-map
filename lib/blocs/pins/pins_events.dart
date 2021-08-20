@@ -26,7 +26,7 @@ class PinsUpdated extends PinEvent {
   List<Object> get props => [pins];
 
   @override
-  String toString() => 'PinsUpdated { pins: $pins }';
+  String toString() => 'PinsUpdated';
 }
 
 class AddPin extends PinEvent {

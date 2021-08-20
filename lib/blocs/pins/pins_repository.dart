@@ -7,11 +7,11 @@ class PinsRepository {
     return collection.add(pin.toJson());
   }
 
-  Future<void> deleteLocation(Pin pin) {
+  Future<void> deletePin(Pin pin) {
     return collection.doc(pin.id).delete();
   }
 
-  Future<void> updateLocation(Pin update) {
+  Future<void> updatePin(Pin update) {
     return collection.doc(update.id).update(update.toJson());
   }
 

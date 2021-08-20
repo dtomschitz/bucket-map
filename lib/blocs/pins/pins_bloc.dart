@@ -20,8 +20,8 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
 
   @override
   Future<void> close() {
-    _authSubscription.cancel();
-    _pinsSubscription.cancel();
+    _authSubscription?.cancel();
+    _pinsSubscription?.cancel();
     return super.close();
   }
 
@@ -42,7 +42,10 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
 
   Stream<PinsState> _mapLoadPinsToState(LoadPins event) async* {
     final userId = _authRepository.currentUser.id;
+
+    _pinsSubscription?.cancel();
     _pinsSubscription = _pinsRepository.pins(userId).listen((pins) {
+      print(pins);
       add(PinsUpdated(pins));
     });
   }
@@ -53,11 +56,11 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
   }
 
   Stream<PinsState> _mapUpdatePinToState(UpdatePin event) async* {
-    _pinsRepository.updateLocation(event.pin);
+    _pinsRepository.updatePin(event.pin);
   }
 
   Stream<PinsState> _mapRemovePinToState(DeletePin event) async* {
-    _pinsRepository.deleteLocation(event.pin);
+    _pinsRepository.deletePin(event.pin);
   }
 
   Stream<PinsState> _mapPinsUpdatedToState(PinsUpdated event) async* {

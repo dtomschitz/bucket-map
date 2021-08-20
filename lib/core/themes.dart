@@ -28,23 +28,24 @@ class Themes {
     ),
   );
 
+  static final textButtonThemeData = TextButtonThemeData(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+      ),
+    ),
+  );
+
+  static final outlinedButtonThemeData = OutlinedButtonThemeData(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+      ),
+    ),
+  );
+
   static final lightIconTheme = IconThemeData(color: Colors.black);
 
-  static final listButtonStyle = TextButton.styleFrom(
-    textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-    padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-    elevation: 0,
-    alignment: Alignment.centerLeft,
-  );
-
-  static final warningButtonStyle = TextButton.styleFrom(
-    primary: Colors.white,
-    backgroundColor: Colors.redAccent,
-    textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-    padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-    elevation: 0,
-    alignment: Alignment.centerLeft,
-  );
 
   static ThemeData buildDarkTheme(BuildContext context) {
     return ThemeData(
@@ -60,6 +61,8 @@ class Themes {
         border: OutlineInputBorder(),
       ),
       buttonTheme: defaultButtonThemeData,
+      textButtonTheme: textButtonThemeData,
+      outlinedButtonTheme: outlinedButtonThemeData,
       bottomNavigationBarTheme: defaultBottomNavigationBarThemeData,
       dialogTheme: defaultDialogThemeData,
       bottomSheetTheme: defaultBottomSheetThemeData,
@@ -82,6 +85,8 @@ class Themes {
         border: OutlineInputBorder(),
       ),
       buttonTheme: defaultButtonThemeData,
+      textButtonTheme: textButtonThemeData,
+      outlinedButtonTheme: outlinedButtonThemeData,
       bottomNavigationBarTheme: defaultBottomNavigationBarThemeData,
       dialogTheme: defaultDialogThemeData,
       bottomSheetTheme: defaultBottomSheetThemeData,

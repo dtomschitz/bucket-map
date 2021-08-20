@@ -1,14 +1,16 @@
 part of screens;
 
 class ModifyPinScreen extends StatefulWidget {
-  ModifyPinScreen({this.pin});
-  final Pin pin;
+  ModifyPinScreen({this.pin, this.country});
 
-  static show(BuildContext context, Pin pin) {
-    Navigator.of(context).push(
+  final Pin pin;
+  final Country country;
+
+  static show(BuildContext context, {Pin pin, Country country}) {
+    return Navigator.of(context).push(
       new MaterialPageRoute(
         builder: (BuildContext context) {
-          return ModifyPinScreen(pin: pin);
+          return ModifyPinScreen(pin: pin, country: country);
         },
         fullscreenDialog: true,
       ),
@@ -22,119 +24,117 @@ class ModifyPinScreen extends StatefulWidget {
 class _ModifyPinScreenState extends State<ModifyPinScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _countryController = TextEditingController();
 
-  Country _country;
+  bool _hasChanges = false;
 
   @override
   initState() {
     super.initState();
-    _loadInitialCountry();
+
+    _nameController.text = widget.pin.name;
+    _countryController.text = widget.pin.country;
+
+    _nameController.addListener(_changeListener);
+    _countryController.addListener(_changeListener);
+
+    //_loadInitialCountry();
+  }
+
+  @override
+  dispose() {
+    _nameController.removeListener(_changeListener);
+    _countryController.removeListener(_changeListener);
+
+    _nameController.dispose();
+    _countryController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: Text('Pin bearbeiten'),
-            pinned: true,
-          ),
-          Form(
-            key: _formKey,
-            child: SliverList(
-              delegate: SliverChildListDelegate.fixed(
-                [
-                  Padding(
-                    padding: EdgeInsets.all(16),
-                    child: TextFormField(
-                      controller: _nameController..text = widget.pin.name,
-                      decoration: InputDecoration(
-                        hintText: "Neuer Name",
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte gib einen Namen ein';
-                        }
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close_outlined),
+          onPressed: () async {
+            FocusScope.of(context).unfocus();
 
-                        return null;
-                      },
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      CountrySelect(
-                        country: _country,
-                        onChange: (country) {
-                          setState(() => _country = country);
-                        },
-                      ),
-                      PinPreviewCard(
-                        coordinates: LatLng(widget.pin.latitude, widget.pin.longitude),
-                        height: 346,
-                        elevation: 0,
-                        padding: EdgeInsets.all(16),
-                      ),
-                      LocationListTile(
-                        title: Text('Aktuelle Koordinaten'),
-                        coordinates: LatLng(widget.pin.latitude, widget.pin.longitude),
-                      ),
-                    ],
-                  ),
-                ],
+            if (_hasChanges) {
+              final discardChanges = await CancelModifyPinDialog.show(context);
+              if (!discardChanges) return;
+            }
+
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Pin bearbeiten'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.all(16),
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            TextFormField(
+              controller: _nameController,
+              validator: (value) => Utils.validateString(
+                value,
+                message: 'Bitte gib einen Namen ein',
+              ),
+              decoration: InputDecoration(
+                labelText: 'Name',
+                hintText: 'Neuer Name',
               ),
             ),
-          )
-        ],
+            SizedBox(height: 16),
+            CountryInputField(
+              initialCountry: widget.country,
+              controller: _countryController,
+              onCountryChanged: (country) {
+                _countryController.text = country.code;
+              },
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text('Speichern'),
-        onPressed: () {
-          final isFormValid = _formKey.currentState.validate();
-          final isCountrySelected = _country != null;
+      floatingActionButton: _hasChanges
+          ? FloatingActionButton.extended(
+              label: Text('Speichern'),
+              onPressed: () {
+                final isFormValid = _formKey.currentState.validate();
 
-          if (isFormValid && isCountrySelected) {
-            final pin = Pin(
-              id: widget.pin.id,
-              userId: widget.pin.userId,
-              name: _nameController.text,
-              country: _country.code,
-              latitude: widget.pin.latitude,
-              longitude: widget.pin.longitude,
-            );
+                if (isFormValid) {
+                  final pin = widget.pin.copyWith(
+                    name: _nameController.text,
+                    country: _countryController.text,
+                  );
 
-            
-            BlocProvider.of<PinsBloc>(context).add(UpdatePin(pin: pin));
-            var state = BlocProvider.of<PinsBloc>(context).state;
-              if (state is PinsLoaded) {
-                BlocProvider.of<PinsBloc>(context).add(PinsUpdated(state.pins));
-              }
-
-            
-            // BlocProvider.of<PinsBloc>(context).add(LoadPins(widget.pin.userId));
-            Navigator.pop(context);
-          }
-        },
-      ),
+                  BlocProvider.of<PinsBloc>(context).add(UpdatePin(pin: pin));
+                  Navigator.pop(context);
+                }
+              },
+            )
+          : null,
     );
   }
 
-  _loadInitialCountry() async {
+  /*_loadInitialCountry() {
     var state = BlocProvider.of<CountriesBloc>(context).state;
     if (state is CountriesLoaded && _country == null) {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        widget.pin.latitude,
-        widget.pin.longitude,
-      );
-
-      final code = placemarks.first?.isoCountryCode;
       final country = state.countries.firstWhere(
-        (country) => country.code == code,
+        (country) => country.code == widget.pin.country,
       );
 
       if (country != null) {
         setState(() => _country = country);
       }
     }
+  }*/
+
+  _changeListener() {
+    final hasChanges = _nameController.text != widget.pin.name ||
+        _countryController.text != widget.pin.country;
+    setState(() => _hasChanges = hasChanges);
   }
 }

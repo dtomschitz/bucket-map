@@ -1,8 +1,10 @@
 part of widgets;
 
 class LocationCard extends StatelessWidget {
-  LocationCard(this.pin);
+  LocationCard(this.pin, {this.onTap});
+
   final Pin pin;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +17,7 @@ class LocationCard extends StatelessWidget {
         borderRadius: borderRadius,
         child: InkWell(
           borderRadius: borderRadius,
-          onTap: () {
-            EditPinBottomSheet.show(context, pin);
-          },
+          onTap: onTap?.call,
           child: ListTile(
             leading: Icon(Icons.place),
             title: Text(pin.name),

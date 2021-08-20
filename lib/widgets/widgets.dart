@@ -25,6 +25,7 @@ part 'animation/shared_axis_page_view.dart';
 part 'country_list/country_list.dart';
 part 'country_list/country_list_tile.dart';
 part 'country_list/country_avatar.dart';
+part 'country_list/country_pins_list.dart';
 
 part 'country_search/country_search.dart';
 part 'country_search/country_search_list.dart';

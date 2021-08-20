@@ -1,14 +1,16 @@
 part of sheets;
 
 class EditPinBottomSheet extends StatelessWidget {
-  EditPinBottomSheet({this.pin});
-  final Pin pin;
+  EditPinBottomSheet({this.pin, this.country});
 
-  static Future<T> show<T>(BuildContext context, Pin pin) {
+  final Pin pin;
+  final Country country;
+
+  static Future<T> show<T>(BuildContext context, {Pin pin, Country country}) {
     return showModalBottomSheet<T>(
       context: context,
       builder: (BuildContext context) {
-        return EditPinBottomSheet(pin: pin);
+        return EditPinBottomSheet(pin: pin, country: country);
       },
     );
   }
@@ -18,6 +20,9 @@ class EditPinBottomSheet extends StatelessWidget {
     return BottomSheetContainer(
       title: pin.name,
       children: [
+        CountryListTile(
+          country: country,
+        ),
         ListTile(
           leading: CenteredIcon(
             icon: Icon(Icons.add_outlined),
@@ -26,23 +31,17 @@ class EditPinBottomSheet extends StatelessWidget {
             'Du hast diesen Pin am ${Utils.formatDate(pin.dateTime)} erstellt',
           ),
         ),
+        Divider(),
         LocationListTile(
           title: Text('Koordinaten'),
           coordinates: pin.toLatLng(),
         ),
-        Divider(),
         ListTile(
           leading: CenteredIcon(icon: Icon(Icons.edit_outlined)),
           title: Text('Bearbeiten'),
-          onTap: () {
-            ModifyPinScreen.show(context, pin);
-          },
-        ),
-        ListTile(
-          leading: CenteredIcon(icon: Icon(Icons.map_outlined)),
-          title: Text('Land ändern'),
           onTap: () async {
-            await EditPinCountryDialog.show(context, pin);
+            await ModifyPinScreen.show(context, pin: pin, country: country);
+            Navigator.pop(context);
           },
         ),
         Divider(),

@@ -5,9 +5,9 @@ class Pin extends Equatable {
     this.id,
     this.userId,
     this.country,
-    @required this.name,
-    @required this.latitude,
-    @required this.longitude,
+    this.name,
+    this.latitude,
+    this.longitude,
     this.dateTime,
   });
 
@@ -85,7 +85,13 @@ class Pin extends Equatable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Pin && runtimeType == other.runtimeType && id == other.id;
+      other is Pin &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          country == other.country &&
+          latitude == other.latitude &&
+          longitude == other.longitude;
 
   @override
   int get hashCode =>

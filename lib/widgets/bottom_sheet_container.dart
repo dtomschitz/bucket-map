@@ -1,12 +1,12 @@
 part of widgets;
 
 class BottomSheetContainer extends StatelessWidget {
-  BottomSheetContainer(
-      {this.title,
-      this.leading,
-      List<Widget> children,
-      MainAxisSize mainAxisSize})
-      : children = children ?? [],
+  BottomSheetContainer({
+    this.title,
+    this.leading,
+    List<Widget> children,
+    MainAxisSize mainAxisSize,
+  })  : children = children ?? [],
         mainAxisSize = mainAxisSize ?? MainAxisSize.min;
 
   final Widget leading;
@@ -16,7 +16,8 @@ class BottomSheetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       child: Column(
         mainAxisSize: mainAxisSize,
         children: [
@@ -24,10 +25,12 @@ class BottomSheetContainer extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 16),
-                  child: leading,
-                ),
+                leading != null
+                    ? Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: leading,
+                      )
+                    : Container(),
                 Text(
                   title,
                   style: Theme.of(context).textTheme.headline5,
