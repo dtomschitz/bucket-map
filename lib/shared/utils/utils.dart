@@ -48,6 +48,10 @@ class Utils {
       return 'Bitte geben Sie ihr Passwort ein';
     }
 
+    if (value.length < 6) {
+      return 'Das Passwort sollte mindestens 6 Zeichen beinhalten';
+    }
+
     return null;
   }
 }

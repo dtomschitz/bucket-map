@@ -119,14 +119,11 @@ class RegisterPage extends StatelessWidget {
   }
 
   _jumpToPage(BuildContext context, {int page}) {
-    //FocusScope.of(context).unfocus();
     _pageController.animateToPage(
       page,
       duration: Duration(milliseconds: 250),
       curve: Curves.ease,
     );
-
-    //FocusScope.of(context).unfocus();
   }
 }
 
@@ -280,8 +277,9 @@ class _SummaryView extends StatelessWidget {
                 ),
                 OutlinedButton(
                   child: Text('Konto anlegen'),
-                  onPressed: () {
-                    context.read<RegisterCubit>().registerUser();
+                  onPressed: () async {
+                    await context.read<RegisterCubit>().registerUser();
+                    Navigator.pop(context);
                   },
                 ),
               ],

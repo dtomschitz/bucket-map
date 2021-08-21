@@ -86,7 +86,9 @@ class _LogoContainer extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.05),
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black.withOpacity(.05)
+                        : Colors.grey[100].withOpacity(.05),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Padding(
