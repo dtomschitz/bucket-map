@@ -38,8 +38,10 @@ part 'fabs/pins_fab.dart';
 part 'fabs/unlock_country_fab.dart';
 
 part 'form_fields/country_form_field.dart';
+part 'form_fields/email_form_field.dart';
 part 'form_fields/first_name_form_field.dart';
 part 'form_fields/last_name_form_field.dart';
+part 'form_fields/password_form_field.dart';
 
 part 'layout/app_bar_icon_button.dart';
 part 'layout/bottom_actions.dart';

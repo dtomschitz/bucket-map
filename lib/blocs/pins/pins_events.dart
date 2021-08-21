@@ -61,3 +61,11 @@ class DeletePin extends PinEvent {
   @override
   String toString() => 'DeletePin';
 }
+
+class ResetPinsState extends PinEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() => 'ResetPinsState';
+}

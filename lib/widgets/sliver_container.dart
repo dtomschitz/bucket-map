@@ -27,9 +27,7 @@ class _SliverContainerState<B extends BlocBase<S>, S>
         return true;
       },*/
       listener: (context, state) {
-        print(state);
         final isState = widget.on.call(state);
-        print(isState);
         if (isState && !_loaded) {
           setState(() => _loaded = true);
         }

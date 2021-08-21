@@ -44,8 +44,16 @@ class UpdateProfile extends ProfileEvent {
   final Profile profile;
 
   @override
-  List<Object> get props => [Profile];
+  List<Object> get props => [profile];
 
   @override
   String toString() => 'UpdateProfile';
+}
+
+class ResetProfileState extends ProfileEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() => 'ResetProfileState';
 }

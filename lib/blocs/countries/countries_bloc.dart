@@ -30,6 +30,8 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
       yield* _mapLoadUnlockedCountriesToState(event);
     } else if (event is UpdateViewPortCountry) {
       yield* _mapUpdateViewPortCountryToState(event);
+    } else if (event is ResetCountriesState) {
+      yield* _mapResetCountriesStateToState();
     }
   }
 
@@ -42,27 +44,27 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   Stream<CountriesState> _mapLoadUnlockedCountriesToState(
     LoadUnlockedCountries event,
   ) async* {
-    if (state is CountriesLoaded) {
-      var countries = (state as CountriesLoaded).countries;
+    var countries = state is CountriesLoaded
+        ? (state as CountriesLoaded).countries
+        : await _loadCountries();
 
-      countries = countries.map((country) {
-        var unlocked = event.countries.firstWhere(
-          (c) => country.code == c.code,
-          orElse: () => null,
+    countries = countries.map((country) {
+      var unlocked = event.countries.firstWhere(
+        (c) => country.code == c.code,
+        orElse: () => null,
+      );
+
+      if (unlocked != null) {
+        return country.copyWith(
+          unlocked: true,
+          dateTime: unlocked.dateTime,
         );
+      }
 
-        if (unlocked != null) {
-          return country.copyWith(
-            unlocked: true,
-            dateTime: unlocked.dateTime,
-          );
-        }
+      return country;
+    }).toList();
 
-        return country;
-      }).toList();
-
-      yield CountriesLoaded(countries: countries);
-    }
+    yield CountriesLoaded(countries: countries);
   }
 
   Stream<CountriesState> _mapUpdateViewPortCountryToState(
@@ -89,6 +91,10 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
             : null,
       );
     }
+  }
+
+  Stream<CountriesState> _mapResetCountriesStateToState() async* {
+    yield CountriesUninitialized();
   }
 
   Future<List<Country>> _loadCountries() async {

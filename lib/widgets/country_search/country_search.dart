@@ -42,7 +42,7 @@ class CountrySearch extends SearchDelegate<Country> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return _CountrySearchList(
+    return CountrySearchList(
       query: query,
       filterOnlyUnlocked: filterOnlyUnlocked,
       onTap: (country) => close(context, country),
@@ -51,7 +51,7 @@ class CountrySearch extends SearchDelegate<Country> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return _CountrySearchList(
+    return CountrySearchList(
       query: query,
       filterOnlyUnlocked: filterOnlyUnlocked,
       onTap: (country) => close(context, country),

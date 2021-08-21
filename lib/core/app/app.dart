@@ -29,46 +29,49 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _settingsBloc = SettingsBloc(
+      sharedPreferencesService: sharedPreferencesService,
+      initialSettings: initialSettings,
+    );
+
+    final _profileBloc = ProfileBloc(
+      authenticationRepository: authenticationRepository,
+      profileRepository: profileRepository,
+    );
+
+    final _pinsBloc = PinsBloc(
+      authRepository: authenticationRepository,
+      pinsRepository: pinsRepository,
+    );
+
+    final _countriesBloc = CountriesBloc(profileBloc: _profileBloc);
+
+    final _filteredCountriesBloc = FilteredCountriesBloc(
+      countriesBloc: _countriesBloc,
+    );
+
+    final _appBloc = AppBloc(
+      authenticationRepository: authenticationRepository,
+      countriesBloc: _countriesBloc,
+      pinsBloc: _pinsBloc,
+      profileBloc: _profileBloc,
+    );
+
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(create: (context) => authenticationRepository),
-        RepositoryProvider(create: (context) => profileRepository),
-        RepositoryProvider(create: (context) => pinsRepository),
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: profileRepository),
+        RepositoryProvider.value(value: pinsRepository),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => AppBloc(
-              authenticationRepository: authenticationRepository,
-            ),
-          ),
-          BlocProvider<SettingsBloc>(
-            create: (context) => SettingsBloc(
-              sharedPreferencesService: sharedPreferencesService,
-              initialSettings: initialSettings,
-            ),
-          ),
-          BlocProvider<ProfileBloc>(
-            create: (context) => ProfileBloc(
-              authenticationRepository: authenticationRepository,
-              profileRepository: profileRepository,
-            ),
-          ),
-          BlocProvider<PinsBloc>(
-            create: (context) => PinsBloc(
-              authRepository: authenticationRepository,
-              pinsRepository: pinsRepository,
-            ),
-          ),
-          BlocProvider<CountriesBloc>(
-            create: (context) => CountriesBloc(
-              profileBloc: BlocProvider.of<ProfileBloc>(context),
-            )..add(LoadCountries()),
-          ),
-          BlocProvider<FilteredCountriesBloc>(
-            create: (context) => FilteredCountriesBloc(
-              countriesBloc: BlocProvider.of<CountriesBloc>(context),
-            ),
+          BlocProvider<AppBloc>.value(value: _appBloc),
+          BlocProvider<SettingsBloc>.value(value: _settingsBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<PinsBloc>.value(value: _pinsBloc),
+          BlocProvider<CountriesBloc>.value(value: _countriesBloc),
+          BlocProvider<FilteredCountriesBloc>.value(
+            value: _filteredCountriesBloc,
           ),
         ],
         child: BlocBuilder<SettingsBloc, SettingsState>(

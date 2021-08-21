@@ -96,7 +96,7 @@ class AuthRepository {
       );
 
       return true;
-    } on Exception {
+    } catch (e) {
       throw LogInWithEmailAndPasswordFailure();
     }
   }
@@ -116,8 +116,6 @@ class AuthRepository {
   Future<bool> isEmailInUse(String email) async {
     try {
       final methods = await _firebaseAuth.fetchSignInMethodsForEmail(email);
-      print(methods);
-
       return methods.isNotEmpty;
     } catch (e) {
       return true;

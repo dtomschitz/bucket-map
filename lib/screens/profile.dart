@@ -102,7 +102,6 @@ class _ProfileStatistics extends StatelessWidget {
         SizedBox(width: 8),
         BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            print(state);
             if (state is ProfileLoaded) {
               return _ProfileStatistic(
                 count: state.profile.unlockedCountries.length,

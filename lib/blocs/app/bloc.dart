@@ -2,6 +2,9 @@ library blocs.app;
 
 import 'dart:async';
 
+import 'package:bucket_map/blocs/countries/bloc.dart';
+import 'package:bucket_map/blocs/pins/bloc.dart';
+import 'package:bucket_map/blocs/profile/bloc.dart';
 import 'package:bucket_map/core/core.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:equatable/equatable.dart';

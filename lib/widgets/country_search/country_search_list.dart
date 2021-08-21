@@ -1,12 +1,31 @@
 part of widgets;
 
-class _CountrySearchList extends StatelessWidget {
-  _CountrySearchList({this.query, this.filterOnlyUnlocked, this.onTap});
+class CountrySearchList extends StatefulWidget {
+  CountrySearchList({
+    this.query,
+    this.filterOnlyUnlocked,
+    this.onTap,
+  });
 
   final String query;
   final bool filterOnlyUnlocked;
 
   final Function(Country country) onTap;
+
+  @override
+  State createState() => CountrySearchListState();
+}
+
+class CountrySearchListState extends State<CountrySearchList> {
+  @override
+  initState() {
+    super.initState();
+
+    var bloc = BlocProvider.of<CountriesBloc>(context);
+    if (bloc.state is CountriesUninitialized) {
+      bloc.add(LoadCountries());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +34,14 @@ class _CountrySearchList extends StatelessWidget {
         if (state is CountriesLoaded) {
           List<Country> countries = state.countries.where(
             (country) {
-              return filterOnlyUnlocked
-                  ? country.name.toLowerCase().contains(query.toLowerCase()) &&
+              return widget.filterOnlyUnlocked
+                  ? country.name
+                          .toLowerCase()
+                          .contains(widget.query.toLowerCase()) &&
                       country.unlocked
-                  : country.name.toLowerCase().contains(query.toLowerCase());
+                  : country.name
+                      .toLowerCase()
+                      .contains(widget.query.toLowerCase());
             },
           ).toList();
 
@@ -26,7 +49,7 @@ class _CountrySearchList extends StatelessWidget {
             countries: countries,
             onTap: (country) {
               if (country != null) {
-                onTap?.call(country);
+                widget.onTap?.call(country);
               }
             },
           );

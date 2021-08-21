@@ -5,8 +5,6 @@ abstract class CountriesEvent extends Equatable {
 }
 
 class LoadCountries extends CountriesEvent {
-  const LoadCountries();
-
   @override
   List<Object> get props => [];
 
@@ -22,7 +20,7 @@ class LoadUnlockedCountries extends CountriesEvent {
   List<Object> get props => [];
 
   @override
-  String toString() => 'UpdateUnlockedCountries';
+  String toString() => 'LoadUnlockedCountries';
 }
 
 class UpdateViewPortCountry extends CountriesEvent {
@@ -34,4 +32,12 @@ class UpdateViewPortCountry extends CountriesEvent {
 
   @override
   String toString() => 'UpdateViewPortCountry';
+}
+
+class ResetCountriesState extends CountriesEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() => 'ResetCountriesState';
 }

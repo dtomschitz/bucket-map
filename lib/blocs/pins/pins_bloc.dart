@@ -7,7 +7,9 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
   })  : _authRepository = authRepository,
         _pinsRepository = pinsRepository,
         super(PinsUninitialized()) {
-    _authSubscription = _authRepository.user.listen((user) {
+    _authSubscription = _authRepository.user
+        .where((user) => user.isNotAnonymous)
+        .listen((user) {
       add(LoadPins(user.id));
     });
   }
@@ -37,6 +39,8 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
       yield* _mapRemovePinToState(event);
     } else if (event is PinsUpdated) {
       yield* _mapPinsUpdatedToState(event);
+    } else if (event is ResetPinsState) {
+      yield* _mapResetPinsStateToState();
     }
   }
 
@@ -66,5 +70,9 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
 
   Stream<PinsState> _mapPinsUpdatedToState(PinsUpdated event) async* {
     yield PinsLoaded(event.pins);
+  }
+
+  Stream<PinsState> _mapResetPinsStateToState() async* {
+    yield PinsUninitialized();
   }
 }

@@ -102,18 +102,15 @@ class RegisterPage extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           children: [
             _DetailView(
-              onNextView: () => _jumpToPage(1),
+              onNextView: () => _jumpToPage(context, page: 1),
               onLogin: () => Navigator.pop(context),
             ),
             _LoginDetailsView(
-              onPreviouseView: () => _jumpToPage(0),
-              onNextView: () => _jumpToPage(2),
+              onPreviouseView: () => _jumpToPage(context, page: 0),
+              onNextView: () => _jumpToPage(context, page: 2),
             ),
             _SummaryView(
-              onPreviouseView: () => _jumpToPage(1),
-              onRegister: () {
-                context.read<RegisterCubit>().registerUser();
-              },
+              onPreviouseView: () => _jumpToPage(context, page: 1),
             ),
           ],
         ),
@@ -121,12 +118,15 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  _jumpToPage(int page) {
+  _jumpToPage(BuildContext context, {int page}) {
+    //FocusScope.of(context).unfocus();
     _pageController.animateToPage(
       page,
       duration: Duration(milliseconds: 250),
       curve: Curves.ease,
     );
+
+    //FocusScope.of(context).unfocus();
   }
 }
 
@@ -156,29 +156,20 @@ class _DetailViewState extends State<_DetailView> {
             padding: EdgeInsets.all(16),
             physics: NeverScrollableScrollPhysics(),
             children: [
-              TextFormField(
+              FirstNameFormField(
                 initialValue: state.firstName,
-                keyboardType: TextInputType.name,
-                validator: (value) => Utils.validateString(
-                  value,
-                  message: 'Bitte geben Sie einen Vornamen ein',
-                ),
-                decoration: InputDecoration(labelText: 'Vorname'),
                 onChanged: cubit.updateFirstName,
               ),
               SizedBox(height: 16),
-              TextFormField(
+              LastNameNameFormField(
                 initialValue: state.firstName,
-                keyboardType: TextInputType.name,
-                validator: (value) => Utils.validateString(
-                  value,
-                  message: 'Bitte geben Sie einen Nachname ein',
-                ),
-                decoration: InputDecoration(labelText: 'Nachname'),
                 onChanged: cubit.updateLastName,
               ),
               SizedBox(height: 16),
-              CountryFormField(controller: _countryController),
+              CountryFormField(
+                controller: _countryController,
+                onCountryChange: cubit.updateCountry,
+              ),
               SizedBox(height: 32),
               BottomActions(
                 children: [
@@ -215,32 +206,22 @@ class _LoginDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<RegisterCubit>();
+
     return BlocBuilder<RegisterCubit, RegisterState>(
       builder: (context, state) {
-        final cubit = context.read<RegisterCubit>();
-        final authRepository = RepositoryProvider.of<AuthRepository>(context);
-
         return Form(
           key: _formKey,
           child: ListView(
             padding: EdgeInsets.all(16),
             physics: NeverScrollableScrollPhysics(),
             children: [
-              TextFormField(
+              EmailFormField(
                 initialValue: state.email,
-                keyboardType: TextInputType.emailAddress,
-                validator: Utils.validateEmail,
-                decoration: InputDecoration(labelText: 'E-Mail'),
                 onChanged: cubit.updateEmail,
               ),
               SizedBox(height: 16),
-              TextFormField(
-                keyboardType: TextInputType.visiblePassword,
-                validator: Utils.validatePassword,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Passwort'),
-                onChanged: cubit.updatePassword,
-              ),
+              PasswordFormField(onChanged: cubit.updatePassword),
               SizedBox(height: 32),
               BottomActions(
                 children: [
@@ -268,10 +249,8 @@ class _LoginDetailsView extends StatelessWidget {
 }
 
 class _SummaryView extends StatelessWidget {
-  _SummaryView({this.onPreviouseView, this.onRegister});
-
+  _SummaryView({this.onPreviouseView});
   final VoidCallback onPreviouseView;
-  final VoidCallback onRegister;
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +280,9 @@ class _SummaryView extends StatelessWidget {
                 ),
                 OutlinedButton(
                   child: Text('Konto anlegen'),
-                  onPressed: onRegister?.call,
+                  onPressed: () {
+                    context.read<RegisterCubit>().registerUser();
+                  },
                 ),
               ],
             ),

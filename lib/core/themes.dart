@@ -46,7 +46,6 @@ class Themes {
 
   static final lightIconTheme = IconThemeData(color: Colors.black);
 
-
   static ThemeData buildDarkTheme(BuildContext context) {
     return ThemeData(
       splashFactory: InkRipple.splashFactory,

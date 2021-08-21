@@ -1,7 +1,7 @@
 part of widgets;
 
-class LastNameNameFormField extends StatelessWidget {
-  LastNameNameFormField({
+class PasswordFormField extends StatelessWidget {
+  PasswordFormField({
     this.controller,
     this.initialValue,
     this.onChanged,
@@ -16,12 +16,9 @@ class LastNameNameFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      keyboardType: TextInputType.name,
-      validator: (value) => Utils.validateString(
-        value,
-        message: 'Bitte geben Sie einen Nachname ein',
-      ),
-      decoration: InputDecoration(labelText: 'Nachname'),
+      validator: Utils.validatePassword,
+      obscureText: true,
+      decoration: InputDecoration(labelText: 'Password'),
       onChanged: onChanged?.call,
     );
   }

@@ -7,7 +7,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   })  : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
         super(ProfileUninitialized()) {
-    _authSubscription = _authenticationRepository.user.listen((user) {
+    _authSubscription = _authenticationRepository.user
+        .where((user) => user.isNotAnonymous)
+        .listen((user) {
       add(LoadProfile(user));
     });
   }
@@ -35,6 +37,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield* _mapUnlockCountryToProfile(event);
     } else if (event is ProfileUpdated) {
       yield* _mapProfileUpdatedToState(event);
+    } else if (event is ResetProfileState) {
+      yield* _mapResetProfileStateToState();
     }
   }
 
@@ -44,7 +48,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     _profileSubscription?.cancel();
     _profileSubscription = _profileRepository.getProfile(event.user.id).listen(
       (profile) {
-        print('test' + profile.firstName);
         add(ProfileUpdated(profile: profile, user: event.user));
       },
     );
@@ -78,5 +81,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapProfileUpdatedToState(ProfileUpdated event) async* {
     yield ProfileLoaded(profile: event.profile, user: event.user);
+  }
+
+  Stream<ProfileState> _mapResetProfileStateToState() async* {
+    yield ProfileUninitialized();
   }
 }

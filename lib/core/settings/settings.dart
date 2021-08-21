@@ -1,18 +1,12 @@
 library core.settings;
 
 import 'dart:ui';
-import 'dart:async';
 
-import 'package:bucket_map/core/core.dart';
 import 'package:bucket_map/blocs/blocs.dart';
 import 'package:bucket_map/shared/shared.dart';
 import 'package:bucket_map/widgets/widgets.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cache/cache.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:meta/meta.dart';
 
 part 'sections/app_settings.dart';
 part 'sections/profile_settings.dart';
@@ -85,8 +79,8 @@ class SettingsScreen extends StatelessWidget {
       child: TextButton(
         child: Text('Abmelden'),
         onPressed: () {
-          Navigator.pop(context);
-          context.read<AppBloc>().add(LogoutRequested());
+          BlocProvider.of<AppBloc>(context).add(LogoutRequested());
+          Navigator.of(context).popUntil((route) => route.isFirst);
         },
       ),
     );

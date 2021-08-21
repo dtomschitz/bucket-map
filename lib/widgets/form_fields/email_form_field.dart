@@ -1,7 +1,7 @@
 part of widgets;
 
-class LastNameNameFormField extends StatelessWidget {
-  LastNameNameFormField({
+class EmailFormField extends StatelessWidget {
+  EmailFormField({
     this.controller,
     this.initialValue,
     this.onChanged,
@@ -16,12 +16,10 @@ class LastNameNameFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      keyboardType: TextInputType.name,
-      validator: (value) => Utils.validateString(
-        value,
-        message: 'Bitte geben Sie einen Nachname ein',
-      ),
-      decoration: InputDecoration(labelText: 'Nachname'),
+      initialValue: initialValue,
+      keyboardType: TextInputType.emailAddress,
+      validator: Utils.validateEmail,
+      decoration: InputDecoration(labelText: 'E-Mail'),
       onChanged: onChanged?.call,
     );
   }
