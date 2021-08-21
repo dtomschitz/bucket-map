@@ -37,7 +37,7 @@ class PinsLoaded extends PinsState {
 
   @override
   String toString() {
-    return 'PinsLoaded { pins: $pins }';
+    return 'PinsLoaded';
   }
 }
 
@@ -46,8 +46,8 @@ class PinsError extends PinsState {
   final String error;
 
   @override
-  String toString() => 'PinsError { error: $error }';
+  List<Object> get props => [error];
 
   @override
-  List<Object> get props => [error];
+  String toString() => 'PinsError ';
 }

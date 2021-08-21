@@ -15,7 +15,7 @@ class LoadPins extends PinEvent {
   List<Object> get props => [userId];
 
   @override
-  String toString() => 'LoadPins { userId: $userId }';
+  String toString() => 'LoadPins';
 }
 
 class PinsUpdated extends PinEvent {
@@ -37,7 +37,7 @@ class AddPin extends PinEvent {
   List<Object> get props => [pin];
 
   @override
-  String toString() => 'AddPin { pin: $pin }';
+  String toString() => 'AddPin';
 }
 
 class UpdatePin extends PinEvent {
@@ -48,7 +48,7 @@ class UpdatePin extends PinEvent {
   List<Object> get props => [pin];
 
   @override
-  String toString() => 'UpdatePin { pin: $pin }';
+  String toString() => 'UpdatePin';
 }
 
 class DeletePin extends PinEvent {
@@ -59,5 +59,5 @@ class DeletePin extends PinEvent {
   List<Object> get props => [pin];
 
   @override
-  String toString() => 'DeletePin { pin: $pin }';
+  String toString() => 'DeletePin';
 }

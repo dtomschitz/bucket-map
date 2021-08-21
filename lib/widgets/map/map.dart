@@ -101,7 +101,7 @@ class _MapState extends State<Map> with TickerProviderStateMixin {
 
   _onMapCreated(MapboxMapController controller) async {
     _mapController = controller;
-    
+
     final ByteData bytes = await rootBundle.load("assets/location_pin.png");
     final Uint8List list = bytes.buffer.asUint8List();
     await _mapController.addImage("location_pin", list);

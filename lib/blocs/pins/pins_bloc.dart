@@ -43,9 +43,10 @@ class PinsBloc extends Bloc<PinEvent, PinsState> {
   Stream<PinsState> _mapLoadPinsToState(LoadPins event) async* {
     final userId = _authRepository.currentUser.id;
 
+    yield PinsLoading();
+
     _pinsSubscription?.cancel();
     _pinsSubscription = _pinsRepository.pins(userId).listen((pins) {
-      print(pins);
       add(PinsUpdated(pins));
     });
   }

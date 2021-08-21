@@ -1,14 +1,11 @@
 part of dialogs;
 
-class CancelModifyPinDialog extends StatelessWidget {
-
-
+class DiscardChangesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       buttonPadding: EdgeInsets.all(16),
-      title:
-          Text('Möchtest du die Änderungen an diesem Pin wirklich verwerfen?'),
+      title: Text('Möchtest du die Änderungen wirklich verwerfen?'),
       actions: [
         TextButton(
           child: Text('Nein'),

@@ -8,23 +8,17 @@ abstract class AppEvent extends Equatable {
 }
 
 class UserChanged extends AppEvent {
-  @visibleForTesting
   const UserChanged(this.user);
-
   final User user;
 
   @override
   List<Object> get props => [user];
-}
-
-class UserPasswordChanged extends AppEvent {
-  const UserPasswordChanged(this.password);
-
-  final String password;
 
   @override
-  List<Object> get props => [password];
+  String toString() => 'UserChanged';
 }
 
-
-class LogoutRequested extends AppEvent {}
+class LogoutRequested extends AppEvent {
+  @override
+  String toString() => 'LogoutRequested';
+}

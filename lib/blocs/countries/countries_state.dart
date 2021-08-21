@@ -48,7 +48,7 @@ class CountriesLoaded extends CountriesState {
   @override
   String toString() {
     var count = countries.length;
-    return 'CountriesLoaded { count: $count }';
+    return 'CountriesLoaded';
   }
 }
 
@@ -57,5 +57,5 @@ class CountriesError extends CountriesState {
   final String error;
 
   @override
-  String toString() => 'CountriesError { error: $error }';
+  String toString() => 'CountriesError';
 }

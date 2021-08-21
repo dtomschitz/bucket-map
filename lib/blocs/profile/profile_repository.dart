@@ -1,15 +1,16 @@
 part of blocs.profile;
 
 class ProfileRepository {
-  final profileCollection = FirebaseFirestore.instance.collection('profiles');
+  final collection = FirebaseFirestore.instance.collection('profiles');
 
-  Future<Profile> getProfile(String id) async {
-    final snapshot = await profileCollection.doc(id).get();
-    return Profile.fromJson(snapshot.data());
+  Stream<Profile> getProfile(String id) {
+    return collection.doc(id).snapshots().map((snapshot) {
+      return Profile.fromJson(snapshot.data());
+    });
   }
 
   Future<Profile> getProfileByEmail(String email) async {
-    final snapshot = await profileCollection
+    final snapshot = await collection
         .where(
           'email',
           isEqualTo: email,
@@ -21,10 +22,10 @@ class ProfileRepository {
   }
 
   Future<void> createProfile(Profile profile) {
-    return profileCollection.doc(profile.id).set(profile.toJson());
+    return collection.doc(profile.id).set(profile.toJson());
   }
 
   Future<void> updateProfile(Profile update) {
-    return profileCollection.doc(update.id).update(update.toJson());
+    return collection.doc(update.id).update(update.toJson());
   }
 }

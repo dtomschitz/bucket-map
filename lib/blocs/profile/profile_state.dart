@@ -33,7 +33,7 @@ class ProfileLoaded extends ProfileState {
 
   @override
   String toString() {
-    return 'ProfileLoaded { profile: $profile }';
+    return 'ProfileLoaded';
   }
 }
 
@@ -42,5 +42,5 @@ class ProfileError extends ProfileState {
   final String error;
 
   @override
-  String toString() => 'ProfileError { error: $error }';
+  String toString() => 'ProfileError';
 }

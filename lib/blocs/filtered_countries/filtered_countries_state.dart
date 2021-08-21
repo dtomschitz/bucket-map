@@ -28,6 +28,6 @@ class FilteredCountriesLoaded extends FilteredCountriesState {
   @override
   String toString() {
     final length = countries.length;
-    return 'FilteredCountriesLoaded { filteredCountries: $length, filter: $filter }';
+    return 'FilteredCountriesLoaded';
   }
 }

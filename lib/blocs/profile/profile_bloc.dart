@@ -7,7 +7,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   })  : _authenticationRepository = authenticationRepository,
         _profileRepository = profileRepository,
         super(ProfileUninitialized()) {
-    _subscription = _authenticationRepository.user.listen((user) {
+    _authSubscription = _authenticationRepository.user.listen((user) {
       add(LoadProfile(user));
     });
   }
@@ -15,11 +15,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthRepository _authenticationRepository;
   final ProfileRepository _profileRepository;
 
-  StreamSubscription _subscription;
+  StreamSubscription _authSubscription;
+  StreamSubscription _profileSubscription;
 
   @override
   Future<void> close() {
-    _subscription.cancel();
+    _authSubscription.cancel();
+    _profileSubscription?.cancel();
     return super.close();
   }
 
@@ -27,15 +29,29 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
     if (event is LoadProfile) {
       yield* _mapLoadProfileToState(event);
+    } else if (event is UpdateProfile) {
+      yield* _mapUpdateProfileToState(event);
     } else if (event is UnlockCountry) {
       yield* _mapUnlockCountryToProfile(event);
+    } else if (event is ProfileUpdated) {
+      yield* _mapProfileUpdatedToState(event);
     }
   }
 
   Stream<ProfileState> _mapLoadProfileToState(LoadProfile event) async* {
     yield ProfileLoading();
-    var profile = await _profileRepository.getProfile(event.user.id);
-    yield ProfileLoaded(profile: profile, user: event.user);
+
+    _profileSubscription?.cancel();
+    _profileSubscription = _profileRepository.getProfile(event.user.id).listen(
+      (profile) {
+        print('test' + profile.firstName);
+        add(ProfileUpdated(profile: profile, user: event.user));
+      },
+    );
+  }
+
+  Stream<ProfileState> _mapUpdateProfileToState(UpdateProfile event) async* {
+    _profileRepository.updateProfile(event.profile);
   }
 
   Stream<ProfileState> _mapUnlockCountryToProfile(UnlockCountry event) async* {
@@ -58,5 +74,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         user: (state as ProfileLoaded).user,
       );
     }
+  }
+
+  Stream<ProfileState> _mapProfileUpdatedToState(ProfileUpdated event) async* {
+    yield ProfileLoaded(profile: event.profile, user: event.user);
   }
 }

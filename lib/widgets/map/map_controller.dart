@@ -29,8 +29,6 @@ class MapController with ChangeNotifier {
         iconImage: state.iconImage,
         iconSize: state.iconSize,
         draggable: false,
-        //textField: pin.name,
-        //textOffset: Offset(0, state.iconSize * 10),
       );
     }).toList();
 
@@ -76,23 +74,21 @@ class MapController with ChangeNotifier {
     return animateCamera(cameraUpdate);
   }
 
-  Future<void> animateCameraToPin(Pin pin, {double zoom = 8}) {
-    return animateCamera(CameraUpdate.newLatLngZoom(pin.toLatLng(), zoom));
+  Future<void> animateCameraToPin(
+    Pin pin, {
+    double defaultZoom = 8,
+    double overrideZoom,
+  }) {
+    return animateCamera(
+      CameraUpdate.newLatLngZoom(
+          pin.toLatLng(),
+          overrideZoom != null && overrideZoom < defaultZoom
+              ? overrideZoom
+              : defaultZoom),
+    );
   }
 
-  Future<void> animateCameraToCoordinates(
-    LatLng latLng, {
-    double zoom = 8,
-    bool minZoom = false,
-  }) {
-    /*if (minZoom) {
-      var currentZoom = state._cameraPosition.zoom;
-      return animateCamera(CameraUpdate.newLatLngZoom(
-        latLng,
-        currentZoom > zoom ? currentZoom : zoom,
-      ));
-    }*/
-
+  Future<void> animateCameraToCoordinates(LatLng latLng, {double zoom = 8}) {
     return animateCamera(CameraUpdate.newLatLngZoom(latLng, zoom));
   }
 

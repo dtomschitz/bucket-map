@@ -13,7 +13,7 @@ class UpdateCountriesFilter extends CountriesFilterEvent {
   List<Object> get props => [filter];
 
   @override
-  String toString() => 'UpdateCountriesFilter { filter: $filter }';
+  String toString() => 'UpdateCountriesFilter';
 }
 
 class ClearCountriesFilter extends CountriesFilterEvent {
@@ -23,7 +23,7 @@ class ClearCountriesFilter extends CountriesFilterEvent {
   List<Object> get props => [];
 
   @override
-  String toString() => 'ClearCountriesFilter { filter: empty }';
+  String toString() => 'ClearCountriesFilter';
 }
 
 class FilteredCountriesUpdated extends CountriesFilterEvent {

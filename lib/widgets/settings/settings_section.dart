@@ -4,7 +4,7 @@ class SettingsSection extends StatelessWidget {
   SettingsSection({this.header, this.tiles});
 
   final SettingsHeader header;
-  final List<SettingsTile> tiles;
+  final List<Widget> tiles;
 
   @override
   Widget build(BuildContext context) {

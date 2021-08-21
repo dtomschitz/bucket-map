@@ -29,9 +29,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield _mapUserChangedToState(event, state);
     } else if (event is LogoutRequested) {
       await _authenticationRepository.logOut();
-    } else if (event is UserPasswordChanged) {
-      await _authenticationRepository.updatePassword(event.password);
-      //await _authenticationRepository.logOut();
     }
   }
 

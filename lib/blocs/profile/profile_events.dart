@@ -12,7 +12,20 @@ class LoadProfile extends ProfileEvent {
   List<Object> get props => [user];
 
   @override
-  String toString() => 'LoadProfile { id: $user }';
+  String toString() => 'LoadProfile';
+}
+
+class ProfileUpdated extends ProfileEvent {
+  const ProfileUpdated({this.profile, this.user});
+
+  final Profile profile;
+  final User user;
+
+  @override
+  List<Object> get props => [profile];
+
+  @override
+  String toString() => 'ProfileUpdated';
 }
 
 class UnlockCountry extends ProfileEvent {
@@ -23,17 +36,16 @@ class UnlockCountry extends ProfileEvent {
   List<Object> get props => [code];
 
   @override
-  String toString() => 'UnlockCountry { code: $code }';
+  String toString() => 'UnlockCountry';
 }
 
-class RenameProfile extends ProfileEvent {
-  const RenameProfile({this.firstName, this.lastName});
-  final String firstName;
-  final String lastName;
+class UpdateProfile extends ProfileEvent {
+  const UpdateProfile({this.profile});
+  final Profile profile;
 
   @override
-  List<Object> get props => [firstName, lastName];
+  List<Object> get props => [Profile];
 
   @override
-  String toString() => 'UnlockCountry';
+  String toString() => 'UpdateProfile';
 }

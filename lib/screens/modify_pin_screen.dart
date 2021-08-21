@@ -61,7 +61,10 @@ class _ModifyPinScreenState extends State<ModifyPinScreen> {
             FocusScope.of(context).unfocus();
 
             if (_hasChanges) {
-              final discardChanges = await CancelModifyPinDialog.show(context);
+              final discardChanges = await showAppDialog<bool>(
+                context,
+                dialog: CancelModifyPinDialog(),
+              );
               if (!discardChanges) return;
             }
 
@@ -99,12 +102,10 @@ class _ModifyPinScreenState extends State<ModifyPinScreen> {
         ),
       ),
       floatingActionButton: _hasChanges
-          ? FloatingActionButton.extended(
-              label: Text('Speichern'),
-              onPressed: () {
-                final isFormValid = _formKey.currentState.validate();
-
-                if (isFormValid) {
+          ? SaveButton(
+              formKey: _formKey,
+              onValidated: (isValid) {
+                if (isValid) {
                   final pin = widget.pin.copyWith(
                     name: _nameController.text,
                     country: _countryController.text,

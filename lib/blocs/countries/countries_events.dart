@@ -33,5 +33,5 @@ class UpdateViewPortCountry extends CountriesEvent {
   List<Object> get props => [position];
 
   @override
-  String toString() => 'UpdateViewPortCountry { position: $position }';
+  String toString() => 'UpdateViewPortCountry';
 }
