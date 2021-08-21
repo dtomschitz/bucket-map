@@ -33,9 +33,7 @@ class ProfileSettingsSection extends StatelessWidget {
                 subtitle: '${profile.firstName} ${profile.lastName}',
                 onTap: () => showSettingsView(
                   context,
-                  view: ProfileNameSettingsView(
-                    profile: profile,
-                  ),
+                  view: ProfileNameSettingsView(profile: profile),
                 ),
               ),
               BlocBuilder<CountriesBloc, CountriesState>(
@@ -47,7 +45,13 @@ class ProfileSettingsSection extends StatelessWidget {
                     return SettingsTile(
                       title: 'Heimatland bearbeiten',
                       subtitle: country.name,
-                      onTap: onCountry?.call,
+                      onTap: () => showSettingsView(
+                        context,
+                        view: HomelandSettingsView(
+                          profile: profile,
+                          country: country,
+                        ),
+                      ),
                     );
                   }
                   return Container();

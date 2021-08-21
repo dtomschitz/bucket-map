@@ -17,6 +17,7 @@ import 'package:meta/meta.dart';
 part 'sections/app_settings.dart';
 part 'sections/profile_settings.dart';
 
+part 'views/homeland_settings.dart';
 part 'views/profile_name_settings.dart';
 part 'views/profile_picture_settings.dart';
 part 'views/theme_settings.dart';

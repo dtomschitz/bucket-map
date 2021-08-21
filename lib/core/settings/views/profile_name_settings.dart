@@ -59,25 +59,9 @@ class _ProfileNameSettingsViewState extends State<ProfileNameSettingsView> {
                       padding: EdgeInsets.all(16),
                       physics: NeverScrollableScrollPhysics(),
                       children: [
-                        TextFormField(
-                          controller: _firstNameController,
-                          keyboardType: TextInputType.name,
-                          validator: (value) => Utils.validateString(
-                            value,
-                            message: 'Bitte geben Sie einen Vornamen ein',
-                          ),
-                          decoration: InputDecoration(labelText: 'Vorname'),
-                        ),
+                        FirstNameFormField(controller: _firstNameController),
                         SizedBox(height: 16),
-                        TextFormField(
-                          controller: _lastNameController,
-                          keyboardType: TextInputType.name,
-                          validator: (value) => Utils.validateString(
-                            value,
-                            message: 'Bitte geben Sie einen Nachname ein',
-                          ),
-                          decoration: InputDecoration(labelText: 'Nachname'),
-                        ),
+                        LastNameNameFormField(controller: _lastNameController),
                       ],
                     ),
                   );

@@ -178,23 +178,7 @@ class _DetailViewState extends State<_DetailView> {
                 onChanged: cubit.updateLastName,
               ),
               SizedBox(height: 16),
-              TextFormField(
-                //initialValue: state?.country?.name,
-                controller: _countryController,
-                readOnly: true,
-                validator: (value) => Utils.validateString(
-                  value,
-                  message: 'Bitte wählen Sie ihr Heimatland',
-                ),
-                decoration: InputDecoration(labelText: 'Heimatland'),
-                onTap: () async {
-                  final country = await CountrySearch.show(context);
-                  if (country != null) {
-                    cubit.updateCountry(country);
-                    _countryController.text = country.name;
-                  }
-                },
-              ),
+              CountryFormField(controller: _countryController),
               SizedBox(height: 32),
               BottomActions(
                 children: [
