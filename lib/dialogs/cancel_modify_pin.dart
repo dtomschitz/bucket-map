@@ -1,8 +1,6 @@
 part of dialogs;
 
 class CancelModifyPinDialog extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

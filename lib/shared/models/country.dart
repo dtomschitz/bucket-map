@@ -115,3 +115,13 @@ class UnlockedCountry extends Equatable {
   @override
   String toString() => 'Country { code: $code, dateTime: $dateTime  }';
 }
+
+class ViewPortCountry {
+  const ViewPortCountry({
+    this.name,
+    this.code,
+  });
+
+  final String name;
+  final String code;
+}

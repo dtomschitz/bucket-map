@@ -41,8 +41,8 @@ class _CurrentCountryState extends State<CurrentCountry>
         if (state.viewPort != null) {
           _controller.forward();
 
-          if (_countryCode != state.viewPort.countryCode) {
-            setState(() => _countryCode = state.viewPort.countryCode);
+          if (_countryCode != state.viewPort.code) {
+            setState(() => _countryCode = state.viewPort.code);
           }
 
           if (_name != state.viewPort.name) {

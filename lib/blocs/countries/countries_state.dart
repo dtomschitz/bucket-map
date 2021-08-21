@@ -19,7 +19,7 @@ class CountriesLoaded extends CountriesState {
   const CountriesLoaded({this.countries, this.viewPort});
 
   final List<Country> countries;
-  final ViewPort viewPort;
+  final ViewPortCountry viewPort;
 
   CountriesLoaded copyWith({List<Country> countries, Country country}) {
     return CountriesLoaded(

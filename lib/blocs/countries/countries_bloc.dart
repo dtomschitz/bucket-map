@@ -82,11 +82,11 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
       yield CountriesLoaded(
         countries: countries,
         viewPort: placemark != null
-            ? ViewPort(
+            ? ViewPortCountry(
                 name: placemark.country.isNotEmpty
                     ? placemark.country
                     : placemark.name,
-                countryCode: placemark.isoCountryCode,
+                code: placemark.isoCountryCode,
               )
             : null,
       );

@@ -1,6 +1,5 @@
 export 'app/app.dart';
 export 'auth/auth.dart';
-export 'events/events.dart';
 export 'settings/settings.dart';
 export 'snack_bars/snack_bars.dart';
 

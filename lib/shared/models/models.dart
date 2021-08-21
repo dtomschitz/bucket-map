@@ -11,4 +11,3 @@ part 'pin.dart';
 part 'profile.dart';
 part 'settings.dart';
 part 'user.dart';
-part 'view_port.dart';
