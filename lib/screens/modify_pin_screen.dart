@@ -31,21 +31,16 @@ class _ModifyPinScreenState extends State<ModifyPinScreen> {
   @override
   initState() {
     super.initState();
-
     _nameController.text = widget.pin.name;
     _countryController.text = widget.pin.country;
-
     _nameController.addListener(_changeListener);
     _countryController.addListener(_changeListener);
-
-    //_loadInitialCountry();
   }
 
   @override
   dispose() {
     _nameController.removeListener(_changeListener);
     _countryController.removeListener(_changeListener);
-
     _nameController.dispose();
     _countryController.dispose();
     super.dispose();
@@ -65,6 +60,7 @@ class _ModifyPinScreenState extends State<ModifyPinScreen> {
                 context,
                 dialog: CancelModifyPinDialog(),
               );
+
               if (!discardChanges) return;
             }
 
@@ -119,19 +115,6 @@ class _ModifyPinScreenState extends State<ModifyPinScreen> {
           : null,
     );
   }
-
-  /*_loadInitialCountry() {
-    var state = BlocProvider.of<CountriesBloc>(context).state;
-    if (state is CountriesLoaded && _country == null) {
-      final country = state.countries.firstWhere(
-        (country) => country.code == widget.pin.country,
-      );
-
-      if (country != null) {
-        setState(() => _country = country);
-      }
-    }
-  }*/
 
   _changeListener() {
     final hasChanges = _nameController.text != widget.pin.name ||

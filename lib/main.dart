@@ -13,7 +13,6 @@ void main() async {
 
   final profileRepository = ProfileRepository();
   final pinsRepository = PinsRepository();
-
   final authenticationRepository = AuthRepository(
     profileRepository: profileRepository,
   );

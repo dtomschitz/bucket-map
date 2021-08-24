@@ -20,9 +20,7 @@ class EditPinBottomSheet extends StatelessWidget {
     return BottomSheetContainer(
       title: pin.name,
       children: [
-        CountryListTile(
-          country: country,
-        ),
+        CountryListTile(country: country),
         ListTile(
           leading: CenteredIcon(
             icon: Icon(Icons.add_outlined),
