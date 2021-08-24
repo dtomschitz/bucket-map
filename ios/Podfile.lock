@@ -266,8 +266,6 @@ PODS:
   - Flutter (1.0.0)
   - geocoding (1.0.5):
     - Flutter
-  - geolocator (6.2.0):
-    - Flutter
   - GoogleDataTransport (9.0.1):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
@@ -341,7 +339,6 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - geocoding (from `.symlinks/plugins/geocoding/ios`)
-  - geolocator (from `.symlinks/plugins/geolocator/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - mapbox_gl (from `.symlinks/plugins/mapbox_gl/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -379,8 +376,6 @@ EXTERNAL SOURCES:
     :path: Flutter
   geocoding:
     :path: ".symlinks/plugins/geocoding/ios"
-  geolocator:
-    :path: ".symlinks/plugins/geolocator/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
   mapbox_gl:
@@ -403,7 +398,6 @@ SPEC CHECKSUMS:
   FirebaseFirestore: 7f6576eaca9f821e864c3e917d68aa99f4e6b613
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
-  geolocator: f5e3de65e241caba7ce3e8a618803387bda73384
   GoogleDataTransport: 04c3e9a480bbcaa2ec3f5d27f1cdeb6a92f20c8d
   GoogleUtilities: 45dbb24a7f351d69d0a601482b39ad6c32e30dab
   "gRPC-C++": 13d8ccef97d5c3c441b7e3c529ef28ebee86fad2
