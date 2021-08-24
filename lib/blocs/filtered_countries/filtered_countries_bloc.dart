@@ -2,20 +2,22 @@ part of blocs.filtered_countries;
 
 class FilteredCountriesBloc
     extends Bloc<CountriesFilterEvent, FilteredCountriesState> {
-  FilteredCountriesBloc({@required this.countriesBloc})
-      : super(countriesBloc.state is CountriesLoaded
+  FilteredCountriesBloc({@required CountriesBloc countriesBloc})
+      : _countriesBloc = countriesBloc,
+        super(countriesBloc.state is CountriesLoaded
             ? FilteredCountriesLoaded(
-                (countriesBloc.state as CountriesLoaded).countries, "")
+                countries: (countriesBloc.state as CountriesLoaded).countries,
+                filter: "",
+              )
             : FilteredCountriesLoading()) {
-    _subscription = countriesBloc.stream.listen((state) {
+    _subscription = _countriesBloc.stream.listen((state) {
       if (state is CountriesLoaded) {
-        add(FilteredCountriesUpdated(
-            (countriesBloc.state as CountriesLoaded).countries));
+        add(FilteredCountriesUpdated(state.countries));
       }
     });
   }
 
-  final CountriesBloc countriesBloc;
+  final CountriesBloc _countriesBloc;
   StreamSubscription _subscription;
 
   @override
@@ -39,28 +41,24 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapUpdateFilterToState(
     UpdateCountriesFilter event,
   ) async* {
-    if (countriesBloc.state is CountriesLoaded) {
-      yield FilteredCountriesLoaded(
-        _filterCountries(
-          (countriesBloc.state as CountriesLoaded).countries,
-          event.filter,
-        ),
-        event.filter,
-      );
-    }
+    var countries = (_countriesBloc.state as CountriesLoaded).countries;
+
+    yield FilteredCountriesLoaded(
+      countries: _filterCountries(countries, event.filter),
+      filter: event.filter,
+    );
   }
 
   Stream<FilteredCountriesState> _mapClearFilterToState(
     ClearCountriesFilter event,
   ) async* {
-    if (countriesBloc.state is CountriesLoaded) {
-      final filter = "";
+    if (_countriesBloc.state is CountriesLoaded) {
+      var countries = (_countriesBloc.state as CountriesLoaded).countries;
+      var filter = "";
+
       yield FilteredCountriesLoaded(
-        _filterCountries(
-          (countriesBloc.state as CountriesLoaded).countries,
-          filter,
-        ),
-        filter,
+        countries: _filterCountries(countries, filter),
+        filter: filter,
       );
     }
   }
@@ -68,16 +66,14 @@ class FilteredCountriesBloc
   Stream<FilteredCountriesState> _mapCountriesToState(
     FilteredCountriesUpdated event,
   ) async* {
-    final filter = state is FilteredCountriesLoaded
+    var countries = (_countriesBloc.state as CountriesLoaded).countries;
+    var filter = state is FilteredCountriesLoaded
         ? (state as FilteredCountriesLoaded).filter
         : "";
 
     yield FilteredCountriesLoaded(
-      _filterCountries(
-        (countriesBloc.state as CountriesLoaded).countries,
-        filter,
-      ),
-      filter,
+      countries: _filterCountries(countries, filter),
+      filter: filter,
     );
   }
 

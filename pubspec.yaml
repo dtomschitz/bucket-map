@@ -9,39 +9,55 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  material_floating_search_bar: ^0.3.3
   flow_builder: ^0.0.2
   flutter_bloc: ^7.0.0
-  formz: ^0.4.0-nullsafety.0
   provider: ^5.0.0
   equatable: ^2.0.0
-  cupertino_icons: ^1.0.2
   firebase_core: ^1.0.3
   firebase_auth: ^1.0.3
   cloud_firestore: ^1.0.4
   permission_handler: ^6.1.1
   http: ^0.13.1
   shared_preferences: ^2.0.5
-  geolocator: ^7.0.3
-  flutter_spinkit: "^4.1.2"
-  shimmer: ^2.0.0
+  geocoding: ^2.0.0
+  image_picker: ^0.8.0+3
+  animations: ^2.0.1
+
   # Custom Packages
   cache:
     path: packages/cache
-  sliding_up_panel:
-    path: packages/sliding_up_panel
   mapbox_gl:
     path: packages/mapbox
+  sliding_sheet:
+    path: packages/sliding_sheet
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: ^0.9.0
+  flutter_native_splash: ^1.2.1
+  dependency_validator: ^3.0.0
+
 flutter:
   uses-material-design: true
   assets:
-    - countries.geojson
+    - assets/icons/
     - countries.json
-    - style_dark.json
-    - style_light.json
     - default_profile_picture.png
+    - location_pin.png
+    - logo.png
+
+flutter_icons:
+  image_path: "assets/icon.png"
+  android: true
+  ios: true
+
+flutter_native_splash:
+  background_image: "assets/launch_images/launch_image_light.png"
+  background_image_dark: "assets/launch_images/launch_image_dark.png"
+
+  ios_content_mode: scaleAspectFit
+
+  android12: true
+  android_gravity: center

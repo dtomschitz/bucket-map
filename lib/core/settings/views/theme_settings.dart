@@ -1,4 +1,4 @@
-part of views.settings;
+part of core.settings;
 
 class ThemeSettingsView extends StatelessWidget {
   @override
@@ -9,11 +9,10 @@ class ThemeSettingsView extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(''),
+            title: Text('Erscheinungsbild'),
           ),
           body: Column(
             children: [
-              SettingsHeader('Erscheinungsbild'),
               _buildOption(
                 context: context,
                 title: 'System',

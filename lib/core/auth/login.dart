@@ -1,163 +1,193 @@
-import 'package:bucket_map/core/auth/cubits/login/cubit.dart';
-import 'package:bucket_map/core/auth/register.dart';
-import 'package:bucket_map/core/auth/repositories/repositories.dart';
-import 'package:bucket_map/core/auth/widgets/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
+part of core.auth;
 
-class LoginPage extends StatelessWidget {
-  final PageController controller = PageController(initialPage: 0);
+class LoginState extends Equatable {
+  const LoginState({
+    this.email,
+    this.password,
+  });
 
-  jumpToPage(int page) {
-    controller.animateToPage(
-      page,
-      duration: Duration(milliseconds: 250),
-      curve: Curves.ease,
+  final String email;
+  final String password;
+
+  LoginState copyWith({String email, String password}) {
+    return LoginState(
+      email: email ?? this.email,
+      password: password ?? this.password,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LoginCubit(
-        context.read<AuthenticationRepository>(),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Bucket Map'),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(6.0),
-            child: BlocBuilder<LoginCubit, LoginState>(
-              builder: (context, state) {
-                if (state.loading) {
-                  return LinearProgressIndicator();
-                }
+  List<Object> get props => [email, password];
+}
 
-                return Container();
-              },
-            ),
-          ),
-        ),
-        body: PageView(
-          controller: controller,
-          scrollDirection: Axis.horizontal,
+class LoginCubit extends Cubit<LoginState> {
+  LoginCubit(this._authRepository) : super(const LoginState());
+  final AuthRepository _authRepository;
+
+  void updateEmail(String email) {
+    emit(state.copyWith(email: email));
+  }
+
+  void updatePassword(String password) {
+    emit(state.copyWith(password: password));
+  }
+
+  Future<bool> isEmailInUse() {
+    return _authRepository.isEmailInUse(state.email);
+  }
+
+  Future<bool> logInWithCredentials() async {
+    try {
+      return await _authRepository.logInWithEmailAndPassword(
+        email: state.email,
+        password: state.password,
+      );
+    } on Exception {
+      return false;
+    }
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  static Page page() => MaterialPage<void>(child: LoginPage());
+
+  @override
+  Widget build(BuildContext context) {
+    final authRepository = RepositoryProvider.of<AuthRepository>(context);
+    final cubit = LoginCubit(authRepository);
+
+    return BlocProvider<LoginCubit>.value(
+      value: cubit,
+      child: Scaffold(
+        body: ListView(
+          padding: EdgeInsets.all(16),
           physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            EmailView(
-              onNextView: () => jumpToPage(1),
-              onRegister: () => Navigator.push(context, RegisterPage.page()),
-            ),
-            PasswordView(
-              onPreviouseView: () => jumpToPage(0),
-            ),
+          children: [
+            _LogoContainer(),
+            _EmailView(),
           ],
         ),
       ),
     );
   }
-
-  static Page page() => MaterialPage<void>(child: LoginPage());
 }
 
-class EmailView extends StatelessWidget {
-  const EmailView({this.onNextView, this.onRegister});
+class _LogoContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Padding(
+            padding: EdgeInsets.all(46),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black.withOpacity(.05)
+                        : Colors.grey[100].withOpacity(.05),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SizedBox(
+                      height: 64,
+                      width: 64,
+                      child: Image.asset('logo.png'),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Bucket Map',
+                    style: Theme.of(context).textTheme.headline3,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-  final Function() onNextView;
-  final Function() onRegister;
+class _EmailView extends StatefulWidget {
+  @override
+  State createState() => _EmailViewState();
+}
+
+class _EmailViewState extends State<_EmailView> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
-        final String labelText = 'E-Mail';
-        final isEmailValid = state.emailStatus == FormzStatus.valid;
+        final cubit = context.read<LoginCubit>();
 
-        return AuthViewContainer(
-          title: 'Anmeldung',
-          subtitle: 'Melde dich mit deinem Konto an.',
-          children: [
-            FormInputField(
-              onChanged: context.read<LoginCubit>().emailChanged,
-              keyboardType: TextInputType.emailAddress,
-              labelText: labelText,
-              errorText: state.error,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              EmailFormField(
+                initialValue: state.email,
+                onChanged: cubit.updateEmail,
+              ),
+              SizedBox(height: 16),
+              PasswordFormField(
+                controller: _passwordController,
+                onChanged: cubit.updatePassword,
+              ),
+              SizedBox(height: 16),
+              BottomActions(
                 children: [
                   TextButton(
                     child: Text('Konto erstellen'),
                     onPressed: () {
-                      onRegister?.call();
+                      FocusScope.of(context).unfocus();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return RegisterPage();
+                        }),
+                      );
                     },
                   ),
-                  ElevatedButton(
-                    child: Text('Weiter'),
-                    onPressed: !isEmailValid
-                        ? null
-                        : () async {
-                            final result =
-                                await context.read<LoginCubit>().verifyEmail();
-                            if (!result) return;
-
-                            onNextView?.call();
-                          },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class PasswordView extends StatelessWidget {
-  const PasswordView({this.onPreviouseView});
-  final Function() onPreviouseView;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
-      builder: (context, state) {
-        final String labelText = 'Password';
-
-        return AuthViewContainer(
-          title: 'Willkommen',
-          subtitle: state.email.value,
-          children: [
-            FormInputField(
-              obscureText: true,
-              onChanged: context.read<LoginCubit>().passwordChanged,
-              keyboardType: TextInputType.emailAddress,
-              labelText: labelText,
-              errorText: state.error,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    child: Text(
-                      'Zurück',
-                    ),
-                    onPressed: onPreviouseView?.call,
-                  ),
-                  ElevatedButton(
+                  OutlinedButton(
                     child: Text('Anmelden'),
-                    onPressed: () {
-                      context.read<LoginCubit>().logInWithCredentials();
+                    onPressed: () async {
+                      final isFormValid = _formKey.currentState.validate();
+                      if (!isFormValid) return;
+
+                      final isEmailInUse = await cubit.isEmailInUse();
+                      if (!isEmailInUse) {
+                        showSnackbar(context, () => EmailNotInUseSnackBar());
+                        return;
+                      }
+
+                      cubit.logInWithCredentials();
                     },
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

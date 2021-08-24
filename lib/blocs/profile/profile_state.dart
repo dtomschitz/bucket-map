@@ -16,19 +16,31 @@ class ProfileLoading extends ProfileState {
 }
 
 class ProfileLoaded extends ProfileState {
-  const ProfileLoaded(this.profile);
+  const ProfileLoaded({this.profile, this.user});
+
   final Profile profile;
+  final User user;
+
+  ProfileLoaded copyWith({
+    Profile profile,
+    User user,
+  }) {
+    return ProfileLoaded(
+      profile: profile ?? this.profile,
+      user: user ?? this.user,
+    );
+  }
 
   @override
   String toString() {
-    return 'ProfileLoaded[profile: $profile]';
+    return 'ProfileLoaded';
   }
 }
 
 class ProfileError extends ProfileState {
-  final String error;
   const ProfileError(this.error);
+  final String error;
 
   @override
-  String toString() => 'ProfileError[error: $error]';
+  String toString() => 'ProfileError';
 }

@@ -1,98 +1,105 @@
+library core.app;
+
 import 'package:bucket_map/blocs/blocs.dart';
-import 'package:bucket_map/core/app/home.dart';
-import 'package:bucket_map/core/auth/login.dart';
-import 'package:bucket_map/core/app/bloc/bloc.dart';
-import 'package:bucket_map/core/auth/repositories/repositories.dart';
-import 'package:bucket_map/core/settings/bloc/bloc.dart';
-import 'package:bucket_map/core/settings/models/models.dart';
-import 'package:bucket_map/core/themes.dart';
-import 'package:bucket_map/utils/utils.dart';
+import 'package:bucket_map/core/core.dart';
+import 'package:bucket_map/screens/screens.dart';
+import 'package:bucket_map/shared/shared.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+
+part 'app_base.dart';
 
 class App extends StatelessWidget {
   const App({
-    @required AuthenticationRepository authenticationRepository,
-    @required ProfileRepository profileRepository,
-    @required SharedPreferencesService sharedPreferencesService,
-    Settings initialSettings,
-  })  : _authenticationRepository = authenticationRepository,
-        _profileRepository = profileRepository,
-        _sharedPreferencesService = sharedPreferencesService,
-        _initialSettings = initialSettings;
+    @required this.authenticationRepository,
+    @required this.profileRepository,
+    @required this.pinsRepository,
+    @required this.sharedPreferencesService,
+    this.initialSettings,
+  });
 
-  final AuthenticationRepository _authenticationRepository;
-  final ProfileRepository _profileRepository;
+  final AuthRepository authenticationRepository;
+  final ProfileRepository profileRepository;
+  final PinsRepository pinsRepository;
 
-  final SharedPreferencesService _sharedPreferencesService;
-  final Settings _initialSettings;
+  final SharedPreferencesService sharedPreferencesService;
+  final Settings initialSettings;
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: _authenticationRepository,
+    final _settingsBloc = SettingsBloc(
+      sharedPreferencesService: sharedPreferencesService,
+      initialSettings: initialSettings,
+    );
+
+    final _profileBloc = ProfileBloc(
+      authenticationRepository: authenticationRepository,
+      profileRepository: profileRepository,
+    );
+
+    final _pinsBloc = PinsBloc(
+      authRepository: authenticationRepository,
+      pinsRepository: pinsRepository,
+    );
+
+    final _countriesBloc = CountriesBloc(profileBloc: _profileBloc);
+
+    final _filteredCountriesBloc = FilteredCountriesBloc(
+      countriesBloc: _countriesBloc,
+    );
+
+    final _appBloc = AppBloc(
+      authenticationRepository: authenticationRepository,
+      countriesBloc: _countriesBloc,
+      pinsBloc: _pinsBloc,
+      profileBloc: _profileBloc,
+    );
+
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: profileRepository),
+        RepositoryProvider.value(value: pinsRepository),
+      ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (_) => AppBloc(
-              authenticationRepository: _authenticationRepository,
-            ),
-          ),
-          BlocProvider<SettingsBloc>(
-            create: (context) => SettingsBloc(
-              sharedPreferencesService: _sharedPreferencesService,
-              initialSettings: _initialSettings,
-            ),
-          ),
-          BlocProvider<ProfileBloc>(
-            create: (context) => ProfileBloc(
-              authenticationRepository: _authenticationRepository,
-              profileRepository: _profileRepository,
-            ),
-          ),
-          BlocProvider<CountriesBloc>(
-            create: (context) => CountriesBloc()..add(LoadCountriesEvent()),
-          ),
-          BlocProvider<FilteredCountriesBloc>(
-            create: (context) => FilteredCountriesBloc(
-              countriesBloc: BlocProvider.of<CountriesBloc>(context),
-            ),
+          BlocProvider<AppBloc>.value(value: _appBloc),
+          BlocProvider<SettingsBloc>.value(value: _settingsBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<PinsBloc>.value(value: _pinsBloc),
+          BlocProvider<CountriesBloc>.value(value: _countriesBloc),
+          BlocProvider<FilteredCountriesBloc>.value(
+            value: _filteredCountriesBloc,
           ),
         ],
-        child: AppView(),
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, state) {
+            return MaterialApp(
+              title: 'Bucket Map',
+              themeMode: state.settings.themeMode,
+              theme: Themes.buildLightTheme(context),
+              darkTheme: Themes.buildDarkTheme(context),
+              home: FlowBuilder<AppStatus>(
+                state: context.select((AppBloc bloc) => bloc.state.status),
+                onGeneratePages: (
+                  AppStatus status,
+                  List<Page<dynamic>> pages,
+                ) {
+                  switch (status) {
+                    case AppStatus.authenticated:
+                      return [AppBase.page()];
+                    case AppStatus.unauthenticated:
+                    default:
+                      return [LoginPage.page()];
+                  }
+                },
+              ),
+            );
+          },
+        ),
       ),
-    );
-  }
-}
-
-class AppView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsBloc, SettingsState>(
-      builder: (context, state) {
-        return MaterialApp(
-          title: 'Bucket Map',
-          themeMode: state.settings.themeMode,
-          theme: Themes.buildLightTheme(),
-          darkTheme: Themes.buildDarkTheme(),
-          home: FlowBuilder<AppStatus>(
-            state: context.select((AppBloc bloc) => bloc.state.status),
-            onGeneratePages: (
-              AppStatus status,
-              List<Page<dynamic>> pages,
-            ) {
-              switch (status) {
-                case AppStatus.authenticated:
-                  return [HomePage.page()];
-                case AppStatus.unauthenticated:
-                default:
-                  return [LoginPage.page()];
-              }
-            },
-          ),
-        );
-      },
     );
   }
 }

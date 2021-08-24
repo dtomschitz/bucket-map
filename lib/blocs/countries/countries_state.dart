@@ -1,11 +1,8 @@
-part of blocs.countries;
+part of blocs.profile;
 
 @immutable
-abstract class CountriesState extends Equatable {
+abstract class CountriesState {
   const CountriesState();
-
-  @override
-  List<Object> get props => [];
 }
 
 class CountriesUninitialized extends CountriesState {
@@ -19,31 +16,46 @@ class CountriesLoading extends CountriesState {
 }
 
 class CountriesLoaded extends CountriesState {
-  final List<Country> countries;
-  const CountriesLoaded(this.countries);
+  const CountriesLoaded({this.countries, this.viewPort});
 
-  CountriesLoaded copyWith({
-    List<Country> countries,
-  }) {
-    return CountriesLoaded(countries ?? this.countries);
+  final List<Country> countries;
+  final ViewPortCountry viewPort;
+
+  CountriesLoaded copyWith({List<Country> countries, Country country}) {
+    return CountriesLoaded(
+      countries: countries ?? this.countries,
+      viewPort: country ?? this.viewPort,
+    );
+  }
+
+  List<Country> get unlockedCountries {
+    return this.countries.where((country) {
+      return country.unlocked;
+    }).toList();
+  }
+
+  List<Country> get recentUnlockedCountries {
+    var unlockedCountries = this.countries.where((country) {
+      return country.unlocked;
+    }).toList();
+
+    var countries = List.of(unlockedCountries);
+    countries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+    return countries.take(5).toList();
   }
 
   @override
   String toString() {
-    return 'CountriesLoaded[countries: $countries]';
+    var count = countries.length;
+    return 'CountriesLoaded';
   }
-
-  @override
-  List<Object> get props => [countries];
 }
 
 class CountriesError extends CountriesState {
-  final String error;
   const CountriesError(this.error);
+  final String error;
 
   @override
-  String toString() => 'CountriesError[error: $error]';
-
-  @override
-  List<Object> get props => [error];
+  String toString() => 'CountriesError';
 }

@@ -74,6 +74,21 @@ class LatLngBounds {
   /// The northeast corner of the rectangle.
   final LatLng northeast;
 
+  bool contains(LatLng point) {
+    var sw2 = point;
+    var ne2 = point;
+    return containsBounds(LatLngBounds(southwest: sw2, northeast: ne2));
+  }
+
+  bool containsBounds(LatLngBounds bounds) {
+    var sw2 = bounds.southwest;
+    var ne2 = bounds.northeast;
+    return (sw2.latitude >= southwest.latitude) &&
+        (ne2.latitude <= northeast.latitude) &&
+        (sw2.longitude >= southwest.longitude) &&
+        (ne2.longitude <= northeast.longitude);
+  }
+
   dynamic toList() {
     return <dynamic>[southwest.toJson(), northeast.toJson()];
   }
