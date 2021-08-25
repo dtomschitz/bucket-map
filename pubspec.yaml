@@ -58,6 +58,4 @@ flutter_native_splash:
   background_image_dark: "assets/launch_images/launch_image_dark.png"
 
   ios_content_mode: scaleAspectFit
-
-  android12: true
   android_gravity: center
